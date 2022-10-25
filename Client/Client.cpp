@@ -50,7 +50,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	GWindowInfo.windowed = true;
 
 	unique_ptr<Game> game = make_unique<Game>();
-	game->Init();
+	game->Init(GWindowInfo);
 
 	// 기본 메시지 루프입니다:
 	while (true)
