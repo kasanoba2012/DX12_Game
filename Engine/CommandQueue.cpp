@@ -71,6 +71,10 @@ void CommandQueue::RenderBegin(const D3D12_VIEWPORT* vp, const D3D12_RECT* rect)
 
 	_cmdList->SetGraphicsRootSignature(ROOT_SIGNATURE.Get()); // 해당 서명을 활용하겠다
 	GEngine->GetCB()->Clear(); // CB 사용 인덱스 0으로 초기화
+	GEngine->GetTableDescriptorHeap()->Clear();
+
+	ID3D12DescriptorHeap* descHeap = GEngine->GetTableDescriptorHeap()->GetDescriptorHeap().Get();
+	_cmdList->SetDescriptorHeaps(1, &descHeap);
 
 	_cmdList->ResourceBarrier(1, &barrier);
 
