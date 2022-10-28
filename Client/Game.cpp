@@ -33,7 +33,25 @@ void Game::Update()
 
 	// 쉐이더 파일을 읽어서 그림그려달라는 대로 그리기 준비
 	shader->Update();
-	// 무엇을 그려달라는지 확인하고 물체 그려달라는 명령어 전달
+
+	{
+		Transform t;
+		t.offset = Vec4(0.5f, 0.f, 0.f, 0.f);
+		mesh->SetTransform(t);
+
+		// 무엇을 그려달라는지 확인하고 물체 그려달라는 명령어 전달
+		mesh->Render();
+	}
+
+	{
+		Transform t;
+		t.offset = Vec4(0.f, 0.5f, 0.f, 0.f);
+		mesh->SetTransform(t);
+
+		// 무엇을 그려달라는지 확인하고 물체 그려달라는 명령어 전달
+		mesh->Render();
+	}
+		
 	mesh->Render();
 
 	GEngine->RenderEnd();
