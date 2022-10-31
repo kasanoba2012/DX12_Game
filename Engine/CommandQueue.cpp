@@ -30,6 +30,10 @@ void CommandQueue::Init(ComPtr<ID3D12Device> device, shared_ptr<SwapChain> swapC
 	// CommandList는 Close / Open 상태가 있는데
 	// Open 상태에서 Command를 넣다가 Close한 다음 제출하는 개념
 	_cmdList->Close();
+	
+	// 텍스쳐 출력을 위한
+	device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&_resCmdAlloc));
+	device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, _resCmdAlloc.Get(), nullptr, IID_PPV_ARGS(&_resCmdList));
 
 	// CreateFence
 	// - CPU와 GPU의 동기화 수단으로 쓰인다
@@ -69,11 +73,11 @@ void CommandQueue::RenderBegin(const D3D12_VIEWPORT* vp, const D3D12_RECT* rect)
 		D3D12_RESOURCE_STATE_PRESENT, // 화면 출력
 		D3D12_RESOURCE_STATE_RENDER_TARGET); // 외주 결과물
 
-	_cmdList->SetGraphicsRootSignature(ROOT_SIGNATURE.Get()); // 해당 서명을 활용하겠다
-	GEngine->GetCB()->Clear(); // CB 사용 인덱스 0으로 초기화
-	GEngine->GetTableDescriptorHeap()->Clear();
+	_cmdList->SetGraphicsRootSignature(ROOT_SIGNATURE.Get());
+	GEngine->GetCB()->Clear();
+	GEngine->GetTableDescHeap()->Clear();
 
-	ID3D12DescriptorHeap* descHeap = GEngine->GetTableDescriptorHeap()->GetDescriptorHeap().Get();
+	ID3D12DescriptorHeap* descHeap = GEngine->GetTableDescHeap()->GetDescriptorHeap().Get();
 	_cmdList->SetDescriptorHeaps(1, &descHeap);
 
 	_cmdList->ResourceBarrier(1, &barrier);
@@ -110,4 +114,17 @@ void CommandQueue::RenderEnd()
 	WaitSync();
 
 	_swapChain->SwapIndex();
+}
+
+void CommandQueue::FlushResourceCommandQueue()
+{
+	_resCmdList->Close();
+
+	ID3D12CommandList* cmdListArr[] = { _resCmdList.Get() };
+	_cmdQueue->ExecuteCommandLists(_countof(cmdListArr), cmdListArr);
+
+	WaitSync();
+
+	_resCmdAlloc->Reset();
+	_resCmdList->Reset(_resCmdAlloc.Get(), nullptr);
 }
