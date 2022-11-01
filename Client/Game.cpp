@@ -60,30 +60,31 @@ void Game::Init(const WindowInfo& info)
 
 void Game::Update()
 {
+	// input, timer Update 함수
+	GEngine->Update();
+
 	GEngine->RenderBegin();
 
 	// 쉐이더 파일을 읽어서 그림그려달라는 대로 그리기 준비
 	shader->Update();
 
+	
 	{
-		Transform t;
-		t.offset = Vec4(0.5f, 0.5f, 0.f, 0.f);
+		static Transform t = {};
+
+		if (INPUT->GetButton(KEY_TYPE::W))
+			t.offset.y += 1.f * DELTA_TIME;
+		if (INPUT->GetButton(KEY_TYPE::S))
+			t.offset.y -= 1.f * DELTA_TIME;
+		if (INPUT->GetButton(KEY_TYPE::A))
+			t.offset.x -= 1.f * DELTA_TIME;
+		if (INPUT->GetButton(KEY_TYPE::D))
+			t.offset.x += 1.f * DELTA_TIME;
+
 		mesh->SetTransform(t);
 
 		mesh->SetTexture(texture);
 
-		// 무엇을 그려달라는지 확인하고 물체 그려달라는 명령어 전달
-		mesh->Render();
-	}
-
-	{
-		Transform t;
-		t.offset = Vec4(0.f, 0.f, 0.f, 0.f);
-		mesh->SetTransform(t);
-
-		mesh->SetTexture(texture);
-
-		// 무엇을 그려달라는지 확인하고 물체 그려달라는 명령어 전달
 		mesh->Render();
 	}
 			
