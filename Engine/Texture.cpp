@@ -20,6 +20,7 @@ void Texture::CreateTexture(const wstring& path)
 	else // png, jpg, jpeg, bmp
 		::LoadFromWICFile(path.c_str(), WIC_FLAGS_NONE, nullptr, _image);
 
+	// 원본 파일 _image을 이용해서 _tex2D를 만들어줌
 	HRESULT hr = ::CreateTexture(DEVICE.Get(), _image.GetMetadata(), &_tex2D);
 	if (FAILED(hr))
 		assert(nullptr);

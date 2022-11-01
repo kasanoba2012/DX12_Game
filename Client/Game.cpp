@@ -67,6 +67,17 @@ void Game::Update()
 
 	{
 		Transform t;
+		t.offset = Vec4(0.5f, 0.5f, 0.f, 0.f);
+		mesh->SetTransform(t);
+
+		mesh->SetTexture(texture);
+
+		// 무엇을 그려달라는지 확인하고 물체 그려달라는 명령어 전달
+		mesh->Render();
+	}
+
+	{
+		Transform t;
 		t.offset = Vec4(0.f, 0.f, 0.f, 0.f);
 		mesh->SetTransform(t);
 
@@ -76,5 +87,6 @@ void Game::Update()
 		mesh->Render();
 	}
 			
+
 	GEngine->RenderEnd();
 }
