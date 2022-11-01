@@ -20,13 +20,11 @@ void CommandQueue::Init(ComPtr<ID3D12Device> device, shared_ptr<SwapChain> swapC
 
 	// - D3D12_COMMAND_LIST_TYPE_DIRECT : GPU가 직접 실행하는 명령 목록
 	device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&_cmdAlloc));
-
 	// GPU가 하나인 시스템에서는 0으로
 	// DIRECT or BUNDLE
 	// Allocator
 	// 초기 상태 (그리기 명령은 nullptr 지정)
 	device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, _cmdAlloc.Get(), nullptr, IID_PPV_ARGS(&_cmdList));
-
 	// CommandList는 Close / Open 상태가 있는데
 	// Open 상태에서 Command를 넣다가 Close한 다음 제출하는 개념
 	_cmdList->Close();
@@ -74,7 +72,11 @@ void CommandQueue::RenderBegin(const D3D12_VIEWPORT* vp, const D3D12_RECT* rect)
 		D3D12_RESOURCE_STATE_RENDER_TARGET); // 외주 결과물
 
 	_cmdList->SetGraphicsRootSignature(ROOT_SIGNATURE.Get());
-	GEngine->GetCB()->Clear();
+
+	// 타입 지정해서 CB 밀어버리기
+	GEngine->GetConstantBuffer(CONSTANT_BUFFER_TYPE::TRANSFORM)->Clear();
+	GEngine->GetConstantBuffer(CONSTANT_BUFFER_TYPE::MATERIAL)->Clear();
+
 	GEngine->GetTableDescHeap()->Clear();
 
 	ID3D12DescriptorHeap* descHeap = GEngine->GetTableDescHeap()->GetDescriptorHeap().Get();

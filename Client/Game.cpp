@@ -1,10 +1,9 @@
 #include "pch.h"
 #include "Game.h"
 #include "Engine.h"
+#include "Material.h"
 
 shared_ptr<Mesh> mesh = make_shared<Mesh>();
-shared_ptr<Shader> shader = make_shared<Shader>();
-shared_ptr<Texture> texture = make_shared<Texture>();
 
 void Game::Init(const WindowInfo& info)
 {
@@ -51,9 +50,19 @@ void Game::Init(const WindowInfo& info)
 	mesh->Init(vec, indexVec);
 
 	// 쉐이더 파일을 읽어서 어떻게 쉐이더 처리할지 컴파일
+	shared_ptr<Shader> shader = make_shared<Shader>();
+	shared_ptr<Texture> texture = make_shared<Texture>();
 	shader->Init(L"..\\Resources\\Shader\\default.hlsli");
-
 	texture->Init(L"..\\Resources\\Texture\\Lucian.jpg");
+
+	shared_ptr<Material> material = make_shared<Material>();
+	material->SetShader(shader);
+	// 메터리얼 옵션 변경
+	material->SetFloat(0, 0.3f);
+	material->SetFloat(1, 0.4f);
+	material->SetFloat(2, 0.3f);
+	material->SetTexture(0, texture);
+	mesh->SetMaterial(material);
 
 	GEngine->GetCmdQueue()->WaitSync();
 }
@@ -65,10 +74,6 @@ void Game::Update()
 
 	GEngine->RenderBegin();
 
-	// 쉐이더 파일을 읽어서 그림그려달라는 대로 그리기 준비
-	shader->Update();
-
-	
 	{
 		static Transform t = {};
 
@@ -82,8 +87,6 @@ void Game::Update()
 			t.offset.x += 1.f * DELTA_TIME;
 
 		mesh->SetTransform(t);
-
-		mesh->SetTexture(texture);
 
 		mesh->Render();
 	}

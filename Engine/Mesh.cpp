@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Mesh.h"
 #include "Engine.h"
-
+#include "Material.h"
 void Mesh::Init(const vector<Vertex>& vertexBuffer, const vector<uint32>& indexBuffer)
 {
 	CreateVertexBuffer(vertexBuffer);
@@ -16,13 +16,14 @@ void Mesh::Render()
 	// 인덱스 버퍼 뷰
 	CMD_LIST->IASetIndexBuffer(&_indexBufferView);
 
+	// TODO
 	// 1) Buffer에다가 데이터 세팅
-	// 2) Buffer의 주소를 register에다가 전송
-	{
-		D3D12_CPU_DESCRIPTOR_HANDLE handle = GEngine->GetCB()->PushData(0, &_transform, sizeof(_transform));
-		GEngine->GetTableDescHeap()->SetCBV(handle, CBV_REGISTER::b0);
-		GEngine->GetTableDescHeap()->SetSRV(_tex->GetCpuHandle(), SRV_REGISTER::t0);
-	}
+	// 2) TableDescHeap에다가 CBV 전달
+	// 3) 모두 세팅이 끝났으면 TableDescHeap 커밋
+
+	CONST_BUFFER(CONSTANT_BUFFER_TYPE::TRANSFORM)->PushData(&_transform, sizeof(_transform));
+
+	_mat->Update();
 
 	GEngine->GetTableDescHeap()->CommitTable();
 
