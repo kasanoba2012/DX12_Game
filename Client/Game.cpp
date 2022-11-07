@@ -3,12 +3,17 @@
 #include "Engine.h"
 #include "Material.h"
 
-shared_ptr<Mesh> mesh = make_shared<Mesh>();
+#include "GameObject.h"
+#include "MeshRenderer.h"
+
+//shared_ptr<Mesh> mesh = make_shared<Mesh>();
+// 메쉬 생성 대신 게임오브젝트를 생성해서 게임오브젝트에서 메쉬 생성을 한다.
+shared_ptr<GameObject> gameObject = make_shared<GameObject>();
 
 void Game::Init(const WindowInfo& info)
 {
 	GEngine->Init(info);
-	
+
 	// 삼각형 정보 만들기
 	//vector<Vertex> vec(3);
 	//vec[0].pos = Vec3(0, 0.5f, 0.5f);
@@ -46,23 +51,36 @@ void Game::Init(const WindowInfo& info)
 		indexVec.push_back(3);
 	}
 
-	// 해당 삼각형 정보를 메쉬 init를 통해서 GPU 메모리쪽으로 전달
-	mesh->Init(vec, indexVec);
+	// 게임 오브젝트를 통한 메쉬 생성 테스트
+	gameObject->Init(); // Transform
 
-	// 쉐이더 파일을 읽어서 어떻게 쉐이더 처리할지 컴파일
-	shared_ptr<Shader> shader = make_shared<Shader>();
-	shared_ptr<Texture> texture = make_shared<Texture>();
-	shader->Init(L"..\\Resources\\Shader\\default.hlsli");
-	texture->Init(L"..\\Resources\\Texture\\Lucian.jpg");
+	shared_ptr<MeshRenderer> meshRenderer = make_shared<MeshRenderer>();
 
-	shared_ptr<Material> material = make_shared<Material>();
-	material->SetShader(shader);
-	// 메터리얼 옵션 변경
-	material->SetFloat(0, 0.3f);
-	material->SetFloat(1, 0.4f);
-	material->SetFloat(2, 0.3f);
-	material->SetTexture(0, texture);
-	mesh->SetMaterial(material);
+	{
+		shared_ptr<Mesh> mesh = make_shared<Mesh>();
+		mesh->Init(vec, indexVec);
+		meshRenderer->SetMesh(mesh);
+	}
+
+	{
+		// 쉐이더 파일을 읽어서 어떻게 쉐이더 처리할지 컴파일
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shared_ptr<Texture> texture = make_shared<Texture>();
+		shader->Init(L"..\\Resources\\Shader\\default.hlsli");
+		texture->Init(L"..\\Resources\\Texture\\Lucian.jpg");
+
+		shared_ptr<Material> material = make_shared<Material>();
+		material->SetShader(shader);
+		// 메터리얼 옵션 변경
+		material->SetFloat(0, 0.3f);
+		material->SetFloat(1, 0.4f);
+		material->SetFloat(2, 0.3f);
+		material->SetTexture(0, texture);
+		meshRenderer->SetMaterial(material);
+	}
+
+	// 게임 오브젝트에 메쉬 붙히기
+	gameObject->AddComponent(meshRenderer);
 
 	GEngine->GetCmdQueue()->WaitSync();
 }
@@ -74,23 +92,7 @@ void Game::Update()
 
 	GEngine->RenderBegin();
 
-	{
-		static Transform t = {};
-
-		if (INPUT->GetButton(KEY_TYPE::W))
-			t.offset.y += 1.f * DELTA_TIME;
-		if (INPUT->GetButton(KEY_TYPE::S))
-			t.offset.y -= 1.f * DELTA_TIME;
-		if (INPUT->GetButton(KEY_TYPE::A))
-			t.offset.x -= 1.f * DELTA_TIME;
-		if (INPUT->GetButton(KEY_TYPE::D))
-			t.offset.x += 1.f * DELTA_TIME;
-
-		mesh->SetTransform(t);
-
-		mesh->Render();
-	}
-			
+	gameObject->Update();
 
 	GEngine->RenderEnd();
 }
