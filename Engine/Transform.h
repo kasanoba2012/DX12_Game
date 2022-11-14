@@ -17,7 +17,7 @@ public:
 	const Vec3& GetLocalScale() { return _localScale; }
 
 	const Matrix& GetLocalToWorldMatrix() { return _matWorld; }
-	const Vec3& GetWorldPosition() { return _matWorld.Translation(); }
+	Vec3 GetWorldPosition() { return _matWorld.Translation(); }
 
 	Vec3 GetRight() { return _matWorld.Right(); }
 	Vec3 GetUp() { return _matWorld.Up(); }
@@ -41,5 +41,5 @@ private:
 	Matrix _matWorld = {};
 
 	weak_ptr<Transform> _parent;
-
 };
+

@@ -2,6 +2,7 @@
 
 class GameObject;
 
+
 class Scene
 {
 public:
@@ -11,6 +12,11 @@ public:
 	void LateUpdate();
 	void FinalUpdate();
 
+	void Render();
+private:
+	void PushLightData();
+
+public:
 	void AddGameObject(shared_ptr<GameObject> gameObject);
 	void RemoveGameObject(shared_ptr<GameObject> gameObject);
 
