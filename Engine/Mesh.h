@@ -1,12 +1,16 @@
 #pragma once
+#include "Object.h"
 
 // Material 클래스 전방선언
 class Material;
 
 // [유니티짱]과 같이 정점으로 이루어진 물체
-class Mesh
+class Mesh : public Object
 {
 public:
+	Mesh();
+	virtual ~Mesh();
+
 	void Init(const vector<Vertex>& vertexBuffer, const vector<uint32>& indexbuffer);
 	void Render();
 
