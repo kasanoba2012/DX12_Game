@@ -33,14 +33,14 @@ void Camera::FinalUpdate()
 		// 투영 변환 행렬 (직교)구하기
 		_matProjection = ::XMMatrixOrthographicLH(width * _scale, height * _scale, _near, _far);
 
-	S_MatView = _matView;
-	S_MatProjection = _matProjection;
-
 	_frustum.FinalUpdate();
 }
 
 void Camera::Render()
 {
+	S_MatView = _matView;
+	S_MatProjection = _matProjection;
+
 	shared_ptr<Scene> scene = GET_SINGLE(SceneManager)->GetActiveScene();
 
 	// TODO : Layer 구분
