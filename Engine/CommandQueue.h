@@ -28,7 +28,6 @@ private:
 	ComPtr<ID3D12CommandAllocator>		_cmdAlloc;
 	ComPtr<ID3D12GraphicsCommandList>	_cmdList;
 
-	// 텍스쳐 출력을 위한 리스트
 	ComPtr<ID3D12CommandAllocator>		_resCmdAlloc;
 	ComPtr<ID3D12GraphicsCommandList>	_resCmdList;
 
