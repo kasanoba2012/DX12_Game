@@ -675,10 +675,10 @@ struct CD3DX12_DESCRIPTOR_RANGE : public D3D12_DESCRIPTOR_RANGE
         UINT offsetInDescriptorsFromTableStart =
         D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND)
     {
-        Init(rangeType, numDescriptors, baseShaderRegister, registerSpace, offsetInDescriptorsFromTableStart);
+        CreateGraphicsShader(rangeType, numDescriptors, baseShaderRegister, registerSpace, offsetInDescriptorsFromTableStart);
     }
     
-    inline void Init(
+    inline void CreateGraphicsShader(
         D3D12_DESCRIPTOR_RANGE_TYPE rangeType,
         UINT numDescriptors,
         UINT baseShaderRegister,
@@ -686,10 +686,10 @@ struct CD3DX12_DESCRIPTOR_RANGE : public D3D12_DESCRIPTOR_RANGE
         UINT offsetInDescriptorsFromTableStart =
         D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND)
     {
-        Init(*this, rangeType, numDescriptors, baseShaderRegister, registerSpace, offsetInDescriptorsFromTableStart);
+        CreateGraphicsShader(*this, rangeType, numDescriptors, baseShaderRegister, registerSpace, offsetInDescriptorsFromTableStart);
     }
     
-    static inline void Init(
+    static inline void CreateGraphicsShader(
         _Out_ D3D12_DESCRIPTOR_RANGE &range,
         D3D12_DESCRIPTOR_RANGE_TYPE rangeType,
         UINT numDescriptors,
@@ -717,17 +717,17 @@ struct CD3DX12_ROOT_DESCRIPTOR_TABLE : public D3D12_ROOT_DESCRIPTOR_TABLE
         UINT numDescriptorRanges,
         _In_reads_opt_(numDescriptorRanges) const D3D12_DESCRIPTOR_RANGE* _pDescriptorRanges)
     {
-        Init(numDescriptorRanges, _pDescriptorRanges);
+        CreateGraphicsShader(numDescriptorRanges, _pDescriptorRanges);
     }
     
-    inline void Init(
+    inline void CreateGraphicsShader(
         UINT numDescriptorRanges,
         _In_reads_(numDescriptorRanges) const D3D12_DESCRIPTOR_RANGE* _pDescriptorRanges)
     {
-        Init(*this, numDescriptorRanges, _pDescriptorRanges);
+        CreateGraphicsShader(*this, numDescriptorRanges, _pDescriptorRanges);
     }
     
-    static inline void Init(
+    static inline void CreateGraphicsShader(
         _Out_ D3D12_ROOT_DESCRIPTOR_TABLE &rootDescriptorTable,
         UINT numDescriptorRanges,
         _In_reads_opt_(numDescriptorRanges) const D3D12_DESCRIPTOR_RANGE* _pDescriptorRanges)
@@ -749,18 +749,18 @@ struct CD3DX12_ROOT_CONSTANTS : public D3D12_ROOT_CONSTANTS
         UINT shaderRegister,
         UINT registerSpace = 0)
     {
-        Init(num32BitValues, shaderRegister, registerSpace);
+        CreateGraphicsShader(num32BitValues, shaderRegister, registerSpace);
     }
     
-    inline void Init(
+    inline void CreateGraphicsShader(
         UINT num32BitValues,
         UINT shaderRegister,
         UINT registerSpace = 0)
     {
-        Init(*this, num32BitValues, shaderRegister, registerSpace);
+        CreateGraphicsShader(*this, num32BitValues, shaderRegister, registerSpace);
     }
     
-    static inline void Init(
+    static inline void CreateGraphicsShader(
         _Out_ D3D12_ROOT_CONSTANTS &rootConstants,
         UINT num32BitValues,
         UINT shaderRegister,
@@ -783,17 +783,17 @@ struct CD3DX12_ROOT_DESCRIPTOR : public D3D12_ROOT_DESCRIPTOR
         UINT shaderRegister,
         UINT registerSpace = 0)
     {
-        Init(shaderRegister, registerSpace);
+        CreateGraphicsShader(shaderRegister, registerSpace);
     }
     
-    inline void Init(
+    inline void CreateGraphicsShader(
         UINT shaderRegister,
         UINT registerSpace = 0)
     {
-        Init(*this, shaderRegister, registerSpace);
+        CreateGraphicsShader(*this, shaderRegister, registerSpace);
     }
     
-    static inline void Init(_Out_ D3D12_ROOT_DESCRIPTOR &table, UINT shaderRegister, UINT registerSpace = 0)
+    static inline void CreateGraphicsShader(_Out_ D3D12_ROOT_DESCRIPTOR &table, UINT shaderRegister, UINT registerSpace = 0)
     {
         table.ShaderRegister = shaderRegister;
         table.RegisterSpace = registerSpace;
@@ -816,7 +816,7 @@ struct CD3DX12_ROOT_PARAMETER : public D3D12_ROOT_PARAMETER
     {
         rootParam.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
         rootParam.ShaderVisibility = visibility;
-        CD3DX12_ROOT_DESCRIPTOR_TABLE::Init(rootParam.DescriptorTable, numDescriptorRanges, pDescriptorRanges);
+        CD3DX12_ROOT_DESCRIPTOR_TABLE::CreateGraphicsShader(rootParam.DescriptorTable, numDescriptorRanges, pDescriptorRanges);
     }
 
     static inline void InitAsConstants(
@@ -828,7 +828,7 @@ struct CD3DX12_ROOT_PARAMETER : public D3D12_ROOT_PARAMETER
     {
         rootParam.ParameterType = D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
         rootParam.ShaderVisibility = visibility;
-        CD3DX12_ROOT_CONSTANTS::Init(rootParam.Constants, num32BitValues, shaderRegister, registerSpace);
+        CD3DX12_ROOT_CONSTANTS::CreateGraphicsShader(rootParam.Constants, num32BitValues, shaderRegister, registerSpace);
     }
 
     static inline void InitAsConstantBufferView(
@@ -839,7 +839,7 @@ struct CD3DX12_ROOT_PARAMETER : public D3D12_ROOT_PARAMETER
     {
         rootParam.ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
         rootParam.ShaderVisibility = visibility;
-        CD3DX12_ROOT_DESCRIPTOR::Init(rootParam.Descriptor, shaderRegister, registerSpace);
+        CD3DX12_ROOT_DESCRIPTOR::CreateGraphicsShader(rootParam.Descriptor, shaderRegister, registerSpace);
     }
 
     static inline void InitAsShaderResourceView(
@@ -850,7 +850,7 @@ struct CD3DX12_ROOT_PARAMETER : public D3D12_ROOT_PARAMETER
     {
         rootParam.ParameterType = D3D12_ROOT_PARAMETER_TYPE_SRV;
         rootParam.ShaderVisibility = visibility;
-        CD3DX12_ROOT_DESCRIPTOR::Init(rootParam.Descriptor, shaderRegister, registerSpace);
+        CD3DX12_ROOT_DESCRIPTOR::CreateGraphicsShader(rootParam.Descriptor, shaderRegister, registerSpace);
     }
 
     static inline void InitAsUnorderedAccessView(
@@ -861,7 +861,7 @@ struct CD3DX12_ROOT_PARAMETER : public D3D12_ROOT_PARAMETER
     {
         rootParam.ParameterType = D3D12_ROOT_PARAMETER_TYPE_UAV;
         rootParam.ShaderVisibility = visibility;
-        CD3DX12_ROOT_DESCRIPTOR::Init(rootParam.Descriptor, shaderRegister, registerSpace);
+        CD3DX12_ROOT_DESCRIPTOR::CreateGraphicsShader(rootParam.Descriptor, shaderRegister, registerSpace);
     }
     
     inline void InitAsDescriptorTable(
@@ -928,7 +928,7 @@ struct CD3DX12_STATIC_SAMPLER_DESC : public D3D12_STATIC_SAMPLER_DESC
          D3D12_SHADER_VISIBILITY shaderVisibility = D3D12_SHADER_VISIBILITY_ALL, 
          UINT registerSpace = 0)
     {
-        Init(
+        CreateGraphicsShader(
             shaderRegister,
             filter,
             addressU,
@@ -944,7 +944,7 @@ struct CD3DX12_STATIC_SAMPLER_DESC : public D3D12_STATIC_SAMPLER_DESC
             registerSpace);
     }
     
-    static inline void Init(
+    static inline void CreateGraphicsShader(
         _Out_ D3D12_STATIC_SAMPLER_DESC &samplerDesc,
          UINT shaderRegister,
          D3D12_FILTER filter = D3D12_FILTER_ANISOTROPIC,
@@ -974,7 +974,7 @@ struct CD3DX12_STATIC_SAMPLER_DESC : public D3D12_STATIC_SAMPLER_DESC
         samplerDesc.ShaderVisibility = shaderVisibility;
         samplerDesc.RegisterSpace = registerSpace;
     }
-    inline void Init(
+    inline void CreateGraphicsShader(
          UINT shaderRegister,
          D3D12_FILTER filter = D3D12_FILTER_ANISOTROPIC,
          D3D12_TEXTURE_ADDRESS_MODE addressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP,
@@ -989,7 +989,7 @@ struct CD3DX12_STATIC_SAMPLER_DESC : public D3D12_STATIC_SAMPLER_DESC
          D3D12_SHADER_VISIBILITY shaderVisibility = D3D12_SHADER_VISIBILITY_ALL, 
          UINT registerSpace = 0)
     {
-        Init(
+        CreateGraphicsShader(
             *this,
             shaderRegister,
             filter,
@@ -1022,24 +1022,24 @@ struct CD3DX12_ROOT_SIGNATURE_DESC : public D3D12_ROOT_SIGNATURE_DESC
         _In_reads_opt_(numStaticSamplers) const D3D12_STATIC_SAMPLER_DESC* _pStaticSamplers = NULL,
         D3D12_ROOT_SIGNATURE_FLAGS flags = D3D12_ROOT_SIGNATURE_FLAG_NONE)
     {
-        Init(numParameters, _pParameters, numStaticSamplers, _pStaticSamplers, flags);
+        CreateGraphicsShader(numParameters, _pParameters, numStaticSamplers, _pStaticSamplers, flags);
     }
     CD3DX12_ROOT_SIGNATURE_DESC(CD3DX12_DEFAULT)
     {
-        Init(0, NULL, 0, NULL, D3D12_ROOT_SIGNATURE_FLAG_NONE);
+        CreateGraphicsShader(0, NULL, 0, NULL, D3D12_ROOT_SIGNATURE_FLAG_NONE);
     }
 
-    inline void Init(
+    inline void CreateGraphicsShader(
         UINT numParameters,
         _In_reads_opt_(numParameters) const D3D12_ROOT_PARAMETER* _pParameters,
         UINT numStaticSamplers = 0,
         _In_reads_opt_(numStaticSamplers) const D3D12_STATIC_SAMPLER_DESC* _pStaticSamplers = NULL,
         D3D12_ROOT_SIGNATURE_FLAGS flags = D3D12_ROOT_SIGNATURE_FLAG_NONE)
     {
-        Init(*this, numParameters, _pParameters, numStaticSamplers, _pStaticSamplers, flags);
+        CreateGraphicsShader(*this, numParameters, _pParameters, numStaticSamplers, _pStaticSamplers, flags);
     }
 
-    static inline void Init(
+    static inline void CreateGraphicsShader(
         _Out_ D3D12_ROOT_SIGNATURE_DESC &desc,
         UINT numParameters,
         _In_reads_opt_(numParameters) const D3D12_ROOT_PARAMETER* _pParameters,

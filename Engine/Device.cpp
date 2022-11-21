@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Device.h"
 
-void Device::Init()
+void Device::CreateGraphicsShader()
 {
 	// D3D12 디버그층 활성화
 	// - VC++ 출력창에 상세한 디버깅 메시지 출력

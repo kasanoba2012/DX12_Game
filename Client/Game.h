@@ -4,6 +4,6 @@ class Game
 {
 public:
 
-	void Init(const WindowInfo& info);
+	void CreateGraphicsShader(const WindowInfo& info);
 	void Update();
 };

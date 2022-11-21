@@ -8,7 +8,7 @@
 #include "Light.h"
 #include "Resources.h"
 
-void Engine::Init(const WindowInfo& info)
+void Engine::CreateGraphicsShader(const WindowInfo& info)
 {
 	_window = info;
 
@@ -16,11 +16,13 @@ void Engine::Init(const WindowInfo& info)
 	_viewport = { 0, 0, static_cast<FLOAT>(info.width), static_cast<FLOAT>(info.height), 0.0f, 1.0f };
 	_scissorRect = CD3DX12_RECT(0, 0, info.width, info.height);
 
-	_device->Init();
-	_cmdQueue->Init(_device->GetDevice(), _swapChain);
-	_swapChain->Init(info, _device->GetDevice(), _device->GetDXGI(), _cmdQueue->GetCmdQueue());
-	_rootSignature->Init();
-	_tableDescHeap->Init(256);
+	_device->CreateGraphicsShader();
+	_graphicsCmdQueue->CreateGraphicsShader(_device->GetDevice(), _swapChain);
+	_computeCmdQueue->CreateGraphicsShader(_device->GetDevice());
+	_swapChain->CreateGraphicsShader(info, _device->GetDevice(), _device->GetDXGI(), _graphicsCmdQueue->GetCmdQueue());
+	_rootSignature->CreateGraphicsShader();
+	_graphicsDescHeap->CreateGraphicsShader(256);
+	_computeDescHeap->CreateGraphicsShader();
 
 	CreateConstantBuffer(CBV_REGISTER::b0, sizeof(LightParams), 1);
 	CreateConstantBuffer(CBV_REGISTER::b1, sizeof(TransformParams), 256);
@@ -57,12 +59,12 @@ void Engine::Render()
 
 void Engine::RenderBegin()
 {
-	_cmdQueue->RenderBegin(&_viewport, &_scissorRect);
+	_graphicsCmdQueue->RenderBegin(&_viewport, &_scissorRect);
 }
 
 void Engine::RenderEnd()
 {
-	_cmdQueue->RenderEnd();
+	_graphicsCmdQueue->RenderEnd();
 }
 
 void Engine::ResizeWindow(int32 width, int32 height)
@@ -91,7 +93,7 @@ void Engine::CreateConstantBuffer(CBV_REGISTER reg, uint32 bufferSize, uint32 co
 	assert(_constantBuffers.size() == typeInt);
 
 	shared_ptr<ConstantBuffer> buffer = make_shared<ConstantBuffer>();
-	buffer->Init(reg, bufferSize, count);
+	buffer->CreateGraphicsShader(reg, bufferSize, count);
 	_constantBuffers.push_back(buffer);
 }
 

@@ -21,23 +21,13 @@ void Mesh::Init(const vector<Vertex>& vertexBuffer, const vector<uint32>& indexB
 
 void Mesh::Render()
 {
-	CMD_LIST->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	// 버텍스 버퍼 뷰
-	CMD_LIST->IASetVertexBuffers(0, 1, &_vertexBufferView); // Slot: (0~15)
-	// 인덱스 버퍼 뷰
-	CMD_LIST->IASetIndexBuffer(&_indexBufferView);
+	GRAPHICS_CMD_LIST->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	GRAPHICS_CMD_LIST->IASetVertexBuffers(0, 1, &_vertexBufferView); // Slot: (0~15)
+	GRAPHICS_CMD_LIST->IASetIndexBuffer(&_indexBufferView);
 
-	// TODO
-	// 1) Buffer에다가 데이터 세팅
-	// 2) TableDescHeap에다가 CBV 전달
-	// 3) 모두 세팅이 끝났으면 TableDescHeap 커밋
+	GEngine->GetGraphicsDescHeap()->CommitTable();
 
-	GEngine->GetTableDescHeap()->CommitTable();
-
-	//CMD_LIST->DrawInstanced(_vertexCount, 1, 0, 0);
-
-	// 인덱스버퍼를 활용해서 그리기
-	CMD_LIST->DrawIndexedInstanced(_indexCount, 1, 0, 0, 0);
+	GRAPHICS_CMD_LIST->DrawIndexedInstanced(_indexCount, 1, 0, 0, 0);
 }
 
 void Mesh::CreateVertexBuffer(const vector<Vertex>& buffer)
@@ -86,7 +76,7 @@ void Mesh::CreateIndexBuffer(const vector<uint32>& buffer)
 		IID_PPV_ARGS(&_indexBuffer));
 
 	void* indexDataBuffer = nullptr;
-	CD3DX12_RANGE readRange(0, 0);
+	CD3DX12_RANGE readRange(0, 0); // We do not intend to read from this resource on the CPU.
 	_indexBuffer->Map(0, &readRange, &indexDataBuffer);
 	::memcpy(indexDataBuffer, &buffer[0], bufferSize);
 	_indexBuffer->Unmap(0, nullptr);

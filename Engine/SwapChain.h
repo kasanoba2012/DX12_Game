@@ -25,7 +25,7 @@
 class SwapChain
 {
 public:
-	void Init(const WindowInfo& info, ComPtr<ID3D12Device> device, ComPtr<IDXGIFactory> dxgi, ComPtr<ID3D12CommandQueue> cmdQueue);
+	void CreateGraphicsShader(const WindowInfo& info, ComPtr<ID3D12Device> device, ComPtr<IDXGIFactory> dxgi, ComPtr<ID3D12CommandQueue> cmdQueue);
 	void Present();
 	void SwapIndex();
 
