@@ -12,7 +12,7 @@ class GraphicsCommandQueue
 public:
 	~GraphicsCommandQueue();
 
-	void CreateGraphicsShader(ComPtr<ID3D12Device> device, shared_ptr<SwapChain> swapChain);
+	void Init(ComPtr<ID3D12Device> device, shared_ptr<SwapChain> swapChain);
 	void WaitSync();
 
 	void RenderBegin(const D3D12_VIEWPORT* vp, const D3D12_RECT* rect);
@@ -48,7 +48,7 @@ class ComputeCommandQueue
 public:
 	~ComputeCommandQueue();
 
-	void CreateGraphicsShader(ComPtr<ID3D12Device> device);
+	void Init(ComPtr<ID3D12Device> device);
 	void WaitSync();
 	void FlushComputeCommandQueue();
 

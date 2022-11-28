@@ -6,7 +6,7 @@
 // GraphicsDescriptorHeap
 // ************************
 
-void GraphicsDescriptorHeap::CreateGraphicsShader(uint32 count)
+void GraphicsDescriptorHeap::Init(uint32 count)
 {
 	_groupCount = count;
 
@@ -76,7 +76,7 @@ D3D12_CPU_DESCRIPTOR_HANDLE GraphicsDescriptorHeap::GetCPUHandle(uint8 reg)
 // ComputeDescriptorHeap
 // ************************
 
-void ComputeDescriptorHeap::CreateGraphicsShader()
+void ComputeDescriptorHeap::Init()
 {
 	D3D12_DESCRIPTOR_HEAP_DESC desc = {};
 	desc.NumDescriptors = TOTAL_REGISTER_COUNT;

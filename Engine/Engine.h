@@ -14,7 +14,7 @@
 class Engine
 {
 public:
-	void CreateGraphicsShader(const WindowInfo& info);
+	void Init(const WindowInfo& info);
 	void Update();
 
 public:
@@ -38,8 +38,6 @@ public:
 	void ResizeWindow(int32 width, int32 height);
 
 private:
-
-
 	void ShowFps();
 	void CreateConstantBuffer(CBV_REGISTER reg, uint32 bufferSize, uint32 count);
 	void CreateRenderTargetGroups();

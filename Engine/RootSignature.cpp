@@ -2,7 +2,7 @@
 #include "RootSignature.h"
 #include "Engine.h"
 
-void RootSignature::CreateGraphicsShader()
+void RootSignature::Init()
 {
 	CreateGraphicsRootSignature();
 	CreateComputeRootSignature();

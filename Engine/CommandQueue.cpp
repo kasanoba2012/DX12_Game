@@ -12,7 +12,7 @@ GraphicsCommandQueue::~GraphicsCommandQueue()
 	::CloseHandle(_fenceEvent);
 }
 
-void GraphicsCommandQueue::CreateGraphicsShader(ComPtr<ID3D12Device> device, shared_ptr<SwapChain> swapChain)
+void GraphicsCommandQueue::Init(ComPtr<ID3D12Device> device, shared_ptr<SwapChain> swapChain)
 {
 	_swapChain = swapChain;
 
@@ -130,7 +130,7 @@ ComputeCommandQueue::~ComputeCommandQueue()
 	::CloseHandle(_fenceEvent);
 }
 
-void ComputeCommandQueue::CreateGraphicsShader(ComPtr<ID3D12Device> device)
+void ComputeCommandQueue::Init(ComPtr<ID3D12Device> device)
 {
 	D3D12_COMMAND_QUEUE_DESC computeQueueDesc = {};
 	computeQueueDesc.Type = D3D12_COMMAND_LIST_TYPE_COMPUTE;

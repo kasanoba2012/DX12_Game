@@ -19,7 +19,7 @@ ConstantBuffer::~ConstantBuffer()
 
 
 
-void ConstantBuffer::CreateGraphicsShader(CBV_REGISTER reg, uint32 size, uint32 count)
+void ConstantBuffer::Init(CBV_REGISTER reg, uint32 size, uint32 count)
 {
 	_reg = reg;
 

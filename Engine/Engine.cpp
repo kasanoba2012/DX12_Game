@@ -8,7 +8,7 @@
 #include "Light.h"
 #include "Resources.h"
 
-void Engine::CreateGraphicsShader(const WindowInfo& info)
+void Engine::Init(const WindowInfo& info)
 {
 	_window = info;
 
@@ -16,13 +16,13 @@ void Engine::CreateGraphicsShader(const WindowInfo& info)
 	_viewport = { 0, 0, static_cast<FLOAT>(info.width), static_cast<FLOAT>(info.height), 0.0f, 1.0f };
 	_scissorRect = CD3DX12_RECT(0, 0, info.width, info.height);
 
-	_device->CreateGraphicsShader();
-	_graphicsCmdQueue->CreateGraphicsShader(_device->GetDevice(), _swapChain);
-	_computeCmdQueue->CreateGraphicsShader(_device->GetDevice());
-	_swapChain->CreateGraphicsShader(info, _device->GetDevice(), _device->GetDXGI(), _graphicsCmdQueue->GetCmdQueue());
-	_rootSignature->CreateGraphicsShader();
-	_graphicsDescHeap->CreateGraphicsShader(256);
-	_computeDescHeap->CreateGraphicsShader();
+	_device->Init();
+	_graphicsCmdQueue->Init(_device->GetDevice(), _swapChain);
+	_computeCmdQueue->Init(_device->GetDevice());
+	_swapChain->Init(info, _device->GetDevice(), _device->GetDXGI(), _graphicsCmdQueue->GetCmdQueue());
+	_rootSignature->Init();
+	_graphicsDescHeap->Init(256);
+	_computeDescHeap->Init();
 
 	CreateConstantBuffer(CBV_REGISTER::b0, sizeof(LightParams), 1);
 	CreateConstantBuffer(CBV_REGISTER::b1, sizeof(TransformParams), 256);
@@ -93,7 +93,7 @@ void Engine::CreateConstantBuffer(CBV_REGISTER reg, uint32 bufferSize, uint32 co
 	assert(_constantBuffers.size() == typeInt);
 
 	shared_ptr<ConstantBuffer> buffer = make_shared<ConstantBuffer>();
-	buffer->CreateGraphicsShader(reg, bufferSize, count);
+	buffer->Init(reg, bufferSize, count);
 	_constantBuffers.push_back(buffer);
 }
 

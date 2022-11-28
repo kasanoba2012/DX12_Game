@@ -19,7 +19,7 @@ public:
 	ConstantBuffer();
 	~ConstantBuffer();
 
-	void CreateGraphicsShader(CBV_REGISTER reg, uint32 size, uint32 count);
+	void Init(CBV_REGISTER reg, uint32 size, uint32 count);
 
 	void Clear();
 	void PushGraphicsData(void* buffer, uint32 size);

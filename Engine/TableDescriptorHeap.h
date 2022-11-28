@@ -7,7 +7,7 @@
 class GraphicsDescriptorHeap
 {
 public:
-	void CreateGraphicsShader(uint32 count);
+	void Init(uint32 count);
 
 	void Clear();
 	void SetCBV(D3D12_CPU_DESCRIPTOR_HANDLE srcHandle, CBV_REGISTER reg);
@@ -41,7 +41,7 @@ private:
 class ComputeDescriptorHeap
 {
 public:
-	void CreateGraphicsShader();
+	void Init();
 
 	void SetCBV(D3D12_CPU_DESCRIPTOR_HANDLE srcHandle, CBV_REGISTER reg);
 	void SetSRV(D3D12_CPU_DESCRIPTOR_HANDLE srcHandle, SRV_REGISTER reg);

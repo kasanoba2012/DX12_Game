@@ -3,9 +3,9 @@
 #include "Engine.h"
 #include "SceneManager.h"
 
-void Game::CreateGraphicsShader(const WindowInfo& info)
+void Game::Init(const WindowInfo& info)
 {
-	GEngine->CreateGraphicsShader(info);	
+	GEngine->Init(info);
 
 	GET_SINGLE(SceneManager)->LoadScene(L"TestScene");
 }
@@ -14,4 +14,3 @@ void Game::Update()
 {
 	GEngine->Update();
 }
- 
