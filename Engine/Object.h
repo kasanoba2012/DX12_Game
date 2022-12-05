@@ -35,8 +35,8 @@ public:
 
 protected:
 	friend class Resources;
-	virtual void Load(const wstring& path) {}
-	virtual void Save(const wstring& path) {}
+	virtual void Load(const wstring& path) { }
+	virtual void Save(const wstring& path) { }
 
 protected:
 	OBJECT_TYPE _objectType = OBJECT_TYPE::NONE;
