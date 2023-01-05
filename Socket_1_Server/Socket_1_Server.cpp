@@ -42,7 +42,7 @@ int main()
     SOCKET clientSock = accept(sock, (sockaddr*)&clientaddr, &length);
     if (clientSock == SOCKET_ERROR)
     {
-        closesocket(sock3);
+        closesocket(sock);
         WSACleanup();
         return 1;
     }
