@@ -3,35 +3,33 @@
 #include "CorePch.h"
 #include <thread>
 #include <atomic>
+#include <mutex>
+vector<int32> v;
 
-atomic<int32> sum = 0;
+// Mutual Exclusive(상호배타적)
+mutex m;
 
-void Add()
+void Push()
 {
-	for(int32 i = 0; i < 100'000; i++)
+	for (int32 i = 0; i < 10000; i++)
 	{
-		sum.fetch_add(1);
+		// 자물쇠 잠그기
+		m.lock();
+		v.push_back(i);
+		// 자물쇠 풀기
+		m.unlock();
+
+		// 자동으로 잠궜다가 소멸자 호출 시 자동 잠그기 해제
+		std::lock_guard<std::mutex> lockGuard(m);
+		v.push_back(i);
 	}
 }
-
-void Sub()
-{
-	for (int32 i = 0; i < 100'000; i++)
-	{
-		sum.fetch_add(-1);
-	}
-}
-
 int main()
 {
-	Add();
-	Sub();
-	cout << sum << endl;
-
-	std::thread t1(Add);
-	std::thread t2(Sub);
+	std::thread t1(Push);
+	std::thread t2(Push);
 	t1.join();
 	t2.join();
 
-	cout << sum << endl;
+	cout << v.size() << endl;
 }
