@@ -4,32 +4,72 @@
 #include <thread>
 #include <atomic>
 #include <mutex>
-vector<int32> v;
 
-// Mutual Exclusive(상호배타적)
-mutex m;
-
-void Push()
+class SpinLock
 {
-	for (int32 i = 0; i < 10000; i++)
+public:
+	void lock()
 	{
-		// 자물쇠 잠그기
-		m.lock();
-		v.push_back(i);
-		// 자물쇠 풀기
-		m.unlock();
+		// CAS(Compare-And-Swap)
+		bool expected = false;
+		bool desired = true;
 
-		// 자동으로 잠궜다가 소멸자 호출 시 자동 잠그기 해제
-		std::lock_guard<std::mutex> lockGuard(m);
-		v.push_back(i);
+		while (_locked.compare_exchange_strong(expected, desired) == false)
+		{
+			expected = false;
+		}
+
+		// CAS 의사 코드
+		//if (_locked == expected)
+		//{
+		//	expected = _locked;
+		//	_locked = desired;
+		//	return true;
+		//}
+		//else {
+		//	expected = _locked;
+		//	return false;
+		//}
+	}
+
+	void unlock()
+	{
+		_locked.store(false);
+	}
+private:
+	atomic<bool> _locked = false;
+};
+
+int32 sum = 0;
+mutex m;
+SpinLock spinLock;
+
+void Add()
+{
+	for (int32 i = 0; i < 100'000; i++)
+	{
+		lock_guard<SpinLock> guard(spinLock);
+		sum++;
 	}
 }
+
+void Sub()
+{
+	for (int32 i = 0; i < 100'000; i++)
+	{
+		lock_guard<SpinLock> guard(spinLock);
+		sum--;
+	}
+}
+
 int main()
 {
-	std::thread t1(Push);
-	std::thread t2(Push);
+	thread t1(Add);
+	thread t2(Sub);
+
 	t1.join();
 	t2.join();
 
-	cout << v.size() << endl;
+	cout << sum << endl;
+
 }
