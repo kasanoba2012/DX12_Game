@@ -5,52 +5,154 @@
 #include <iostream>
 #include <list>
 #include <winsock2.h>
+#include "Protocol.h"
 
 using namespace std;
 struct UserInfo
 {
     SOCKET sock;
     SOCKADDR_IN address;
+    char _szName[9] = { 0, };
+    char szRecvMsg[255] = { 0, };
+    int iTotalRecvBytes = 0;
 };
 
 list<UserInfo> userList;
+int SendMsg(SOCKET sock, char* msg, short type)
+{
+    UPACKET packet;
+    ZeroMemory(&packet, sizeof(UPACKET));
+    // 메세지가 있다면
+    if (msg != nullptr)
+    {
+        // 패킷 헤더 길이를 4로 설정
+        packet.ph.len = PACKET_HEADER_SIZE;
+        memcpy(packet.msg, msg, strlen(msg));
+    }
+    // 메세지가 없다면
+    else {
+        // 패킷 헤더 길이를 4로 설정
+        packet.ph.len = PACKET_HEADER_SIZE;
+    }
+    packet.ph.type = type;
 
+    char* msgSend = (char*)&packet;
+    int iSendBytes = send(sock, msgSend, packet.ph.len, 0);
+    if (iSendBytes == SOCKET_ERROR)
+    {
+        if (WSAGetLastError() != WSAEWOULDBLOCK)
+        {
+            //WSAEWOULDBLOCK 아니라면 오류!
+            closesocket(sock);
+            return -1;
+        }
+    }
+    return 1;
+}
 DWORD WINAPI ServerThread(LPVOID lpThreadParameter)
 {
     printf("Server Open\n");
-    while(1)
+    while (1)
     {
         for (auto iterRecv = userList.begin();
-            userList.end() != iterRecv; )
+            userList.end() != iterRecv;)
         {
-            char szRecvMsg[256] = { 0, };
-            int iRecvBytes = recv(iterRecv->sock, szRecvMsg, 256, 0);
+            // Recv패킷 사이즈를 4로 설정
+            int iRecvPacketSize = PACKET_HEADER_SIZE;
+            
+            int iRecvBytes = recv(iterRecv->sock, iterRecv->szRecvMsg,
+                PACKET_HEADER_SIZE - iterRecv->iTotalRecvBytes, 0);
             if (iRecvBytes == 0)
             {
-                printf("클라이언트 접속 종료 : IP : %s, PORT : %d\n", inet_ntoa(iterRecv->address.sin_addr), ntohs(iterRecv->address.sin_port));
-                // 소켓 닫기
+                printf("클라이언트 접속 종료 : IP : %s, PORT : %d\n",
+                    inet_ntoa(iterRecv->address.sin_addr), ntohs(iterRecv->address.sin_port));
                 closesocket(iterRecv->sock);
-                // 현재 연결 소켓 유저리스트에서 삭제처리
                 iterRecv = userList.erase(iterRecv);
                 continue;
             }
+            DWORD dwError = WSAGetLastError();
             if (iRecvBytes == SOCKET_ERROR)
             {
-                if (WSAGetLastError() != WSAEWOULDBLOCK)
+                if (dwError != WSAEWOULDBLOCK)
                 {
                     //WSAEWOULDBLOCK 아니라면 오류!
                     closesocket(iterRecv->sock);
                     iterRecv = userList.erase(iterRecv);
-                    continue;
                 }
+                else {
+                    iterRecv++;
+                }
+                continue;
+            }
+
+            UPACKET packet;
+            ZeroMemory(&packet, sizeof(UPACKET));
+
+            iterRecv->iTotalRecvBytes += iRecvBytes;
+            if (iterRecv->iTotalRecvBytes == PACKET_HEADER_SIZE)
+            {
+                memcpy(&packet.ph, iterRecv->szRecvMsg, PACKET_HEADER_SIZE);
+
+                char* msg = (char*)&packet;
+                int iNumRecvByte = 0;
+                do {
+                    int iRecvBytes = recv(iterRecv->sock,
+                        &packet.msg[iNumRecvByte],
+                        packet.ph.len - PACKET_HEADER_SIZE - iNumRecvByte, 0);
+
+                    if (iRecvBytes == 0)
+                    {
+                        printf("서버 정상 종료\n");
+                        break;
+                    }
+                    if (iRecvBytes == SOCKET_ERROR)
+                    {
+                        if (WSAGetLastError() != WSAEWOULDBLOCK)
+                        {
+                            //WSAEWOULDBLOCK 아니라면 오류!
+                            closesocket(iterRecv->sock);
+                            printf("서버 비정상 종료\n");
+                            return 1;
+                        }
+                        continue;
+                    }
+                    iNumRecvByte += iRecvBytes;
+                } while ((packet.ph.len - PACKET_HEADER_SIZE) > iNumRecvByte);
             }
             if (iRecvBytes > 0)
             {
-                printf("%s\n", szRecvMsg);
+                switch (packet.ph.type)
+                {
+                case PACKET_CHAR_MSG:
+                {
+                    printf("[%s] %s\n", iterRecv->_szName, packet.msg);
+                    packet.ph.len += strlen(iterRecv->_szName) + 2;
+                    string pMsg = "[";
+                    pMsg += packet.msg;
+                    pMsg += "]";
+                    pMsg += packet.msg;
+                    ZeroMemory(packet.msg, 2048);
+                    memcpy(packet.msg, pMsg.c_str(), pMsg.size());
+                }break;
+
+                case PACKET_NAME_REQ:
+                {
+                    memcpy(iterRecv->_szName, packet.msg, strlen(packet.msg));
+                    packet.ph.type = PACKET_JOIN_USER;
+                    SendMsg(iterRecv->sock, nullptr, PACKET_NAME_ACK);
+                }break;
+                }
+
                 for (auto iterSend = userList.begin();
                     userList.end() != iterSend;)
                 {
-                    int iSendBytes = send(iterSend->sock, szRecvMsg, strlen(szRecvMsg), 0);
+                    if (iterSend == iterRecv)
+                    {
+                        iterSend++;
+                        continue;
+                    }
+                    int iSendBytes = send(iterSend->sock, (char*)&packet, packet.ph.len, 0);
+
                     if (iSendBytes == SOCKET_ERROR)
                     {
                         if (WSAGetLastError() != WSAEWOULDBLOCK)
@@ -65,11 +167,13 @@ DWORD WINAPI ServerThread(LPVOID lpThreadParameter)
                     }
                     iterSend++;
                 }
+                ZeroMemory(&packet, sizeof(UPACKET));
+                iterRecv->iTotalRecvBytes = 0;
             }
             iterRecv++;
         }
     }
-}
+};
 
 int main()
 {
@@ -127,7 +231,7 @@ int main()
         user.address = clientaddr;
         userList.push_back(user);
 
-
+        SendMsg(clientSock, nullptr, PACKET_CHATNAME_REQ);
     }
     closesocket(listenSock);
 
