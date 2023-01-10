@@ -8,6 +8,7 @@
 #include "Protocol.h"
 
 using namespace std;
+
 struct UserInfo
 {
     SOCKET sock;
@@ -18,6 +19,7 @@ struct UserInfo
 };
 
 list<UserInfo> userList;
+
 int SendMsg(SOCKET sock, char* msg, short type)
 {
     UPACKET packet;
