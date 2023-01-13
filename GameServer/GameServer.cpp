@@ -12,7 +12,7 @@
 using namespace std;
 
 LockQueue<int32> q;
-LockStack<int32> s;
+LockFreeStack<int32> s;
 
 void Push()
 {
@@ -21,7 +21,7 @@ void Push()
 		int value = rand() % 100;
 		q.Push(value);
 
-		this_thread::sleep_for(10ms);
+		//this_thread::sleep_for(10ms);
 	}
 }
 
