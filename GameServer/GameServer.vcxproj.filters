@@ -15,10 +15,10 @@
     <ClCompile Include="pch.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
-    <ClCompile Include="ConcurrentQueue.cpp">
+    <ClCompile Include="AccountManager.cpp">
       <Filter>Main</Filter>
     </ClCompile>
-    <ClCompile Include="ConcurrentStack.cpp">
+    <ClCompile Include="PlayerManager.cpp">
       <Filter>Main</Filter>
     </ClCompile>
   </ItemGroup>
@@ -26,10 +26,10 @@
     <ClInclude Include="pch.h">
       <Filter>Utils</Filter>
     </ClInclude>
-    <ClInclude Include="ConcurrentQueue.h">
+    <ClInclude Include="AccountManager.h">
       <Filter>Main</Filter>
     </ClInclude>
-    <ClInclude Include="ConcurrentStack.h">
+    <ClInclude Include="PlayerManager.h">
       <Filter>Main</Filter>
     </ClInclude>
   </ItemGroup>

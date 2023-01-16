@@ -6,44 +6,35 @@
 #include <mutex>
 #include <Windows.h>
 #include <future>
-#include "ConcurrentQueue.h"
-#include "ConcurrentStack.h"
+#include "ThreadManager.h"
+
+#include "PlayerManager.h"
+#include "AccountManager.h"
+
 
 using namespace std;
 
-LockQueue<int32> q;
-LockFreeStack<int32> s;
-
-void Push()
-{
-	while (1)
-	{
-		int value = rand() % 100;
-		q.Push(value);
-
-		this_thread::sleep_for(1ms);
-	}
-}
-
-void Pop()
-{
-	while (1)
-	{
-		int32 data = 0;
-
-		if (q.TryPop(OUT data))
-			cout << data << endl;
-
-	}
-}
-
 int main()
 {
-	thread t1(Push);
-	thread t2(Pop);
-	thread t3(Pop);
+	GThreadManager->Launch([=]
+		{
+			while (true)
+			{
+				cout << "PlayerThenAccount" << endl;
+				GPlayerManager.PlayerThenAccount();
+				this_thread::sleep_for(100ms);
+			}
+		});
 
-	t1.join();
-	t2.join();
-	t3.join();
+	GThreadManager->Launch([=]
+		{
+			while (true)
+			{
+				cout << "AccountThenPlayer" << endl;
+				GAccountManager.AccountThenPlayer();
+				this_thread::sleep_for(100ms);
+			}
+		});
+
+	GThreadManager->Join();
 }
