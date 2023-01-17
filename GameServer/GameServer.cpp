@@ -9,6 +9,7 @@
 
 #include "RefCounting.h"
 #include "Memory.h"
+#include "Allocator.h"
 
 class Player
 {
@@ -17,7 +18,7 @@ public:
 	virtual ~Player() {}
 };
 
-class Knight
+class Knight : public Player
 {
 public:
 	Knight()
@@ -27,7 +28,7 @@ public:
 
 	Knight(int32 hp) : _hp(hp)
 	{
-		cout << "Knight(" << _hp << ")" << endl;
+		cout << "Knight(hp)" << endl;
 	}
 
 	~Knight()
@@ -35,55 +36,17 @@ public:
 		cout << "~Knight()" << endl;
 	}
 
-	/*static void* operator new(size_t size)
-	{
-		cout << "Knight new! " << size << endl;
-		void* ptr = ::malloc(size);
-		return ptr;
-	}
-
-	static void operator delete(void* ptr)
-	{
-		cout << "Knight delete!" << endl;
-		::free(ptr);
-	}*/
-
 	int32 _hp = 100;
 	int32 _mp = 10;
 };
 
-// new operator overloading (Global)
-void* operator new(size_t size)
-{
-	cout << "new! " << size << endl;
-	void* ptr = ::malloc(size);
-	return ptr;
-}
-
-void operator delete(void* ptr)
-{
-	cout << "delete!" << endl;
-	::free(ptr);
-}
-
-void* operator new[](size_t size)
-{
-	cout << "new[]! " << size << endl;
-	void* ptr = ::malloc(size);
-	return ptr;
-}
-
-void operator delete[](void* ptr)
-{
-	cout << "delete![]" << endl;
-	::free(ptr);
-}
-
 int main()
 {
-	Knight* knight = (Knight*)xnew<Player>();
+	// [                    [   ]]
+	Vector<Knight> v(100);
 
-	knight->_hp = 100;
+	Map<int32, Knight> m;
+	m[100] = Knight();
 
-	xdelete(knight);
+
 }
