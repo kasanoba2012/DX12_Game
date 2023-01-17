@@ -20,7 +20,7 @@ public:
 
 	Knight(int32 hp) : _hp(hp)
 	{
-		cout << "Knight(hp)" << endl;
+		cout << "Knight(" << _hp << ")" << endl;
 	}
 
 	~Knight()
