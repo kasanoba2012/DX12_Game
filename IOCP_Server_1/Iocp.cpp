@@ -1,12 +1,4 @@
 #include "Iocp.h"
-
-bool Iocp::SetBind(SOCKET sock, ULONG_PTR key)
-{
-	::CreateIoCompletionPort((HANDLE)sock, m_hIOCP, key, 0);
-	return true;
-}
-
-
 unsigned WINAPI Iocp::WorkProc(LPVOID arg)
 {
 	Iocp* pIocp = (Iocp*)arg;
@@ -33,30 +25,26 @@ unsigned WINAPI Iocp::WorkProc(LPVOID arg)
 			// 읽기 또는 쓰기 비동기 완성
 			if (OVERLAPPED2::MODE_RECV == pOV2->iType)
 			{
-				user->DispatchRead(dwTransfer);
+				user->DispatchRead(dwTransfer, pOV2);
+				user->RecvMsg();
 			}
 			if (OVERLAPPED2::MODE_SEND == pOV2->iType)
 			{
-				user->DispatchSend(dwTransfer);
+				user->DispatchSend(dwTransfer, pOV2);
 			}
 		}
 		else
 		{
 			DWORD dwError = GetLastError();
-			if (dwError == ERROR_HANDLE_EOF)
+			if (dwError == ERROR_NETNAME_DELETED)
 			{
-				break;
-			}
-			else
-			{
-				int k = 0;
+				user->m_bDisConnect = true;
 			}
 		}
 	}
 	return 0;
 }
-
-bool Iocp::Init()
+bool	Iocp::Init()
 {
 	m_hIOCP = ::CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 0);
 	m_hEventFinish = ::CreateEvent(0, TRUE, FALSE, 0);
@@ -69,13 +57,16 @@ bool Iocp::Init()
 	}
 	return true;
 }
-
-bool Iocp::Run()
+bool	Iocp::SetBind(SOCKET sock, ULONG_PTR key)
+{
+	::CreateIoCompletionPort((HANDLE)sock, m_hIOCP, key, 0);
+	return true;
+}
+bool	Iocp::Run()
 {
 	return true;
 }
-
-bool Iocp::Release()
+bool	Iocp::Release()
 {
 	CloseHandle(m_hIOCP);
 	for (int iThread = 0; iThread < MAX_WORKER_THREAD; iThread++)

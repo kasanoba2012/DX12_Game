@@ -1,5 +1,6 @@
 #pragma once
 #define PACKET_HEADER_SIZE 4
+#define PACKET_MAX_DATA_SIZE 1024
 #pragma pack(push, 1)
 typedef struct
 {

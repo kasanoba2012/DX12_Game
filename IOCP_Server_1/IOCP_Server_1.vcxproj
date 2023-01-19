@@ -79,8 +79,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>../../output/Debug/IOCP_Server_1</OutDir>
-    <IntDir>../../output/Debug/IOCP_Server_1</IntDir>
+    <OutDir>../../output/Debug/IOCP_Server_1/</OutDir>
+    <IntDir>../../output/Debug/IOCP_Server_1/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -146,6 +146,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ObjectPool.h" />
     <ClInclude Include="ServerStd.h" />
     <ClInclude Include="SessionMgr.h" />
     <ClInclude Include="Iocp.h" />
@@ -153,7 +154,7 @@
     <ClInclude Include="Protocol.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Sample.cpp" />
+    <ClCompile Include="Server.cpp" />
     <ClCompile Include="SessionMgr.cpp" />
     <ClCompile Include="Iocp.cpp" />
     <ClCompile Include="SessionUser.cpp" />
