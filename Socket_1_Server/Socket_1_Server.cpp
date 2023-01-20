@@ -1,9 +1,8 @@
-﻿// Socket_1_Server.cpp : 이 파일에는 'main' 함수가 포함됩니다. 거기서 프로그램 실행이 시작되고 종료됩니다.
-//
-
-#define _WINSOCK_DEPRECATED_NO_WARNINGS
+﻿#define _WINSOCK_DEPRECATED_NO_WARNINGS
 #include <iostream>
 #include <winsock2.h>
+
+// Winsockt2 서버 기본 개념 https://woo-dev.tistory.com/135
 
 // 서버
 int main()
@@ -15,30 +14,46 @@ int main()
         return 0;
     }
 
+    /*----------------------
+    SOCKET 생성
+    -----------------------*/
     SOCKET sock = socket(AF_INET, SOCK_STREAM, 0);
     short sData = 10000;
     short tData = 0x2710;
     short fData = 0x1027;
 
-    // client
+    /*----------------------
+    SOCKET 정보 지정
+    -----------------------*/
     SOCKADDR_IN sa;//목적지+포트
     sa.sin_family = AF_INET;
     sa.sin_addr.s_addr = htonl(INADDR_ANY);
     sa.sin_port = htons(10000);
+
+    /*----------------------
+    SOCKET 바인딩
+    -----------------------*/
     int iRet = bind(sock, (sockaddr*)&sa, sizeof(sa));
     if (iRet == SOCKET_ERROR)
     {
         return 1;
     }
+
+    /*----------------------
+    SOCKET 연결 대기
+    -----------------------*/
     iRet = listen(sock, SOMAXCONN);
     if (iRet == SOCKET_ERROR)
     {
         return 1;
     }
 
-    // 접속되면 반환된다.
     SOCKADDR_IN clientaddr;
     int length = sizeof(clientaddr);
+    
+    /*----------------------
+    클라이언트 연결 수락
+    -----------------------*/
     SOCKET clientSock = accept(sock, (sockaddr*)&clientaddr, &length);
     if (clientSock == SOCKET_ERROR)
     {
@@ -46,15 +61,23 @@ int main()
         WSACleanup();
         return 1;
     }
+    // inet_ntoa() : IP주소 반환 실패시 -1 반환
+    // ntohs() : 포트 번호 반환
     printf("클라이언트 접속 : IP:%s, PORT:%d\n",
         inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port));
 
     u_long iMode = TRUE;
+
+    /*----------------------
+    SOCKET 논블럭킹 설정  | ioctlsocket
+    -----------------------*/
     ioctlsocket(clientSock, FIONBIO, &iMode);
 
     while (1)
     {
+        // szRecvMsg : data 저장할 버퍼
         char szRecvMsg[256] = { 0, };
+        // recv(연결된 Socket, data 저장 버퍼, 읽을 크기, 읽을 유형 (flags)
         int iRecvBytes = recv(clientSock, szRecvMsg, 256, 0);
         if (iRecvBytes == 0)
         {

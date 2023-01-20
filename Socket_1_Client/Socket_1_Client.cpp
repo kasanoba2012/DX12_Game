@@ -13,6 +13,9 @@ int main()
         return 0;
     }
 
+    /*----------------------
+    SOCKET 생성
+    -----------------------*/
     SOCKET sock = socket(AF_INET, SOCK_STREAM, 0);
 
     short sData = 10000;
@@ -23,6 +26,10 @@ int main()
     sa.sin_family = AF_INET;
     sa.sin_addr.s_addr = inet_addr("192.168.0.157");
     sa.sin_port = htons(10000);
+
+    /*----------------------
+    SOCKET 연결
+    -----------------------*/
     int iRet = connect(sock, (sockaddr*)&sa, sizeof(sa));
     if (iRet == SOCKET_ERROR)
     {
@@ -32,10 +39,16 @@ int main()
     }
 
     u_long iMode = TRUE;
+    /*----------------------
+    SOCKET 논블럭킹 설정  | ioctlsocket
+    -----------------------*/
     ioctlsocket(sock, FIONBIO, &iMode);
 
     while (1)
     {
+        /*----------------------
+         데이터 발신 로직
+         -----------------------*/
         char szSendMsg[256] = { 0, };
         printf("%s", "send---->");
         fgets(szSendMsg, 256, stdin);
@@ -53,6 +66,9 @@ int main()
             continue;
         }
 
+        /*----------------------
+         데이터 수신 로직
+         -----------------------*/
         char szRecvMsg[256] = { 0, };
         int iRecvBytes = recv(sock, szRecvMsg, 256, 0);
         if (iRecvBytes == SOCKET_ERROR)

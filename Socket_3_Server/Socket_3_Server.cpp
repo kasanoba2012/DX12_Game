@@ -1,5 +1,4 @@
-﻿// Socket_2_Server.cpp : 이 파일에는 'main' 함수가 포함됩니다. 거기서 프로그램 실행이 시작되고 종료됩니다.
-//
+﻿// Winsockt2 서버 기본 개념 https://woo-dev.tistory.com/135
 
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #include <iostream>
@@ -18,8 +17,12 @@ struct UserInfo
     int iTotalRecvBytes = 0;
 };
 
+// 유저 정보를 담은 리스트 생성
 list<UserInfo> userList;
 
+/*----------------------
+데이터 발신 로직
+-----------------------*/
 int SendMsg(SOCKET sock, char* msg, short type)
 {
     UPACKET packet;
@@ -40,6 +43,7 @@ int SendMsg(SOCKET sock, char* msg, short type)
 
     char* msgSend = (char*)&packet;
     int iSendBytes = send(sock, msgSend, packet.ph.len, 0);
+
     if (iSendBytes == SOCKET_ERROR)
     {
         if (WSAGetLastError() != WSAEWOULDBLOCK)
@@ -56,14 +60,16 @@ DWORD WINAPI ServerThread(LPVOID lpThreadParameter)
     printf("Server Open\n");
     while (1)
     {
+        // 유저 리스트 처음부터 끝까지 무한으로 돌려
         for (auto iterRecv = userList.begin();
             userList.end() != iterRecv;)
         {
             // Recv패킷 사이즈를 4로 설정
             int iRecvPacketSize = PACKET_HEADER_SIZE;
-            
+
             int iRecvBytes = recv(iterRecv->sock, iterRecv->szRecvMsg,
                 PACKET_HEADER_SIZE - iterRecv->iTotalRecvBytes, 0);
+
             if (iRecvBytes == 0)
             {
                 printf("클라이언트 접속 종료 : IP : %s, PORT : %d\n",
@@ -75,9 +81,12 @@ DWORD WINAPI ServerThread(LPVOID lpThreadParameter)
             DWORD dwError = WSAGetLastError();
             if (iRecvBytes == SOCKET_ERROR)
             {
+                // 창 닫음으로 인한 종료
                 if (dwError != WSAEWOULDBLOCK)
                 {
                     //WSAEWOULDBLOCK 아니라면 오류!
+                    printf("클라이언트 접속 종료 : IP : %s, PORT : %d\n",
+                        inet_ntoa(iterRecv->address.sin_addr), ntohs(iterRecv->address.sin_port));
                     closesocket(iterRecv->sock);
                     iterRecv = userList.erase(iterRecv);
                 }
@@ -141,6 +150,7 @@ DWORD WINAPI ServerThread(LPVOID lpThreadParameter)
                 {
                     memcpy(iterRecv->_szName, packet.msg, strlen(packet.msg));
                     packet.ph.type = PACKET_JOIN_USER;
+                    // 대화명 승인 헤더 전송
                     SendMsg(iterRecv->sock, nullptr, PACKET_NAME_ACK);
                 }break;
                 }
@@ -162,11 +172,13 @@ DWORD WINAPI ServerThread(LPVOID lpThreadParameter)
                             //WSAEWOULDBLOCK 아니라면 오류!
                             printf("클라이언트 접속 비정상 종료 : IP:%s, PORT:%d\n",
                                 inet_ntoa(iterSend->address.sin_addr), ntohs(iterSend->address.sin_port));
+
                             closesocket(iterSend->sock);
                             iterSend = userList.erase(iterSend);
                             continue;
                         }
                     }
+
                     iterSend++;
                 }
                 ZeroMemory(&packet, sizeof(UPACKET));
@@ -175,7 +187,7 @@ DWORD WINAPI ServerThread(LPVOID lpThreadParameter)
             iterRecv++;
         }
     }
-};
+}; // ServerThread End
 
 int main()
 {
@@ -195,11 +207,19 @@ int main()
     sa.sin_family = AF_INET;
     sa.sin_addr.s_addr = htonl(INADDR_ANY);
     sa.sin_port = htons(10000);
+
+    /*----------------------
+    SOCKET 바인딩
+    -----------------------*/
     int iRet = bind(listenSock, (sockaddr*)&sa, sizeof(sa));
     if (iRet == SOCKET_ERROR)
     {
         return 1;
     }
+
+    /*----------------------
+    SOCKET 연결 대기
+    -----------------------*/
     iRet = listen(listenSock, SOMAXCONN);
     if (iRet == SOCKET_ERROR)
     {
@@ -215,6 +235,10 @@ int main()
         // 접속되면 반환된다.
         SOCKADDR_IN clientaddr;
         int length = sizeof(clientaddr);
+
+        /*----------------------
+        클라이언트 연결 수락
+        -----------------------*/
         SOCKET clientSock = accept(listenSock, (sockaddr*)&clientaddr, &length);
         if (clientSock == SOCKET_ERROR)
         {
@@ -233,6 +257,7 @@ int main()
         user.address = clientaddr;
         userList.push_back(user);
 
+        // 클라이언트 이름 호출 헤더 전송
         SendMsg(clientSock, nullptr, PACKET_CHATNAME_REQ);
     }
     closesocket(listenSock);

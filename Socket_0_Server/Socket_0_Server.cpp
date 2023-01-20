@@ -15,20 +15,39 @@ int main()
         return 0;
     }
 
+    /*----------------------
+    SOCKET 생성
+    -----------------------*/
     SOCKET sock = socket(AF_INET, SOCK_STREAM, 0);
     short sData = 10000;
     short tData = 0x2710;
     short fData = 0x1027;
 
+    /*----------------------
+    SOCKET 정보 지정
+    -----------------------*/
     SOCKADDR_IN sa;//목적지+포트
+    // sin_family : 구조체를 구분하기 위한 변수
     sa.sin_family = AF_INET;
+    // sin_addr : 자신의 IP 할당 (IP주소가 2개이상 있지 않으면 INADDR_ANY)로 자동 할당
     sa.sin_addr.s_addr = htonl(INADDR_ANY);
+    // sin_port : 사용할 포트 지정
     sa.sin_port = htons(10000);
+
+
+    /*----------------------
+    SOCKET 바인딩
+    -----------------------*/
     int iRet = bind(sock, (sockaddr*)&sa, sizeof(sa));
     if (iRet == SOCKET_ERROR)
     {
         return 1;
     }
+
+    /*----------------------
+    SOCKET 연결 대기
+    -----------------------*/
+    // listen (연결 소켓, 대기열의 크기 (Winsock2부터는 SOMAXCONN으로 자동할당))
     iRet = listen(sock, SOMAXCONN);
     if (iRet == SOCKET_ERROR)
     {
@@ -37,20 +56,30 @@ int main()
     // 접속되면 반환된다.
     SOCKADDR_IN clientaddr;
     int length = sizeof(clientaddr);
+    /*----------------------
+    SOCKET 연결 수락
+    -----------------------*/
     SOCKET clientSock = accept(sock, (sockaddr*)&clientaddr, &length);
+
     printf("클라이언트 접속 : IP:%s, PORT:%d\n",
         inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port));
 
     char szRecvMsg[256] = { 0, };
+
+    /*----------------------
+    SOCKET 연결 데이터 받기
+    -----------------------*/
     int iRecvBytes = recv(clientSock, szRecvMsg, 256, 0);
     printf("%s\n", szRecvMsg);
 
+    /*----------------------
+    SOCKET 연결 데이터 보내기
+    -----------------------*/
     int iSendBytes = send(clientSock, szRecvMsg, strlen(szRecvMsg), 0);
 
     closesocket(sock);
 
-    WSACleanup();
-    
+    WSACleanup(); 
 }
 
 // 프로그램 실행: <Ctrl+F5> 또는 [디버그] > [디버깅하지 않고 시작] 메뉴

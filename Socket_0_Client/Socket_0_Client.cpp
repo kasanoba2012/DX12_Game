@@ -33,6 +33,7 @@ int main()
     int iRet = connect(sock, (sockaddr*)&sa, sizeof(sa));
     if (iRet == SOCKET_ERROR) { return 1; }
     char szSendMsg[256] = { 0, };
+    std::cout << "채팅 할 내용을 쳐주세요\n";
     fgets(szSendMsg, 256, stdin);
     // 메세지 발신
     int iSendBytes = send(sock, szSendMsg, strlen(szSendMsg), 0);
@@ -45,5 +46,5 @@ int main()
     closesocket(sock);
     WSACleanup();
 
-    std::cout << "Hello World!\n";
+    
 }
