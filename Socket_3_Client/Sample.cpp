@@ -19,6 +19,7 @@ LRESULT Sample::MsgProc(
     {  
 	case WM_CREATE:
 	{
+		// 윈도우 생성
 		m_hEdit =CreateWindow(L"edit", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER,
 			500, 10, 200, 25, hWnd, (HMENU)1000, m_hInstance, NULL);
 
@@ -65,6 +66,7 @@ LRESULT Sample::MsgProc(
     // 메세지 내가 처리 불가 니가 대신 해줘.
     return  DefWindowProc(hWnd, message, wParam, lParam);
 }
+
 bool		Sample::Run()
 {
 	Init();
@@ -83,6 +85,7 @@ bool		Sample::Run()
 	Release();
 	return true;
 }
+
 bool	Sample::Init()
 {
 	std::wstring fmt = L"IP[%s]:PORT[%d] %s";
