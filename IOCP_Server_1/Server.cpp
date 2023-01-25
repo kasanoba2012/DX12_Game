@@ -50,7 +50,6 @@ DWORD WINAPI ServerThread(LPVOID lpThreadParameter)
             pUser->m_RecvPacketList.clear();
         }
 
-
         pMgr->SendPrecess();
 
         for (auto user = pMgr->m_SessionList.begin();
@@ -72,6 +71,7 @@ DWORD WINAPI ServerThread(LPVOID lpThreadParameter)
 int main()
 {
     Iocp  m_Iocp;
+    // IOCP 핸들 생성
     m_Iocp.Init();
 
     WSADATA wsa;
@@ -86,11 +86,19 @@ int main()
     sa.sin_family = AF_INET;
     sa.sin_addr.s_addr = htonl(INADDR_ANY);
     sa.sin_port = htons(10000);
+
+    /*----------------------
+    SOCKET 바인딩
+    -----------------------*/
     int iRet = bind(listenSock, (sockaddr*)&sa, sizeof(sa));
     if (iRet == SOCKET_ERROR)
     {
         return 1;
     }
+
+    /*----------------------
+    SOCKET 연결 대기
+    -----------------------*/
     iRet = listen(listenSock, SOMAXCONN);
     if (iRet == SOCKET_ERROR)
     {
@@ -106,7 +114,12 @@ int main()
         // 접속되면 반환된다.
         SOCKADDR_IN clientaddr;
         int length = sizeof(clientaddr);
+
+        /*----------------------
+        클라이언트 연결 수락
+        -----------------------*/
         SOCKET clientSock = accept(listenSock, (sockaddr*)&clientaddr, &length);
+
         if (clientSock == SOCKET_ERROR)
         {
             closesocket(listenSock);
@@ -118,6 +131,7 @@ int main()
 
 
         SessionUser* pUser = g_SessionMgr.Add(clientSock, clientaddr);
+        // 클라이언트 소켓 IOCP 바인딩
         m_Iocp.SetBind(clientSock, (ULONG_PTR)pUser);
         pUser->SendMsg(PACKET_CHATNAME_REQ);
     }

@@ -71,8 +71,9 @@ public:
 	{
 		for (size_t i = 0; i < POOL_MAX_SIZE; i++)
 		{
-			// 메모리 시작 주소를 16바이트 정렬하겠다.
 			// m_mPool[i] % MEMORY_ALLOCATION_ALIGNMENT = 0
+			// _aligned_malloc : 메모리 시작 주소를 16바이트 정렬하겠다.
+			// https://univ-developer.tistory.com/entry/c6
 			m_mPool[i] = _aligned_malloc(sizeof(T), MEMORY_ALLOCATION_ALIGNMENT);
 		}
 		InterlockedAdd64(&m_TailPos, POOL_MAX_SIZE);
@@ -81,6 +82,7 @@ public:
 	{
 		for (size_t i = 0; i < POOL_MAX_SIZE; i++)
 		{
+			// _aligned_free : _aligned_malloc 할당된 메모리 해제
 			_aligned_free(m_mPool[i]);
 		}
 	}
@@ -95,9 +97,12 @@ public:
 	//m_HeadPos = 7,  0111 & 0111 = 7
 	static void* operator new (size_t size)
 	{
+		// InterlockedIncrement64 : 하나의 쓰레드에서 작동 할수 있도록 Lock
 		size_t pos = InterlockedIncrement64(&m_HeadPos) - 1;
 		size_t realpos = pos & POOL_SIZE_MASK;
 		// ret=m_mPool[0] -> m_mPool[0]=null
+		// InterlockedExchangePointer : 두번째 매개변수 주소를 첫번째 매개 변수에 복사하고 첫째 주소 리턴
+		// 즉 m_mPool을 nullptr로 만듬
 		void* ret = InterlockedExchangePointer(&m_mPool[realpos], nullptr);
 		if (ret != nullptr)
 		{
@@ -107,13 +112,17 @@ public:
 	}
 	static void operator delete (void* obj)
 	{
+		// InterlockedIncrement64 : 하나의 쓰레드에서 작동 할수 있도록 Lock
 		size_t pos = InterlockedIncrement64(&m_TailPos) - 1;
 		size_t realpos = pos & POOL_SIZE_MASK;
 		// ret=m_mPool[0] -> m_mPool[0]=null
 		// 교체전 값 반환.
+		// InterlockedExchangePointer : 두번째 매개변수 주소를 첫번째 매개 변수에 복사하고 첫째 주소 리턴
+		// 즉 m_mPool을 nullptr로 만듬
 		void* ret = InterlockedExchangePointer(&m_mPool[realpos], obj);
 		if (ret != nullptr)
 		{
+			// 메모리 해제
 			_aligned_free(ret);
 		}
 	}

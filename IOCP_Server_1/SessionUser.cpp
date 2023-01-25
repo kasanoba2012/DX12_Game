@@ -16,6 +16,7 @@ int SessionUser::SendMsg(UPACKET& packet)
     OVERLAPPED2* ov = new OVERLAPPED2(OVERLAPPED2::MODE_SEND);
 
     DWORD dwSendBytes;// = send(sock, msgSend, packet.ph.len, 0);
+    // WSASend : 소켓으로 데이터 전송 (하나 이상의 데이터 버퍼를 전송하기 위함)
     int iRet = WSASend(m_Sock, &m_wsaSendBuffer, 1, &dwSendBytes, 0,
         (OVERLAPPED*)ov, NULL);
 
@@ -45,8 +46,12 @@ int SessionUser::SendMsg(short type, char* msg)
     packet.ph.type = type;
     DWORD dwSendBytes;
     OVERLAPPED2* ov = new OVERLAPPED2(OVERLAPPED2::MODE_SEND);
+    // WSABUF : 소켓 데이터 송수신 데이터를 저장하고 보내기 위해 사용하는 버퍼
+    // Send에는 하나의 패킷만큼만 처리한다.
     m_wsaSendBuffer.buf = (char*)&packet;
     m_wsaSendBuffer.len = packet.ph.len;
+
+    // WSASend : 소켓으로 데이터 전송 (하나 이상의 데이터 버퍼를 전송하기 위함)
     int iRet = WSASend(m_Sock, &m_wsaSendBuffer, 1, &dwSendBytes, 0,
         (OVERLAPPED*)ov, NULL);
 
@@ -64,8 +69,10 @@ int SessionUser::SendMsg(short type, char* msg)
 int SessionUser::RecvMsg()
 {
     OVERLAPPED2* ov = new OVERLAPPED2(OVERLAPPED2::MODE_RECV);
+    // Recv 할때는 한번에 많은 양의 버퍼를 받아버린다.
     m_wsaRecvBuffer.buf = &m_szDataBuffer[m_iWritePos];
     m_wsaRecvBuffer.len = g_iMaxDataBufferSize;
+
     DWORD dwRecvBytes;
     DWORD dwFlag = 0;
     int iRet = WSARecv(m_Sock, &m_wsaRecvBuffer, 1, &dwRecvBytes, &dwFlag,
@@ -84,6 +91,9 @@ int SessionUser::RecvMsg()
 
 void SessionUser::DispatchRead(DWORD dwTrans, OVERLAPPED2* ov)
 {
+    /*----------------------
+    메모리 Pool 작업
+    -----------------------*/
     delete ov;
     int iMaxSize = g_iMaxDataBufferSize;
     if (m_iWritePos + dwTrans >= g_iMaxDataBufferSize)

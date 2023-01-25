@@ -28,8 +28,6 @@ DWORD Load(std::wstring file)
     return dwRead;
 }
 
-// 테스트 주석
-
 DWORD Copy(std::wstring file, DWORD dwFileSize)
 {
     HANDLE hWriteFile = CreateFile(file.c_str(),
