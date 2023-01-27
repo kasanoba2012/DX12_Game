@@ -56,46 +56,36 @@ int main()
 
 	cout << "Accept" << endl;
 
-	// WSAEventSelect = (WSAEventSelect 함수가 핵심이 되는)
-	// 소켓과 관련된 네트워크 이벤트를 [이벤트 객체]를 통해 감지
+	// Overlapped IO (비동기 + 논블로킹)
+	// - Overlapped 함수를 건다 (WSARecv, WSASend)
+	// - Overlapped 함수가 성공했는지 확인 후
+	// -> 성공했으면 결과 얻어서 처리
+	// -> 실패했으면 사유를 확인
 
-	// 이벤트 객체 관련 함수들
-	// 생성 : WSACreateEvent (수동 리셋 Manual-Reset + Non-Signaled 상태 시작)
-	// 삭제 : WSACloseEvent
-	// 신호 상태 감지 : WSAWaitForMultipleEvents
-	// 구체적인 네트워크 이벤트 알아내기 : WSAEnumNetworkEvents
+	// 1) 비동기 입출력 소켓
+	// 2) WSABUF 배열의 시작 주소 + 개수 // Scatter-Gather
+	// 3) 보내고/받은 바이트 수
+	// 4) 상세 옵션인데 0
+	// 5) WSAOVERLAPPED 구조체 주소값
+	// 6) 입출력이 완료되면 OS가 호출할 콜백 함수
+	// WSASend
+	// WSARecv
 
-	// 소켓 <-> 이벤트 객체 연동
-	// WSAEventSelect(socket, event, networkEvents);
-	// - 관심있는 네트워크 이벤트
-	// FD_ACCEPT : 접속한 클라가 있음 accept
-	// FD_READ : 데이터 수신 가능 recv, recvfrom
-	// FD_WRITE : 데이터 송신 가능 send, sendto
-	// FD_CLOSE : 상대가 접속 종료
-	// FD_CONNECT : 통신을 위한 연결 절차 완료
-	// FD_OOB
+	// Overlapped 모델 (이벤트 기반)
+	// - 비동기 입출력 지원하는 소켓 생성 + 통지 받기 위한 이벤트 객체 생성
+	// - 비동기 입출력 함수 호출 (1에서 만든 이벤트 객체를 같이 넘겨줌)
+	// - 비동기 작업이 바로 완료되지 않으면, WSA_IO_PENDING 오류 코드
+	// 운영체제는 이벤트 객체를 signaled 상태로 만들어서 완료 상태 알려줌
+	// - WSAWaitForMultipleEvents 함수 호출해서 이벤트 객체의 signal 판별
+	// - WSAGetOverlappedResult 호출해서 비동기 입출력 결과 확인 및 데이터 처리
 
-	// 주의 사항
-	// WSAEventSelect 함수를 호출하면, 해당 소켓은 자동으로 넌블로킹 모드 전환
-	// accept() 함수가 리턴하는 소켓은 listenSocket과 동일한 속성을 갖는다
-	// - 따라서 clientSocket은 FD_READ, FD_WRITE 등을 다시 등록 필요
-	// - 드물게 WSAEWOULDBLOCK 오류가 뜰 수 있으니 예외 처리 필요
-	// 중요)
-	// - 이벤트 발생 시, 적절한 소켓 함수 호출해야 함
-	// - 아니면 다음 번에는 동일 네트워크 이벤트가 발생 X
-	// ex) FD_READ 이벤트 떴으면 recv() 호출해야 하고, 안하면 FD_READ 두 번 다시 X
-
-	// 1) count, event
-	// 2) waitAll : 모두 기다림? 하나만 완료 되어도 OK?
-	// 3) timeout : 타임아웃
-	// 4) 지금은 false
-	// return : 완료된 첫번째 인덱스
-	// WSAWaitForMultipleEvents
-
-	// 1) socket
-	// 2) eventObject : socket 과 연동된 이벤트 객체 핸들을 넘겨주면, 이벤트 객체를 non-signaled
-	// 3) networkEvent : 네트워크 이벤트 / 오류 정보가 저장
-	// WSAEnumNetworkEvents
+	// 1) 비동기 소켓
+	// 2) 넘겨준 overlapped 구조체
+	// 3) 전송된 바이트 수
+	// 4) 비동기 입출력 작업이 끝날때까지 대기할지?
+	// false
+	// 5) 비동기 입출력 작업 관련 부가 정보. 거의 사용 안 함.
+	// WSAGetOverlappedResult
 
 	while (1)
 	{
