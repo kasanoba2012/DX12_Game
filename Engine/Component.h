@@ -37,7 +37,7 @@ public:
 	virtual void FinalUpdate() { }
 
 public:
-	COMPONENT_TYPE GetType() { return _type; }
+	COMPONENT_TYPE GetType() { return eventType; }
 	bool IsValid() { return _gameObject.expired() == false; }
 
 	shared_ptr<GameObject> GetGameObject();
@@ -48,7 +48,7 @@ private:
 	void SetGameObject(shared_ptr<GameObject> gameObject) { _gameObject = gameObject; }
 
 protected:
-	COMPONENT_TYPE _type;
+	COMPONENT_TYPE eventType;
 	weak_ptr<GameObject> _gameObject;
 };
 

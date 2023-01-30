@@ -16,8 +16,8 @@ public:
 
 	virtual void FinalUpdate() override;
 
-	void SetProjectionType(PROJECTION_TYPE type) { _type = type; }
-	PROJECTION_TYPE GetProjectionType() { return _type; }
+	void SetProjectionType(PROJECTION_TYPE type) { eventType = type; }
+	PROJECTION_TYPE GetProjectionType() { return eventType; }
 
 	void SortGameObject();
 	void SortShadowObject();
@@ -49,7 +49,7 @@ public:
 	Matrix& GetProjectionMatrix() { return _matProjection; }
 
 private:
-	PROJECTION_TYPE _type = PROJECTION_TYPE::PERSPECTIVE;
+	PROJECTION_TYPE eventType = PROJECTION_TYPE::PERSPECTIVE;
 
 	float _near = 1.f;
 	float _far = 1000.f;
