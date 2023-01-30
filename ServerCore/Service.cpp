@@ -25,6 +25,7 @@ void Service::CloseService()
 SessionRef Service::CreateSession()
 {
 	SessionRef session = _sessionFactory();
+	session->SetService(shared_from_this());
 
 	if (_iocpCore->Register(session) == false)
 		return nullptr;
@@ -61,7 +62,6 @@ bool ClientService::Start()
 	return true;
 }
 
-
 ServerService::ServerService(NetAddress address, IocpCoreRef core, SessionFactory factory, int32 maxSessionCount)
 	: Service(ServiceType::Server, address, core, factory, maxSessionCount)
 {
@@ -89,5 +89,3 @@ void ServerService::CloseService()
 
 	Service::CloseService();
 }
-
-

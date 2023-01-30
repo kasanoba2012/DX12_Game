@@ -81,4 +81,3 @@ public:
 private:
 	ListenerRef		_listener = nullptr;
 };
-
