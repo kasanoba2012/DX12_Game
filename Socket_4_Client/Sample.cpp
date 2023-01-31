@@ -86,13 +86,13 @@ bool		Sample::Run()
 bool	Sample::Init()
 {
 	std::wstring fmt = L"IP[%s]:PORT[%d] %s";
-	if (m_Net.NetStart("172.30.1.3", 10000))
+	if (m_Net.NetStart("127.0.0.1", 10000))
 	{		
-		Print(fmt.c_str(), L"172.30.1.3", 10000, L"立加 己傍");
+		Print(fmt.c_str(), L"127.0.0.1", 10000, L"立加 己傍");
 	}
 	else
 	{
-		Print(fmt.c_str(), L"172.30.1.3", 10000, L"立加 角菩");
+		Print(fmt.c_str(), L"127.0.0.1", 10000, L"立加 角菩");
 	}
 	
 	return true;

@@ -12,10 +12,15 @@ unsigned WINAPI Iocp::WorkProc(LPVOID arg)
 		// 프로세서 생성 Non-Signal, 프로세서 종료 Signal
 		DWORD dwEvent = WaitForSingleObject(pIocp->m_hEventFinish, 0);
 
+		// WAIT_FAILED : GetLastError()으로 원인을 알 수 있다.
+		// WAIT_ABANDONED : Event object를 reset 하고 다시 WaitForSinalgeObject() 호출
+		// WAIT_OBJECT_0 : 기다리던 Event가 Signal 된 경우
+		// WAIT_TEMEOUT : time-out이 된 경우
 		if (dwEvent == WAIT_OBJECT_0)
 		{
 			break;
 		}
+
 		// 비동기 읽기 완성 여부 판단
 		// GetQueuedCompletionStatus : IOCP 입출력 완료 대기열로부터 입출력 완료를 기다림
 		BOOL bRet = ::GetQueuedCompletionStatus(pIocp->m_hIOCP,

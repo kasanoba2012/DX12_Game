@@ -5,12 +5,9 @@
 	SocketUtils
 -----------------*/
 
-// LPFN_CONNECTEX : 클라이언트에서 서버로 접속 할 때 사용하는 connect 함수의 비동기 버전
 LPFN_CONNECTEX		SocketUtils::ConnectEx = nullptr;
 LPFN_DISCONNECTEX	SocketUtils::DisconnectEx = nullptr;
 LPFN_ACCEPTEX		SocketUtils::AcceptEx = nullptr;
-
-
 
 void SocketUtils::Init()
 {
@@ -86,7 +83,7 @@ bool SocketUtils::BindAnyAddress(SOCKET socket, uint16 port)
 	myAddress.sin_family = AF_INET;
 	myAddress.sin_addr.s_addr = ::htonl(INADDR_ANY);
 	myAddress.sin_port = ::htons(port);
-	
+
 	return SOCKET_ERROR != ::bind(socket, reinterpret_cast<const SOCKADDR*>(&myAddress), sizeof(myAddress));
 }
 

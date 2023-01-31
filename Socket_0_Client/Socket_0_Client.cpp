@@ -30,6 +30,7 @@ int main()
 
     sa.sin_addr.s_addr = inet_addr("192.168.0.157"); // 접속 IP
     sa.sin_port = htons(10000); // 접속 포트
+
     int iRet = connect(sock, (sockaddr*)&sa, sizeof(sa));
     if (iRet == SOCKET_ERROR) { return 1; }
     char szSendMsg[256] = { 0, };

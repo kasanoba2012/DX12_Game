@@ -106,8 +106,7 @@ int main()
     }
 
     DWORD dwThreadID;
-    HANDLE hClient = CreateThread(0, 0, ServerThread,
-        &g_SessionMgr, 0, &dwThreadID);
+    HANDLE hClient = CreateThread(0, 0, ServerThread, &g_SessionMgr, 0, &dwThreadID);
 
     while (1)
     {
@@ -126,13 +125,12 @@ int main()
             WSACleanup();
             return 1;
         }
-        printf("클라이언트 접속 : IP:%s, PORT:%d\n",
-            inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port));
-
+        printf("클라이언트 접속 : IP:%s, PORT:%d\n", inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port));
 
         SessionUser* pUser = g_SessionMgr.Add(clientSock, clientaddr);
         // 클라이언트 소켓 IOCP 바인딩
         m_Iocp.SetBind(clientSock, (ULONG_PTR)pUser);
+        // 클라이언트 이름 입력패킷 전송
         pUser->SendMsg(PACKET_CHATNAME_REQ);
     }
     closesocket(listenSock);

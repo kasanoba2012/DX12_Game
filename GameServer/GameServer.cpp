@@ -1,18 +1,49 @@
 ﻿#include "pch.h"
-#include <iostream>
-#include "CorePch.h"
-#include <atomic>
-#include <mutex>
-#include <windows.h>
-#include <future>
 #include "ThreadManager.h"
- 
 #include "Service.h"
 #include "Session.h"
 
+char sendBuffer[] = "Hello World";
+char sendBuffer2[] = "Monster World";
+map<string, int> Monster;
+
 class GameSession : public Session
 {
+public:
+	~GameSession()
+	{
+		cout << "~GameSession" << endl;
+	}
 
+	virtual void OnConnected() override
+	{
+		cout << "Connected To Client" << endl;
+		Send((BYTE*)sendBuffer, sizeof(sendBuffer));
+		Monster.insert(make_pair("Monster1", 10));
+		Monster.insert(make_pair("Monster2", 10));
+		OnMonsterLocation();
+	}
+	virtual int32 OnRecv(BYTE* buffer, int32 len) override
+	{
+		// Echo
+		cout << "OnRecv Len = " << len << endl;
+		Send(buffer, len);
+		return len;
+	}
+
+	virtual void OnSend(int32 len) override
+	{
+		cout << "OnSend Len = " << len << endl;
+	}
+
+	virtual void OnMonsterLocation() override
+	{
+		while (1)
+		{
+			this_thread::sleep_for(3s);
+			Send((BYTE*)sendBuffer2, sizeof(sendBuffer2));
+		}
+	}
 };
 
 int main()

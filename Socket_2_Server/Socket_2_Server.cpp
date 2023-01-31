@@ -227,8 +227,7 @@ int main()
     }
 
     DWORD dwThreadID;
-    HANDLE hClient = CreateThread(0, 0, ServerThread,
-        0, 0, &dwThreadID);
+    HANDLE hClient = CreateThread(0, 0, ServerThread, 0, 0, &dwThreadID);
 
     while (1)
     {
