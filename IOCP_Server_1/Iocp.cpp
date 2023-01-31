@@ -21,8 +21,9 @@ unsigned WINAPI Iocp::WorkProc(LPVOID arg)
 			break;
 		}
 
-		// 비동기 읽기 완성 여부 판단
+		// 2. IOCP 완료 검사 (비동기 읽기 완성 여부 판단)
 		// GetQueuedCompletionStatus : IOCP 입출력 완료 대기열로부터 입출력 완료를 기다림
+		// GetQueuedCompletionStatus (연결된 핸들, 전송된 데이터 양, 미리 정해놓은 ID, Overlapped 구조체, Timeout)
 		BOOL bRet = ::GetQueuedCompletionStatus(pIocp->m_hIOCP,
 			&dwTransfer,
 			&KeyValue,
@@ -58,7 +59,9 @@ unsigned WINAPI Iocp::WorkProc(LPVOID arg)
 }
 bool	Iocp::Init()
 {
+	// 1. IOCP 준비
 	// CreateIoCompletionPort : IOCP 커널 객체 생성하거나 IOCP 디바이스를 연결
+	// 모든 코어를 풀러 사용해라
 	m_hIOCP = ::CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 0);
 	
 	// CreateEvent : (NULL, SetEvent시 Signal 상태 유지 할건지?, Signal 상태로 생성할건지?, 이벤트이름)

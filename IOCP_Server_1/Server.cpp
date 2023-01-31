@@ -1,6 +1,8 @@
 #include "Iocp.h"
 #include "SessionMgr.h"
 
+// https://popcorntree.tistory.com/80
+
 SessionMgr g_SessionMgr;
 
 // 시작함수
@@ -71,7 +73,7 @@ DWORD WINAPI ServerThread(LPVOID lpThreadParameter)
 int main()
 {
     Iocp  m_Iocp;
-    // IOCP 핸들 생성
+    // 1. IOCP준비 (IOCP 핸들 생성)
     m_Iocp.Init();
 
     WSADATA wsa;
