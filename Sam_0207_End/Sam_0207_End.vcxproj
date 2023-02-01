@@ -141,6 +141,9 @@
   <ItemGroup>
     <ClCompile Include="Sam_0207_End.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="IOCompletionPort.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

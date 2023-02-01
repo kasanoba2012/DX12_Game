@@ -91,7 +91,7 @@ int main()
     // sin_family : 구조체를 구분하기 위한 변수
     sa.sin_family = AF_INET;
     // sin_addr : 자신의 IP 할당 (IP주소가 2개이상 있지 않으면 INADDR_ANY)로 자동 할당
-    sa.sin_addr.s_addr = inet_addr("192.168.0.157");
+    sa.sin_addr.s_addr = inet_addr("127.0.0.1");
     // sin_port : 사용할 포트 지정
     sa.sin_port = htons(10000);
 
@@ -117,6 +117,7 @@ int main()
     while (1)
     {
         Sleep(1);
+
         char szRecvMsg[256] = { 0, };
         int iRecvBytes = recv(sock, szRecvMsg,
             PACKET_HEADER_SIZE - iTotalRecvBytes, 0);
@@ -214,6 +215,8 @@ int main()
 
             iTotalRecvBytes = 0;
         }
+
+
     }
 
     CloseHandle(hClient);
