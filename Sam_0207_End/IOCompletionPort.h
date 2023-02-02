@@ -114,6 +114,7 @@ public:
 
 		for (auto& th : mIOWorkerThreads)
 		{
+			// joinable() : 쓰레드 실행중 확인 여부
 			if (th.joinable())
 			{
 				th.join();
@@ -130,6 +131,10 @@ public:
 		}
 	}
 
+	// 네트워크 이벤트를 처리할 함수들
+	virtual void OnConnect(const UINT32 clientIndex_) {}
+	virtual void OnClose(const UINT32 clientIndex_) {}
+	virtual void OnReceive(const UINT32 clientIndex_, const UINT32 size_, char* pData_) {}
 
 private:
 	// CreateClient : 허용 클라이언트 숫자만큼 빈 구조체 생성
@@ -138,6 +143,9 @@ private:
 		for (UINT32 i = 0; i < maxClientCount; ++i)
 		{
 			mClientInfos.emplace_back();
+
+			// 클라이언트 정보 저장 구조체에 별로 인덱스 값 세팅
+			mClientInfos[i].mIndex = i;
 		}
 	} // end CreateClient()
 
@@ -311,6 +319,9 @@ private:
 			//Overlapped I/O Recv작업 결과 뒤 처리
 			if (IOOperation::RECV == pOverlappedEx->m_eOperation)
 			{
+				// RECV Iocp 호출 시 OnReceive 함수 호출
+				OnReceive(pClientInfo->mIndex, dwIoSize, pClientInfo->mRecvBuf);
+
 				pClientInfo->mRecvBuf[dwIoSize] = '\0';
 				printf("[수신] bytes : %d , msg : %s\n", dwIoSize, &pClientInfo->mRecvBuf[4]);
 
@@ -373,6 +384,9 @@ private:
 			inet_ntop(AF_INET, &(stClientAddr.sin_addr), clientIP, 32 - 1);
 			printf("클라이언트 접속 : IP(%s) SOCKET(%d)\n", clientIP, (int)pClientInfo->m_socketClient);
 
+			// 클라이언트 Accepter 발생시 OnConnect 
+			OnConnect(pClientInfo->mIndex);
+
 			//클라이언트 갯수 증가
 			++mClientCnt;
 		}
@@ -381,6 +395,8 @@ private:
 	//소켓의 연결을 종료 시킨다.
 	void CloseSocket(stClientInfo* pClientInfo, bool bIsForce = false)
 	{
+		auto clientIndex = pClientInfo->mIndex;
+
 		struct linger stLinger = { 0, 0 };	// SO_DONTLINGER로 설정
 
 	// bIsForce가 true이면 SO_LINGER, timeout = 0으로 설정하여 강제 종료 시킨다. 주의 : 데이터 손실이 있을수 있음 
@@ -399,6 +415,8 @@ private:
 		closesocket(pClientInfo->m_socketClient);
 
 		pClientInfo->m_socketClient = INVALID_SOCKET;
+
+		OnClose(clientIndex);
 	}
 
 

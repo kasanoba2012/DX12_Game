@@ -1,4 +1,5 @@
-﻿#include "IOCompletionPort.h"
+﻿//#include "IOCompletionPort.h"
+#include "EchoServer.h"
 #include <string>
 #include <iostream>
 
@@ -7,7 +8,7 @@ const UINT16 MAX_CLIENT = 100;		//총 접속할수 있는 클라이언트 수
 
 int main()
 {
-	IOCompletionPort ioCompletionPort;
+	EchoServer ioCompletionPort;
 
 	//소켓을 초기화
 	ioCompletionPort.InitSocket();
