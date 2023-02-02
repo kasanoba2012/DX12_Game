@@ -141,6 +141,34 @@ public:
 		return pClient->SendMsg(dataSize_, pData);
 	}
 
+	bool WellcomeSend(stClientInfo* pClientInfo, char* pMsg, int nLen)
+	{
+		DWORD dwSendBytes = 0;
+		//전송될 메세지를 복사
+		CopyMemory(pClientInfo->m_stSendOverlappedEx.m_szBuf, pMsg, nLen);
+
+		//Overlapped I/O을 위해 각 정보를 셋팅해 준다.
+		pClientInfo->m_stSendOverlappedEx.m_wsaBuf.len = nLen;
+		pClientInfo->m_stSendOverlappedEx.m_wsaBuf.buf = pClientInfo->m_stSendOverlappedEx.m_szBuf;
+		pClientInfo->m_stSendOverlappedEx.m_eOperation = IOOperation::SEND;
+
+		int nRet = WSASend(pClientInfo->mSock,
+			&(pClientInfo->m_stSendOverlappedEx.m_wsaBuf),
+			1,
+			&dwSendBytes,
+			0,
+			(LPWSAOVERLAPPED) & (pClientInfo->m_stSendOverlappedEx),
+			NULL);
+
+		//socket_error이면 client socket이 끊어진걸로 처리한다.
+		if (nRet == SOCKET_ERROR && (WSAGetLastError() != ERROR_IO_PENDING))
+		{
+			printf("[에러] WSASend()함수 실패 : %d\n", WSAGetLastError());
+			return false;
+		}
+		return true;
+	}
+
 	// 네트워크 이벤트를 처리할 함수들
 	virtual void OnConnect(const UINT32 clientIndex_) {}
 	virtual void OnClose(const UINT32 clientIndex_) {}
@@ -310,11 +338,12 @@ private:
 
 			//클라이언트 접속 요청이 들어올 때까지 기다린다.
 			auto newSocket = accept(mListenSocket, (SOCKADDR*)&stClientAddr, &nAddrLen);
+			
 			if (INVALID_SOCKET == newSocket)
 			{
 				continue;
 			}
-
+			
 			//I/O Completion Port객체와 소켓을 연결시킨다.
 			/*bool bRet = BindIOCompletionPort(pClientInfo);
 			if (false == bRet)
@@ -334,9 +363,13 @@ private:
 
 			// 클라이언트 Accepter 발생시 OnConnect 
 			OnConnect(pClientInfo->GetIndex());
+			//pClientInfo->WellcomeSend(1001);
 
 			//클라이언트 갯수 증가
 			++mClientCnt;
+
+			char* pMsgMin = (char*)"1001";
+			WellcomeSend(pClientInfo, pMsgMin, 4);
 		}
 	}
 

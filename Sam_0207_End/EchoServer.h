@@ -16,6 +16,16 @@ public:
 	virtual void OnConnect(const UINT32 clientIndex_) override
 	{
 		printf("[OnConnect] 클라이언트: Index(%d)\n", clientIndex_);
+
+		//PacketData mPacket;
+		//mPacket.SessionIndex = 0;
+		//mPacket.DataSize = 4;
+		//mPacket.pPacketData = (char*) 1001;
+
+		//if (mPacket.DataSize != 0)
+		//{
+		//	SendMsg(mPacket.SessionIndex, mPacket.DataSize, mPacket.pPacketData);
+		//}
 	} 
 
 	virtual void OnClose(const UINT32 clientIndex_) override

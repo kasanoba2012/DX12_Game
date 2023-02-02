@@ -133,6 +133,7 @@ int main()
         // 클라이언트 소켓 IOCP 바인딩
         m_Iocp.SetBind(clientSock, (ULONG_PTR)pUser);
         // 클라이언트 이름 입력패킷 전송
+        // TODO IOCP 이름입력패킷
         pUser->SendMsg(PACKET_CHATNAME_REQ);
     }
     closesocket(listenSock);
