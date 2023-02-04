@@ -16,6 +16,8 @@ int main()
 	FSM fsm;
 	// 가만히 서있다가 시간 지나면 움직이기
 	fsm.AddTransition(STATE_STAND, EVENT_TIMEMOVE, STATE_MOVE);
+	// 타켓 발견하면 타켓에게 다가가기
+	fsm.AddTransition(STATE_STAND, EVENT_POINTMOVE, STATE_POINT_MOVE);
 	// 가만히 서있다가 타켓 발견하면 공격
 	fsm.AddTransition(STATE_STAND, EVENT_FINDTARGET, STATE_ATTACK);
 	// 움직이다가 멈추기

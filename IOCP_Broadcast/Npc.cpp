@@ -10,7 +10,7 @@ void StandState::Process(Player* player, Npc* npc)
 	std::cout << "Stand State\n";
 	// 0,1 중 0 나오면 MoveState::Process 실행
 
-	std::printf("현재 플레이어 좌표 X : %d, Y :%d\n",(int)player->m_Pos[0], (int)player->m_Pos[1]);
+	std::printf("현재 플레이어 좌표 X : %d, Y :%d\n", (int)player->m_Pos[0], (int)player->m_Pos[1]);
 	std::printf("Stand Npc 좌표 X : %d Y : %d\n", (int)npc->m_NpcPos[0], (int)npc->m_NpcPos[1]);
 	m_pOwner->SetTransition(EVENT_TIMEMOVE);
 
@@ -40,7 +40,7 @@ void MoveState::Process(Player* player, Npc* npc)
 
 	// npc 상태 변경
 	m_pOwner->SetTransition(EVENT_STOPMOVE);
-	
+
 }
 
 void PointMovekState::Process(Player* player, Npc* npc)
@@ -70,7 +70,7 @@ void PointMovekState::Process(Player* player, Npc* npc)
 				m_pOwner->SetTransition(EVENT_FINDTARGET);
 			}
 		}
-		
+
 	}
 }
 
@@ -83,7 +83,7 @@ void AttackState::Process(Player* player, Npc* npc)
 	{
 		std::cout << "전투 종료 리셋\n";
 		// 20~30 중
-		float playerPos = rand()% (30 - 20 + 1) + 20;
+		float playerPos = rand() % (30 - 20 + 1) + 20;
 		player->m_Pos[0] = playerPos;
 		// 1~10 중
 		float npcPos = rand() % (10 - 0 + 1) + 0;

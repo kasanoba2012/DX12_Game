@@ -9,22 +9,51 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="리소스 파일">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="FSM">
+      <UniqueIdentifier>{68c17e25-f3da-49c4-b1ff-80f97e28a46c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="FSM\소스 파일">
+      <UniqueIdentifier>{2312fbae-d483-40dc-83ac-ee7ef936d245}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="FSM\헤더 파일">
+      <UniqueIdentifier>{eedb70c0-e779-4442-b73e-ef6383b87795}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IOCP_BroadcastServer.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="FiniteState.cpp">
+      <Filter>FSM\소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="FSM.cpp">
+      <Filter>FSM\소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Npc.cpp">
+      <Filter>FSM\소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>FSM\소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="FiniteState.h">
+      <Filter>FSM\헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="FSM.h">
+      <Filter>FSM\헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Npc.h">
+      <Filter>FSM\헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>FSM\헤더 파일</Filter>
+    </ClInclude>
     <ClInclude Include="IOCompletionPort.h">
-      <Filter>소스 파일</Filter>
+      <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Define.h">
-      <Filter>소스 파일</Filter>
+      <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
