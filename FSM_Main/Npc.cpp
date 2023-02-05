@@ -104,8 +104,6 @@ void Npc::SetTransition(DWORD dwEvent)
 	m_pCurentState = m_pActionList[dwOutput];
 }
 
-
-
 Npc::Npc(FSM* fsm)
 {
 	m_pFsm = fsm;

@@ -104,7 +104,20 @@ void Npc::SetTransition(DWORD dwEvent)
 	m_pCurentState = m_pActionList[dwOutput];
 }
 
+void Npc::FsmAdd(FSM* fsm)
+{
+	m_pFsm = fsm;
+	m_pActionList.push_back(new StandState(this));
+	m_pActionList.push_back(new MoveState(this));
+	m_pActionList.push_back(new AttackState(this));
+	m_pActionList.push_back(new PointMovekState(this));
+	// 최초 상태는 StandState 있는 상태로 시작
+	m_pCurentState = m_pActionList[0];
+	m_dwState = STATE_STAND;
 
+	m_NpcPos[0] = 0;
+	m_NpcPos[1] = 0;
+}
 
 Npc::Npc(FSM* fsm)
 {
@@ -120,6 +133,16 @@ Npc::Npc(FSM* fsm)
 	m_NpcPos[0] = 0;
 	m_NpcPos[1] = 0;
 }
+
+Npc::Npc()
+{
+	m_dwState = STATE_STAND;
+
+	m_NpcPos[0] = 0;
+	m_NpcPos[1] = 0;
+}
+
+
 
 Npc::~Npc()
 {

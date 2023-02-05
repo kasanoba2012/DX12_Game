@@ -61,9 +61,11 @@ public:
 	std::vector<NpcState*> m_pActionList;
 	void Process(Player* player);
 	void SetTransition(DWORD dwEvent);
+	void FsmAdd(FSM* fsm);
 public:
 	float m_NpcPos[2];
 	Npc(FSM* fsm);
+	Npc();
 	virtual ~Npc();
 };
 

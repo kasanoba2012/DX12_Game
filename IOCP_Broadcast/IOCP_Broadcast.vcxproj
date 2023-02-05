@@ -141,6 +141,7 @@
   <ItemGroup>
     <ClCompile Include="FiniteState.cpp" />
     <ClCompile Include="FSM.cpp" />
+    <ClCompile Include="FSMServer.cpp" />
     <ClCompile Include="IOCP_BroadcastServer.cpp" />
     <ClCompile Include="Npc.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -149,6 +150,7 @@
     <ClInclude Include="Define.h" />
     <ClInclude Include="FiniteState.h" />
     <ClInclude Include="FSM.h" />
+    <ClInclude Include="FSMServer.h" />
     <ClInclude Include="IOCompletionPort.h" />
     <ClInclude Include="Npc.h" />
     <ClInclude Include="Player.h" />

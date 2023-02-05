@@ -8,6 +8,9 @@
 
 class IOCompletionPort
 {
+
+	stClientInfo* pClientInfo;
+
 public:
 	IOCompletionPort(void) {}
 
@@ -122,12 +125,28 @@ public:
 		}
 	}
 
+	char* mainSendMsg(char* pMsg)
+	{
+		//SendMsg(pClientInfo, pMsg, sizeof(pMsg));
+		// TODO 모든 데이터 저장 첫번째 벡터에 소켓에 발송 이새끼를 브로드 캐스트 하면 전체발송
+		SendMsg(&mClientInfos[0], pMsg, sizeof(pMsg));
+	
+		return pMsg;
+	}
+
+	// 네트워크 이벤트를 처리할 함수들
+	virtual void OnConnect(const UINT32 clientIndex_) {}
+	virtual void OnClose(const UINT32 clientIndex_) {}
+	virtual void OnReceive(const UINT32 clientIndex_, const UINT32 size_, char* pData_) {}
+
 private:
 	void CreateClient(const UINT32 maxClientCount)
 	{
 		for (UINT32 i = 0; i < maxClientCount; ++i)
 		{
 			mClientInfos.emplace_back();
+
+			mClientInfos[i].mIndex = i;
 		}
 	}
 
@@ -246,11 +265,13 @@ private:
 		return true;
 	} // end SendMsg
 
+
+
 	//Overlapped I/O작업에 대한 완료 통보를 받아 
 	//그에 해당하는 처리를 하는 함수
 	void WokerThread()
 	{
-		stClientInfo* pClientInfo = nullptr;
+		pClientInfo = nullptr;
 		BOOL bSuccess = TRUE;
 		DWORD dwIoSize = 0;
 		LPOVERLAPPED lpOverlapped = NULL;
@@ -290,28 +311,28 @@ private:
 			if (IOOperation::RECV == pOverlappedEx->m_eOperation)
 			{
 				pClientInfo->mRecvBuf[dwIoSize] = '\0';
-				printf("[수신] bytes : %d , msg : %s\n", dwIoSize, &pClientInfo->mRecvBuf[4]);
+				printf("[수신] bytes : %d , msg : %s\n", dwIoSize, &pClientInfo->mRecvBuf);
 
 				//클라이언트에 메세지를 에코한다.
 
 
-				if (wellcomeSw == false)
-					//클라이언트에 메세지를 에코한다.
-					SendMsg(pClientInfo, pClientInfo->mRecvBuf, dwIoSize);
+				//if (wellcomeSw == false)
+				//	//클라이언트에 메세지를 에코한다.
+				//	SendMsg(pClientInfo, pClientInfo->mRecvBuf, dwIoSize);
 
-				while (wellcomeSw == true)
-				{
-					//UPACKET returnPacket;
-					//ZeroMemory(&returnPacket, sizeof(UPACKET));
-					//// 패킷 길이 : 보낼 문자열 길이 + PACKET_HEADER_SIZE (4)
-					//returnPacket.ph.len = PACKET_HEADER_SIZE + 3;
-					//// 패킷 타입
-					//returnPacket.ph.type = PACKET_NAME_ACK;
-					//char* returnPacket2 = (char*)&returnPacket;
-					//SendMsg(pClientInfo, returnPacket2, sizeof(returnPacket2));
+				//while (wellcomeSw == true)
+				//{
+				//	//UPACKET returnPacket;
+				//	//ZeroMemory(&returnPacket, sizeof(UPACKET));
+				//	//// 패킷 길이 : 보낼 문자열 길이 + PACKET_HEADER_SIZE (4)
+				//	//returnPacket.ph.len = PACKET_HEADER_SIZE + 3;
+				//	//// 패킷 타입
+				//	//returnPacket.ph.type = PACKET_NAME_ACK;
+				//	//char* returnPacket2 = (char*)&returnPacket;
+				//	//SendMsg(pClientInfo, returnPacket2, sizeof(returnPacket2));
 
-					wellcomeSw = false;
-				}
+				//	wellcomeSw = false;
+				//}
 
 				BindRecv(pClientInfo);
 				//SendMsg(pClientInfo, pClientInfo->mRecvBuf, dwIoSize);
@@ -338,7 +359,7 @@ private:
 		while (mIsAccepterRun)
 		{
 			//접속을 받을 구조체의 인덱스를 얻어온다.
-			stClientInfo* pClientInfo = GetEmptyClientInfo();
+			pClientInfo = GetEmptyClientInfo();
 			if (NULL == pClientInfo)
 			{
 				printf("[에러] Client Full\n");
@@ -370,15 +391,23 @@ private:
 			inet_ntop(AF_INET, &(stClientAddr.sin_addr), clientIP, 32 - 1);
 			printf("클라이언트 접속 : IP(%s) SOCKET(%d)\n", clientIP, (int)pClientInfo->m_socketClient);
 
-			UPACKET packetHeader;
-			ZeroMemory(&packetHeader, sizeof(UPACKET));
-			// 패킷 길이 : 보낼 문자열 길이 + PACKET_HEADER_SIZE (4)
-			packetHeader.ph.len = PACKET_HEADER_SIZE;
-			// 패킷 타입
-			packetHeader.ph.type = PACKET_CHATNAME_REQ;
-			char* wellcomePacket = (char*)&packetHeader;
 
-			SendMsg(pClientInfo, wellcomePacket, sizeof(wellcomePacket));
+			OnConnect(pClientInfo->mIndex);
+
+			if (wellcomeSw == true)
+			{
+				UPACKET packetHeader;
+				ZeroMemory(&packetHeader, sizeof(UPACKET));
+				// 패킷 길이 : 보낼 문자열 길이 + PACKET_HEADER_SIZE (4)
+				packetHeader.ph.len = PACKET_HEADER_SIZE;
+				// 패킷 타입
+				packetHeader.ph.type = PACKET_CHATNAME_REQ;
+				char* wellcomePacket = (char*)&packetHeader;
+
+				SendMsg(pClientInfo, wellcomePacket, sizeof(wellcomePacket));
+			}
+
+			// TODO 여기서 player 생성해야되는데?
 
 			//클라이언트 갯수 증가
 			++mClientCnt;
@@ -434,5 +463,6 @@ private:
 	//소켓 버퍼
 	char		mSocketBuf[1024] = { 0, };
 
-	bool wellcomeSw = true;
+	// 웰컴스위치
+	bool wellcomeSw = false;
 };
