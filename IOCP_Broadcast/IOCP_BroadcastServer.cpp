@@ -5,41 +5,54 @@
 #include "FSMServer.h"
 
 const UINT16 SERVER_PORT = 10000;
-const UINT16 MAX_CLIENT = 5;		//총 접속할수 있는 클라이언트 수
+const UINT16 MAX_CLIENT = 3;		//총 접속할수 있는 클라이언트 수
+const int SLEEP_TIME = 1000;
 
 FSMServer ioCompletionPort;
 bool  MovementSw = true;
 
-void fun1()
+
+void MonsterMovemnet()
 {
 	while (ioCompletionPort.MovementSw)
 	{
-		if (MovementSw) {
+		if (MovementSw == true) {
 			ioCompletionPort.npc.m_NpcPos[0] += 1;
-			Sleep(300);
+
+			char npcPosMsg[256] = { 0, };
+			*npcPosMsg = ioCompletionPort.npc.m_NpcPos[0];
+			npcPosMsg[1] = '\0';
+			ioCompletionPort.mainSendMsg(npcPosMsg);
+
+			Sleep(SLEEP_TIME);
 			if (ioCompletionPort.npc.m_NpcPos[0] >= 30)
 			{
 				MovementSw = false;
-				break;
+				//break;
 			}
 		}
-
 		else {
 			ioCompletionPort.npc.m_NpcPos[0] -= 1;
-			Sleep(300);
+
+			char npcPosMsg[256] = { 0, };
+			*npcPosMsg = ioCompletionPort.npc.m_NpcPos[0];
+			npcPosMsg[1] = '\0';
+			ioCompletionPort.mainSendMsg(npcPosMsg);
+
+			Sleep(SLEEP_TIME);
 			if (ioCompletionPort.npc.m_NpcPos[0] <= 0)
 			{
 				MovementSw = true;
 			}
 		}
 
-		std::printf("쓰레드1 작동 : %d\n", (int)ioCompletionPort.npc.m_NpcPos[0]);
+		std::printf("MonsterMovemnet Thread 작동 몬스터 X : %d\n", (int)ioCompletionPort.npc.m_NpcPos[0]);
 	}
 }
 
 int main()
 {
-	void (*testPtr)(void) = *fun1;
+	void (*P_MonsterMovemnet)(void) = *MonsterMovemnet;
 
 	//소켓을 초기화
 	ioCompletionPort.InitSocket();
@@ -49,14 +62,23 @@ int main()
 
 	ioCompletionPort.StartServer(MAX_CLIENT);
 
-	//std::thread t1(testPtr);
+	std::thread t1(P_MonsterMovemnet);
 
 	printf("아무 키나 누를 때까지 대기합니다\n");
 	while (true)
 	{
 		char szSendMsg[256] = { 0, };
+		
 		fgets(szSendMsg, 256, stdin);
-		ioCompletionPort.mainSendMsg(szSendMsg);
+		//ioCompletionPort.mainSendMsg(szSendMsg);
+
+		char npcPosMsg[256] = { 0, };
+		*npcPosMsg = ioCompletionPort.npc.m_NpcPos[0];
+		npcPosMsg[1] = '\0';
+		ioCompletionPort.mainSendMsg(npcPosMsg);
+		//Sleep(1000);
+		
+
 		//std::string inputCmd;
 		//std::getline(std::cin, inputCmd);
 

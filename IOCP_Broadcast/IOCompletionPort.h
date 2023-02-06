@@ -129,8 +129,11 @@ public:
 	{
 		//SendMsg(pClientInfo, pMsg, sizeof(pMsg));
 		// TODO 모든 데이터 저장 첫번째 벡터에 소켓에 발송 이새끼를 브로드 캐스트 하면 전체발송
-		SendMsg(&mClientInfos[0], pMsg, sizeof(pMsg));
-	
+		for (auto& broadastList : mClientInfos)
+		{
+			SendMsg(&broadastList, pMsg, sizeof(pMsg));
+		}
+			
 		return pMsg;
 	}
 
@@ -172,6 +175,8 @@ private:
 		printf("AccepterThread 시작..\n");
 		return true;
 	}
+
+
 
 	//사용하지 않는 클라이언트 정보 구조체를 반환한다.
 	stClientInfo* GetEmptyClientInfo()
@@ -340,7 +345,8 @@ private:
 			//Overlapped I/O Send작업 결과 뒤 처리
 			else if (IOOperation::SEND == pOverlappedEx->m_eOperation)
 			{
-				printf("[발신] bytes : %d , msg : %s\n", dwIoSize, pClientInfo->mSendBuf);
+				printf("[발신] bytes : %d , msg : %d\n", dwIoSize, pClientInfo->mSendBuf[0]);
+				//printf("[발신] bytes : %d , msg : %s\n", dwIoSize, pClientInfo->mSendBuf);
 			}
 			//예외 상황
 			else
@@ -390,7 +396,6 @@ private:
 			char clientIP[32] = { 0, };
 			inet_ntop(AF_INET, &(stClientAddr.sin_addr), clientIP, 32 - 1);
 			printf("클라이언트 접속 : IP(%s) SOCKET(%d)\n", clientIP, (int)pClientInfo->m_socketClient);
-
 
 			OnConnect(pClientInfo->mIndex);
 
