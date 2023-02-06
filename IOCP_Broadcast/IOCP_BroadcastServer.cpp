@@ -1,33 +1,34 @@
 ﻿#include "IOCompletionPort.h"
 #include <string>
 #include <iostream>
+#include <mutex>
 #include "FSM.h"
 #include "FSMServer.h"
 
 const UINT16 SERVER_PORT = 10000;
-const UINT16 MAX_CLIENT = 3;		//총 접속할수 있는 클라이언트 수
+const UINT16 MAX_CLIENT = 5;		//총 접속할수 있는 클라이언트 수
 const int SLEEP_TIME = 1000;
 
 FSMServer ioCompletionPort;
-bool  MovementSw = true;
+bool  Main_MovementSw = true;
 
-
+// TODO 이새끼를 돌리면 accept가 병신이 되는데 .......
 void MonsterMovemnet()
 {
 	while (ioCompletionPort.MovementSw)
 	{
-		if (MovementSw == true) {
+		if (Main_MovementSw == true) {
 			ioCompletionPort.npc.m_NpcPos[0] += 1;
 
 			char npcPosMsg[256] = { 0, };
 			*npcPosMsg = ioCompletionPort.npc.m_NpcPos[0];
-			npcPosMsg[1] = '\0';
-			ioCompletionPort.mainSendMsg(npcPosMsg);
+			//npcPosMsg[1] = '\0';
+			//ioCompletionPort.broadcastSendMsg(npcPosMsg);
 
 			Sleep(SLEEP_TIME);
 			if (ioCompletionPort.npc.m_NpcPos[0] >= 30)
 			{
-				MovementSw = false;
+				Main_MovementSw = false;
 				//break;
 			}
 		}
@@ -36,17 +37,17 @@ void MonsterMovemnet()
 
 			char npcPosMsg[256] = { 0, };
 			*npcPosMsg = ioCompletionPort.npc.m_NpcPos[0];
-			npcPosMsg[1] = '\0';
-			ioCompletionPort.mainSendMsg(npcPosMsg);
+			//npcPosMsg[1] = '\0';
+			//ioCompletionPort.broadcastSendMsg(npcPosMsg);
 
 			Sleep(SLEEP_TIME);
 			if (ioCompletionPort.npc.m_NpcPos[0] <= 0)
 			{
-				MovementSw = true;
+				Main_MovementSw = true;
 			}
 		}
 
-		std::printf("MonsterMovemnet Thread 작동 몬스터 X : %d\n", (int)ioCompletionPort.npc.m_NpcPos[0]);
+		//std::printf("MonsterMovemnet Thread 작동 몬스터 X : %d\n", (int)ioCompletionPort.npc.m_NpcPos[0]);
 	}
 }
 
@@ -67,15 +68,24 @@ int main()
 	printf("아무 키나 누를 때까지 대기합니다\n");
 	while (true)
 	{
-		char szSendMsg[256] = { 0, };
-		
-		fgets(szSendMsg, 256, stdin);
-		//ioCompletionPort.mainSendMsg(szSendMsg);
+		//std::string inputCmd;
+		//std::getline(std::cin, inputCmd);
 
-		char npcPosMsg[256] = { 0, };
-		*npcPosMsg = ioCompletionPort.npc.m_NpcPos[0];
-		npcPosMsg[1] = '\0';
-		ioCompletionPort.mainSendMsg(npcPosMsg);
+		//if (inputCmd == "quit")
+		//{
+		//	break;
+		//}
+
+		// fgets 블럭킹하면 정상적으로 접속을 받는데 while로 돌리면 씨바 ......
+		char szSendMsg[256] = { 0, };
+		fgets(szSendMsg, 256, stdin);
+		*szSendMsg = ioCompletionPort.npc.m_NpcPos[0];
+		ioCompletionPort.broadcastSendMsg(szSendMsg);
+
+		//char npcPosMsg[256] = { 0, };
+		//*npcPosMsg = ioCompletionPort.npc.m_NpcPos[0];
+		//npcPosMsg[1] = '\0';
+		//ioCompletionPort.broadcastSendMsg(npcPosMsg);
 		//Sleep(1000);
 		
 

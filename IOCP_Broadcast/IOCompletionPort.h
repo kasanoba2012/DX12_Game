@@ -125,7 +125,7 @@ public:
 		}
 	}
 
-	char* mainSendMsg(char* pMsg)
+	char* broadcastSendMsg(char* pMsg)
 	{
 		//SendMsg(pClientInfo, pMsg, sizeof(pMsg));
 		// TODO 모든 데이터 저장 첫번째 벡터에 소켓에 발송 이새끼를 브로드 캐스트 하면 전체발송
@@ -264,7 +264,7 @@ private:
 		//socket_error이면 client socket이 끊어진걸로 처리한다.
 		if (nRet == SOCKET_ERROR && (WSAGetLastError() != ERROR_IO_PENDING))
 		{
-			printf("[에러] WSASend()함수 실패 : %d\n", WSAGetLastError());
+			//printf("[에러] WSASend()함수 실패 : %d\n", WSAGetLastError());
 			return false;
 		}
 		return true;
@@ -320,7 +320,7 @@ private:
 
 				//클라이언트에 메세지를 에코한다.
 
-
+				// 안녕 받는 클라 헤더 보낼때
 				//if (wellcomeSw == false)
 				//	//클라이언트에 메세지를 에코한다.
 				//	SendMsg(pClientInfo, pClientInfo->mRecvBuf, dwIoSize);
@@ -353,7 +353,7 @@ private:
 			{
 				printf("socket(%d)에서 예외상황\n", (int)pClientInfo->m_socketClient);
 			}
-		}
+		} // End mIsWorkerRun
 	}
 
 	//사용자의 접속을 받는 쓰레드
@@ -411,8 +411,6 @@ private:
 
 				SendMsg(pClientInfo, wellcomePacket, sizeof(wellcomePacket));
 			}
-
-			// TODO 여기서 player 생성해야되는데?
 
 			//클라이언트 갯수 증가
 			++mClientCnt;

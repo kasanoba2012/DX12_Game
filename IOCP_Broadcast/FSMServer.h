@@ -22,21 +22,21 @@ public:
 		// 접속 되면 플레이어 생성
 		Player player;
 
-		// TODO 접속하면 npc 따라가기 시작 근데 미리 좌표는 움직이고 있어야한다.
-		while (1)
-		{
-			printf("Connect npc 좌표 : %d\n", (int)npc.m_NpcPos[0]);
+		// TODO 여기 주석하면 마지막 클라이언트만 담는다
+		//while (1)
+		//{
+		//	printf("Connect npc 좌표 : %d\n", (int)npc.m_NpcPos[0]);
 
-			MovementSw = false;
+		//	MovementSw = false;
 
-			char npcPosMsg[256] = { 0, };
-			*npcPosMsg = npc.m_NpcPos[0];
-			npcPosMsg[1] = '\0';
-			mainSendMsg(npcPosMsg);
+		//	char npcPosMsg[256] = { 0, };
+		//	*npcPosMsg = npc.m_NpcPos[0];
+		//	npcPosMsg[1] = '\0';
+		//	mainSendMsg(npcPosMsg);
 
-			npc.Process(&player);
-			Sleep(1000);
-		}
+		//	npc.Process(&player);
+		//	Sleep(1000);
+		//}
 
 		printf("[OnConnect] 클라이언트: Index(%d)\n", clientIndex_);
 	}
