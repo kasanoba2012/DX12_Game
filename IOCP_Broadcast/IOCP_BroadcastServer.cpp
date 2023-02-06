@@ -20,8 +20,8 @@ void MonsterMovemnet()
 		if (Main_MovementSw == true) {
 			ioCompletionPort.npc.m_NpcPos[0] += 1;
 
-			char npcPosMsg[256] = { 0, };
-			*npcPosMsg = ioCompletionPort.npc.m_NpcPos[0];
+			//char npcPosMsg[256] = { 0, };
+			//*npcPosMsg = ioCompletionPort.npc.m_NpcPos[0];
 			//npcPosMsg[1] = '\0';
 			//ioCompletionPort.broadcastSendMsg(npcPosMsg);
 
@@ -35,8 +35,8 @@ void MonsterMovemnet()
 		else {
 			ioCompletionPort.npc.m_NpcPos[0] -= 1;
 
-			char npcPosMsg[256] = { 0, };
-			*npcPosMsg = ioCompletionPort.npc.m_NpcPos[0];
+			//char npcPosMsg[256] = { 0, };
+			//*npcPosMsg = ioCompletionPort.npc.m_NpcPos[0];
 			//npcPosMsg[1] = '\0';
 			//ioCompletionPort.broadcastSendMsg(npcPosMsg);
 

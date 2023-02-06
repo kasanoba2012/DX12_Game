@@ -43,7 +43,7 @@ public:
 
 		printf("소켓 초기화 성공\n");
 		return true;
-	}
+	} // End InitSocket
 
 
 	//------서버용 함수-------//
@@ -73,7 +73,7 @@ public:
 
 		printf("서버 등록 성공..\n");
 		return true;
-	}
+	} // end BindandListen
 
 	bool StartServer(const UINT32 maxClientCount)
 	{

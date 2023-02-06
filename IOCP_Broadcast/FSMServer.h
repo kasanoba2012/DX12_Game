@@ -32,7 +32,7 @@ public:
 		//	char npcPosMsg[256] = { 0, };
 		//	*npcPosMsg = npc.m_NpcPos[0];
 		//	npcPosMsg[1] = '\0';
-		//	mainSendMsg(npcPosMsg);
+		//	broadcastSendMsg(npcPosMsg);
 
 		//	npc.Process(&player);
 		//	Sleep(1000);
