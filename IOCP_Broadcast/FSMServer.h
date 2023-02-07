@@ -35,7 +35,7 @@ public:
 			mainSendMsg(npcPosMsg);
 
 			npc.Process(&player);
-			Sleep(1000);
+			Sleep(3000);
 		}
 
 		printf("[OnConnect] 클라이언트: Index(%d)\n", clientIndex_);

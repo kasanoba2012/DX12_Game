@@ -6,7 +6,7 @@
 
 const UINT16 SERVER_PORT = 10000;
 const UINT16 MAX_CLIENT = 3;		//총 접속할수 있는 클라이언트 수
-const int SLEEP_TIME = 1000;
+const int SLEEP_TIME = 3000;
 
 FSMServer ioCompletionPort;
 bool  MovementSw = true;
