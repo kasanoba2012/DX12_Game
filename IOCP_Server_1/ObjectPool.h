@@ -16,7 +16,7 @@ protected:
 	static const size_t DefalultChunkSize = 10;
 	std::queue<shared_ptr<T>> m_List;
 	void AllocateChunk();
-};
+}; // end ClassPool
 
 template<typename T>
 ClassPool<T>::ClassPool(size_t chunkSize)
@@ -97,13 +97,18 @@ public:
 	//m_HeadPos = 7,  0111 & 0111 = 7
 	static void* operator new (size_t size)
 	{
-		// InterlockedIncrement64 : 하나의 쓰레드에서 작동 할수 있도록 Lock
+		// InterlockedIncrement64 : 카운터를 1 증가 시키는 인터락 함수
 		size_t pos = InterlockedIncrement64(&m_HeadPos) - 1;
+		
+		// TODO realpos어차피 pos에 &로 POOL_SIZE_MASK 대입하면 pos 나올 수밖에 없는데 &
 		size_t realpos = pos & POOL_SIZE_MASK;
+
 		// ret=m_mPool[0] -> m_mPool[0]=null
+		
 		// InterlockedExchangePointer : 두번째 매개변수 주소를 첫번째 매개 변수에 복사하고 첫째 주소 리턴
 		// 즉 m_mPool을 nullptr로 만듬
 		void* ret = InterlockedExchangePointer(&m_mPool[realpos], nullptr);
+		// m_mPool의 첫번째 주소를 리턴 받았는데 nullptr이 아니면 ret 리턴
 		if (ret != nullptr)
 		{
 			return ret;

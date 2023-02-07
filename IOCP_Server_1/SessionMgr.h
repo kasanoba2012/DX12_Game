@@ -10,7 +10,8 @@ public:
 	void   Delete(std::shared_ptr<SessionUser> user);
 	std::list<UPACKET>  m_BroadcasttingPacketList;
 	void   SendPrecess();
-	SessionMgr() : m_Pool(20)
+	// 초기 m_ChunkSize 사이즈는 20으로 잡혀있음
+	SessionMgr() : m_Pool(1)
 	{
 		OVERLAPPED2::Allocation();
 	}

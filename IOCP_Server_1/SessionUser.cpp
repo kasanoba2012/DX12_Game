@@ -46,14 +46,21 @@ int SessionUser::SendMsg(short type, char* msg)
     packet.ph.type = type;
     DWORD dwSendBytes;
     OVERLAPPED2* ov = new OVERLAPPED2(OVERLAPPED2::MODE_SEND);
+    //OVERLAPPED2* ov = new OVERLAPPED2();
+    
     // WSABUF : 소켓 데이터 송수신 데이터를 저장하고 보내기 위해 사용하는 버퍼
     // Send에는 하나의 패킷만큼만 처리한다.
     m_wsaSendBuffer.buf = (char*)&packet;
     m_wsaSendBuffer.len = packet.ph.len;
 
     // WSASend : 소켓으로 데이터 전송 (하나 이상의 데이터 버퍼를 전송하기 위함)
-    int iRet = WSASend(m_Sock, &m_wsaSendBuffer, 1, &dwSendBytes, 0,
-        (OVERLAPPED*)ov, NULL);
+    int iRet = WSASend(m_Sock, 
+        &m_wsaSendBuffer,
+        1,
+        &dwSendBytes, 
+        0,
+        (OVERLAPPED*)ov, 
+        NULL);
 
     if (iRet == SOCKET_ERROR)
     {
