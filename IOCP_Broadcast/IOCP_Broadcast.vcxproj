@@ -147,12 +147,14 @@
     <ClCompile Include="Player.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ClientInfo.h" />
     <ClInclude Include="Define.h" />
     <ClInclude Include="FiniteState.h" />
     <ClInclude Include="FSM.h" />
     <ClInclude Include="FSMServer.h" />
     <ClInclude Include="IOCompletionPort.h" />
     <ClInclude Include="Npc.h" />
+    <ClInclude Include="Packet.h" />
     <ClInclude Include="Player.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

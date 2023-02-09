@@ -25,7 +25,7 @@ void FSMServer::NpcMovement(Npc* npc)
 			{
 				MovementSw = true;
 			}
-		}	
+		}
 
 		printf("npc À§Ä¡ X : %d Y : %d\n", (int)npc->m_NpcPos[0], (int)npc->m_NpcPos[1]);
 	}

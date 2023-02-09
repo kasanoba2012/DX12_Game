@@ -60,24 +60,31 @@ int main()
 	//소켓과 서버 주소를 연결하고 등록 시킨다.
 	ioCompletionPort.BindandListen(SERVER_PORT);
 
-	ioCompletionPort.StartServer(MAX_CLIENT);
+	ioCompletionPort.Run(MAX_CLIENT);
 
-	std::thread t1(P_MonsterMovemnet);
+	//std::thread t1(P_MonsterMovemnet);
 
 	printf("아무 키나 누를 때까지 대기합니다\n");
 	while (true)
 	{
-		char szSendMsg[256] = { 0, };
-		
-		fgets(szSendMsg, 256, stdin);
+		std::string inputCmd;
+		std::getline(std::cin, inputCmd);
+
+		if (inputCmd == "quit")
+		{
+			break;
+		}
+		//char szSendMsg[256] = { 0, };
+		//
+		//fgets(szSendMsg, 256, stdin);
 		//ioCompletionPort.mainSendMsg(szSendMsg);
 
-		char npcPosMsg[256] = { 0, };
-		*npcPosMsg = ioCompletionPort.npc.m_NpcPos[0];
-		npcPosMsg[1] = '\0';
-		ioCompletionPort.mainSendMsg(npcPosMsg);
+		//char npcPosMsg[256] = { 0, };
+		//*npcPosMsg = ioCompletionPort.npc.m_NpcPos[0];
+		//npcPosMsg[1] = '\0';
+		//ioCompletionPort.mainSendMsg(npcPosMsg);
 		//Sleep(1000);
-		
+
 
 		//std::string inputCmd;
 		//std::getline(std::cin, inputCmd);
