@@ -95,8 +95,6 @@ public:
 			return false;
 		}
 
-		CreateSendThread();
-
 		printf("서버 시작\n");
 		return true;
 	}
@@ -104,25 +102,6 @@ public:
 	//생성되어있는 쓰레드를 파괴한다.
 	void DestroyThread()
 	{
-
-		// SendThread 파괴
-
-		is_sender_run_ = false;
-
-		if (send_thread_.joinable())
-		{
-			send_thread_.join();
-		}
-
-		// Accepter 쓰레드를 종료한다.
-		is_accepter_run_ = false;
-		closesocket(listen_socket_);
-
-		if (accepter_thread_.joinable())
-		{
-			accepter_thread_.join();
-		}
-
 		// WorkThread 종료
 		is_worker_run_ = false;
 		CloseHandle(iocp_handle_);
@@ -135,7 +114,14 @@ public:
 			}
 		}
 
-		
+		// Accepter 쓰레드를 종료한다.
+		is_accepter_run_ = false;
+		closesocket(listen_socket_);
+
+		if (accepter_thread_.joinable())
+		{
+			accepter_thread_.join();
+		}	
 	}
 
 	bool SendMsg(const UINT32 clientIndex, const UINT32 dataSize, char* pData)
@@ -214,13 +200,6 @@ private:
 
 		printf("AccepterThread 시작..\n");
 		return true;
-	}
-
-	void CreateSendThread()
-	{
-		is_sender_run_ = true;
-		send_thread_ = std::thread([this]() {SendThread();  });
-		printf("SendThread 시작..\n");
 	}
 
 	//Overlapped I/O작업에 대한 완료 통보를 받아 
@@ -376,26 +355,6 @@ private:
 		pClientInfo->Close(bIsForce);
 
 		OnClose(clientIndex);
-	}
-
-	void SendThread()
-	{
-		while (is_sender_run_)
-		{
-			for (auto client : client_Infos_)
-			{
-				// 클라이언트 접속이 끊어지면
-				if (client->IsConnected() == false)
-				{
-					continue;
-				}
-				// 접속이 되어 있는 클라이언트 SendIo 처리
-				client->SendIO();
-			}
-
-			// 할짓 거리 없으면 쳐자고 있고
-			std::this_thread::sleep_for(std::chrono::milliseconds(8));
-		}
 	}
 
 	//클라이언트 정보 저장 구조체

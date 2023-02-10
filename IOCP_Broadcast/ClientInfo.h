@@ -3,6 +3,7 @@
 #include "Define.h"
 #include <stdio.h>
 #include <mutex>
+#include <queue>
 
 class stClientInfo
 {
@@ -10,7 +11,6 @@ public:
 	stClientInfo()
 	{
 		ZeroMemory(&recv_overlapped_ex_, sizeof(stOverlappedEx));
-		ZeroMemory(&send_overlapped_ex_, sizeof(stOverlappedEx));
 		sock_ = INVALID_SOCKET;
 	}
 
@@ -66,9 +66,6 @@ public:
 
 	void Clear()
 	{
-		// 버퍼 시작점 0으로 초기화
-		send_pos_ = 0;
-		is_sending_ = false;
 	}
 
 	bool BindIOCompletionPort(HANDLE iocpHandle_)
@@ -112,54 +109,67 @@ public:
 		return true;
 	}
 
-	bool SendMsg(const UINT32 dataSize_, char* P_msg_)
+	bool SendMsg(const UINT32 data_size_, char* P_msg_)
 	{
+		// send_overlapped 구조체 생성
+		auto send_overlapped_ex = new stOverlappedEx;
+		ZeroMemory(send_overlapped_ex, sizeof(stOverlappedEx));
+		send_overlapped_ex->wsa_buf_.len = data_size_;
+		// Send 보낼 데이터 사이즈만큼 buf 동적 할당
+		send_overlapped_ex->wsa_buf_.buf = new char[data_size_];
+		CopyMemory(send_overlapped_ex->wsa_buf_.buf, P_msg_, data_size_);
+		// send_overlapped 형태 알려주기 
+		send_overlapped_ex->E_operation_ = IOOperation::SEND;
+
 		std::lock_guard<std::mutex> guard(send_lock_);
 
-		// 버퍼가 정해진 버퍼 사이즈보다 크게 되면 0으로 해서 다시 처음부터 쓴다
-		if ((send_pos_ + dataSize_) > MAX_SOCKBUF)
+		// send queue에 데이터 밀어 넣기
+		send_data_queue_.push(send_overlapped_ex);
+
+		// 현재 큐에 한개 밖에 없으면 실행해도 되고 2개 이상이면 현재 진행중인 WSASend가 있다
+		if (send_data_queue_.size() == 1)
 		{
-			send_pos_ = 0;
+			SendIO();
 		}
-
-		auto P_send_buf_ = &send_buf_[send_pos_];
-
-		//전송될 메세지를 복사
-		CopyMemory(P_send_buf_, P_msg_, dataSize_);
-		send_pos_ += dataSize_;
 
 		return true;
 	}
 
-	bool SendIO()
+
+	void SendCompleted(const UINT32 dataSize_)
 	{
-		// send_pos_ <= 0 : 보낼 데이터가 있는가?
-		// is_sending_ : Send 완료가 안됐는데 또 호출 했을 때 SendIO 처리 안되게 막음
-		if (send_pos_ <= 0 || is_sending_)
-		{
-			return true;
-		}
+		printf("[송신 완료] bytes : %d\n", dataSize_);
 
 		std::lock_guard<std::mutex> guard(send_lock_);
 
-		is_sending_ = true;
+		// 큐의 제일 앞 버퍼 배열 삭제
+		delete[] send_data_queue_.front()->wsa_buf_.buf;
+		// 큐 제일 삭제
+		delete send_data_queue_.front();
 
-		CopyMemory(sending_buf_, &send_buf_[0], send_pos_);
+		// 큐 제일 앞 빼버리기
+		send_data_queue_.pop();
 
-		//Overlapped I/O을 위해 각 정보를 셋팅해 준다.
-		send_overlapped_ex_.wsa_buf_.len = send_pos_;
-		send_overlapped_ex_.wsa_buf_.buf = &sending_buf_[0];
-		send_overlapped_ex_.E_operation_ = IOOperation::SEND;
+		// 큐가 비어 있는 상태가 아니면 그 다음부터 다시 wsasend
+		if (send_data_queue_.empty() == false)
+		{
+			SendIO();
+		}
+	}
+
+private:
+	bool SendIO()
+	{
+		// 큐의 제일 앞부분 stOverlappedEx로 객체에 담기
+		auto send_overlapped_ex = send_data_queue_.front();
 
 		DWORD dwRecvNumBytes = 0;
-		// WSASend() 2번째 &(mSendOverlappedEx.m_wsaBuf 보내기 작업 동안 유효한 상태를 유지해야한다.
-		// 버퍼에 락을 걸고 WSASend를 일괄적으로 해버린다.
 		int nRet = WSASend(sock_,
-			&(send_overlapped_ex_.wsa_buf_),
+			&(send_overlapped_ex->wsa_buf_),
 			1,
 			&dwRecvNumBytes,
 			0,
-			(LPWSAOVERLAPPED) & (send_overlapped_ex_),
+			(LPWSAOVERLAPPED)send_overlapped_ex,
 			NULL);
 
 		//socket_error이면 client socket이 끊어진걸로 처리한다.
@@ -168,31 +178,14 @@ public:
 			printf("[에러] WSASend()함수 실패 : %d\n", WSAGetLastError());
 			return false;
 		}
-
-		// Send 한번에 싹 하고 send_pos 0으로 밀어서 다시 첨부터 쓰기
-		send_pos_ = 0;
-		return true;
 	}
-
-	void SendCompleted(const UINT32 dataSize_)
-	{
-		// 다른 쓰레드에서 SendIO 처리를 하고 있을 경우 못들어 가게 막는 sw
-		is_sending_ = false;
-		printf("[송신 완료] bytes : %d\n", dataSize_);
-	}
-private:
 	INT32 index_ = 0;
 	SOCKET sock_; //Cliet와
 	stOverlappedEx recv_overlapped_ex_; //RECV Overlapped I/O작업을 위한 변수
-	stOverlappedEx send_overlapped_ex_; //SEND Overlapped I/O작업을 위한 변수
 
 	char recv_buf_[MAX_SOCKBUF];  //데이터 버퍼
 
-	// 1 버퍼 추가 변수
+	// 1 send (queue 형태)
 	std::mutex send_lock_;
-	bool is_sending_ = false;
-	UINT64 send_pos_ = 0;
-	char send_buf_[MAX_SOCK_SENDBUF];
-	char sending_buf_[MAX_SOCK_SENDBUF];
-
+	std::queue<stOverlappedEx*> send_data_queue_;
 };
