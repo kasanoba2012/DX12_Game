@@ -105,7 +105,7 @@ int main()
 
 	//t1.join();
 
-	ioCompletionPort.DestroyThread();
+	ioCompletionPort.End();
 	return 0;
 }
 

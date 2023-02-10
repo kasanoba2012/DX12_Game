@@ -25,7 +25,7 @@ public:
 	void NpcMovement(Npc* npc);
 	void ThreadTestfuntion();
 
-	virtual void OnConnect(const UINT32 clientIndex_) override
+	virtual void OnConnect(const UINT32 client_index_) override
 	{
 		// 접속 되면 플레이어 생성
 		Player player;
@@ -46,46 +46,46 @@ public:
 			Sleep(3000);
 		}
 
-		printf("[OnConnect] 클라이언트: Index(%d)\n", clientIndex_);
+		printf("[OnConnect] 클라이언트: Index(%d)\n", client_index_);
 	}
 
-	virtual void OnClose(const UINT32 clientIndex_) override
+	virtual void OnClose(const UINT32 client_index_) override
 	{
-		printf("[OnClose] 클라이언트: Index(%d)\n", clientIndex_);
+		printf("[OnClose] 클라이언트: Index(%d)\n", client_index_);
 	}
 
-	virtual void OnReceive(const UINT32 clientIndex_, const UINT32 size_, char* pData_) override
+	virtual void OnReceive(const UINT32 client_index_, const UINT32 size_, char* P_data_) override
 	{
-		printf("[OnReceive] 클라이언트: Index(%d), dataSize(%d), data : %s\n", clientIndex_, size_, pData_);
+		printf("[OnReceive] 클라이언트: Index(%d), dataSize(%d), data : %s\n", client_index_, size_, P_data_);
 
 		// 클라이언트에서 받은 Recv 데이터를 큐에 넣어주기 위해서 패킷형태로 변환한다.
 		// PacketData : 인덱스, 데이터 사이즈, 데이터 내용 시작 주소 받는 구조체
 		PacketData packet;
-		packet.Set(clientIndex_, size_, pData_);
+		packet.Set(client_index_, size_, P_data_);
 
 		// lock_guard : 이 scope 벗어나면 lock이 해제 됩니다.
-		std::lock_guard<std::mutex> guard(_Lock);
-		_PacketDataQueue.push_back(packet);
+		std::lock_guard<std::mutex> guard(lock_);
+		packet_data_queue_.push_back(packet);
 	}
 
 	void Run(const UINT32 maxClient)
 	{
-		_IsRunProcessThread = TRUE;
+		is_run_process_thread_ = TRUE;
 		// ProcessPacket() : 패킷 처리 쓰레드
 		// 클라이언트에서 Send가 날라오면 Send 내용을 PacketData 타입의 큐에 저장을 시키는 쓰레드 이며, Send에서 내용을 받아서 큐에 내용이 저장 될 경우
 		// 클라이언트에게 다시 동일 내용을 Send 하게 하는 에코 서버 형태이다.
-		_ProcessThread = std::thread([this]() {ProcessPacket();  });
+		process_thread_ = std::thread([this]() {ProcessPacket();  });
 
 		StartServer(maxClient);
 	}
 
 	void End()
 	{
-		_IsRunProcessThread = false;
+		is_run_process_thread_ = false;
 
-		if (_ProcessThread.joinable())
+		if (process_thread_.joinable())
 		{
-			_ProcessThread.join();
+			process_thread_.join();
 		}
 
 		DestroyThread();
@@ -94,7 +94,7 @@ public:
 private:
 	void ProcessPacket()
 	{
-		while (_IsRunProcessThread)
+		while (is_run_process_thread_)
 		{
 			// DequePacketData() 큐에서 데이터 읽어오기
 			auto packetData = DequePacketData();
@@ -115,30 +115,31 @@ private:
 		PacketData packetData;
 
 		// lock_guard : 이 scope 벗어나면 lock이 해제 됩니다.
-		std::lock_guard<std::mutex> guard(_Lock);
+		std::lock_guard<std::mutex> guard(lock_);
 
 		// 패킷 큐에 아무것도 없으면
-		if (_PacketDataQueue.empty())
+		if (packet_data_queue_.empty())
 		{
 			return PacketData();
 		}
 
 		// 디큐 제일 앞에 내용을 packetData
-		packetData.Set(_PacketDataQueue.front());
+		packetData.Set(packet_data_queue_.front());
 
 		// 디큐 제일 앞 삭제 처리 delete pPacketData;
-		_PacketDataQueue.front().Release();
+		packet_data_queue_.front().Release();
 		// 디큐에서 제일 앞부분 삭제
-		_PacketDataQueue.pop_front();
+		packet_data_queue_.pop_front();
 
 		return packetData;
 
 	}
-	bool _IsRunProcessThread = false;
 
-	std::thread _ProcessThread;
+	bool is_run_process_thread_ = false;
 
-	std::mutex _Lock;
-	std::deque<PacketData> _PacketDataQueue;
+	std::thread process_thread_;
+
+	std::mutex lock_;
+	std::deque<PacketData> packet_data_queue_;
 };
 

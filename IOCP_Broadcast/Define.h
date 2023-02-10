@@ -30,10 +30,10 @@ enum class IOOperation
 //WSAOVERLAPPED구조체를 확장 시켜서 필요한 정보를 더 넣었다.
 struct stOverlappedEx
 {
-	WSAOVERLAPPED _wsaOverlapped;		//Overlapped I/O구조체
-	SOCKET		_socketClient;			//클라이언트 소켓
-	WSABUF		_wsaBuf;				//Overlapped I/O작업 버퍼
-	IOOperation _eOperation;			//작업 동작 종류
+	WSAOVERLAPPED wsa_overlapped_;		//Overlapped I/O구조체
+	SOCKET		socket_client_;			//클라이언트 소켓
+	WSABUF		wsa_buf_;				//Overlapped I/O작업 버퍼
+	IOOperation E_operation_;			//작업 동작 종류
 };
 
 #define PACKET_CHAR_MSG   1000      // client ->
