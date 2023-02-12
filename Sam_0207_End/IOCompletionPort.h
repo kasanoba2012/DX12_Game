@@ -19,7 +19,7 @@ public:
 	}
 
 	//소켓을 초기화하는 함수
-	bool InitSocket()
+	bool Init()
 	{
 		WSADATA wsaData;
 

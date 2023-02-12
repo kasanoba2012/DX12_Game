@@ -4,10 +4,11 @@
 
 #include <winsock2.h>
 #include <Ws2tcpip.h>
+#include <mswsock.h>
 
 const UINT32 MAX_SOCKBUF = 256;	//패킷 크기
 const UINT32 MAX_SOCK_SENDBUF = 4096;	// 소켓 버퍼의 크기
-const UINT32 MAX_WORKERTHREAD = 4;  //쓰레드 풀에 넣을 쓰레드 수
+const UINT64 RE_USE_SESSION_WAIT_TIMESEC = 3;
 
 typedef struct
 {
@@ -23,6 +24,7 @@ typedef struct
 
 enum class IOOperation
 {
+	ACCEPT,
 	RECV,
 	SEND
 };
@@ -31,9 +33,9 @@ enum class IOOperation
 struct stOverlappedEx
 {
 	WSAOVERLAPPED wsa_overlapped_;		//Overlapped I/O구조체
-	SOCKET		socket_client_;			//클라이언트 소켓
 	WSABUF		wsa_buf_;				//Overlapped I/O작업 버퍼
 	IOOperation E_operation_;			//작업 동작 종류
+	UINT32 session_index_ = 0;
 };
 
 #define PACKET_CHAR_MSG   1000      // client ->

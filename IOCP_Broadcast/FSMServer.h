@@ -70,7 +70,7 @@ public:
 
 	void Run(const UINT32 maxClient)
 	{
-		is_run_process_thread_ = TRUE;
+		is_run_process_thread_ = true;
 		// ProcessPacket() : 패킷 처리 쓰레드
 		// 클라이언트에서 Send가 날라오면 Send 내용을 PacketData 타입의 큐에 저장을 시키는 쓰레드 이며, Send에서 내용을 받아서 큐에 내용이 저장 될 경우
 		// 클라이언트에게 다시 동일 내용을 Send 하게 하는 에코 서버 형태이다.

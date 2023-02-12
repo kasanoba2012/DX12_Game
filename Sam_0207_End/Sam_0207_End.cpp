@@ -11,7 +11,7 @@ int main()
 	EchoServer server;
 
 	//소켓을 초기화
-	server.InitSocket();
+	server.Init();
 
 	//소켓과 서버 주소를 연결하고 등록 시킨다.
 	server.BindandListen(SERVER_PORT);
