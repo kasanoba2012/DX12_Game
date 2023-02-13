@@ -5,6 +5,7 @@
 #include <mutex>
 #include <queue>
 
+//클라이언트 정보를 담기위한 구조체
 class stClientInfo
 {
 public:
@@ -74,7 +75,7 @@ public:
 	{
 	}
 
-	// accept 연결 예약
+	// 비동기 accept 연결 예약
 	bool PostAccept(SOCKET listen_socket, const UINT64 cur_time_sec)
 	{
 		printf_s("PostAccept. client Index: %d\n", GetIndex());

@@ -10,18 +10,6 @@ const UINT32 MAX_SOCKBUF = 256;	//패킷 크기
 const UINT32 MAX_SOCK_SENDBUF = 4096;	// 소켓 버퍼의 크기
 const UINT64 RE_USE_SESSION_WAIT_TIMESEC = 3;
 
-typedef struct
-{
-	short len;
-	short type;
-}PACKET_HEADER;
-
-typedef struct
-{
-	PACKET_HEADER ph;
-	char msg[2048];
-}UPACKET;
-
 enum class IOOperation
 {
 	ACCEPT,

@@ -7,7 +7,7 @@
 #include <thread>
 #include <mutex>
 
-class EchoServer : public IOCompletionPort
+class EchoServer : public IOCP_Net_Server
 {
 public:
 	EchoServer() = default;

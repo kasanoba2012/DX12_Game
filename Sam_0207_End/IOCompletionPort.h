@@ -7,12 +7,12 @@
 #include <thread>
 #include <vector>
 
-class IOCompletionPort
+class IOCP_Net_Server
 {
 public:
-	IOCompletionPort(void) {}
+	IOCP_Net_Server(void) {}
 
-	~IOCompletionPort(void)
+	~IOCP_Net_Server(void)
 	{
 		//윈속의 사용을 끝낸다.
 		WSACleanup();
@@ -195,7 +195,7 @@ private:
 		for (int i = 0; i < MAX_WORKERTHREAD; i++)
 		{
 			// mIOWorkerThreads에 WokerThread()담아서 실행 / WokerThread : (네트워크 IO 처리전용 쓰레드)
-			mIOWorkerThreads.emplace_back([this]() { WokerThread(); });
+			mIOWorkerThreads.emplace_back([this]() { WorkerThread(); });
 		}
 
 		printf("WokerThread 시작..\n");
@@ -232,7 +232,7 @@ private:
 
 	//Overlapped I/O작업에 대한 완료 통보를 받아 
 	//그에 해당하는 처리를 하는 함수
-	void WokerThread()
+	void WorkerThread()
 	{
 		//CompletionKey를 받을 포인터 변수
 		stClientInfo* pClientInfo = NULL;

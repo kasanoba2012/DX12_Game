@@ -116,6 +116,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -142,20 +143,25 @@
     <ClCompile Include="FiniteState.cpp" />
     <ClCompile Include="FSM.cpp" />
     <ClCompile Include="FSMServer.cpp" />
-    <ClCompile Include="IOCP_BroadcastServer.cpp" />
+    <ClCompile Include="IOCP_Main_Server.cpp" />
     <ClCompile Include="Npc.cpp" />
+    <ClCompile Include="PacketManager.cpp" />
     <ClCompile Include="Player.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ClientInfo.h" />
     <ClInclude Include="Define.h" />
+    <ClInclude Include="ErrorCode.h" />
     <ClInclude Include="FiniteState.h" />
     <ClInclude Include="FSM.h" />
     <ClInclude Include="FSMServer.h" />
-    <ClInclude Include="IOCompletionPort.h" />
+    <ClInclude Include="IOCP_Net_Server.h" />
     <ClInclude Include="Npc.h" />
     <ClInclude Include="Packet.h" />
+    <ClInclude Include="PacketManager.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="User.h" />
+    <ClInclude Include="UserManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,4 +1,4 @@
-﻿#include "IOCompletionPort.h"
+﻿#include "IOCP_Net_Server.h"
 #include <string>
 #include <iostream>
 #include "FSM.h"
@@ -9,45 +9,45 @@ const UINT16 MAX_CLIENT = 3;		//총 접속할수 있는 클라이언트 수
 const int SLEEP_TIME = 3000;
 const UINT32 MAX_IO_WORKER_THREAD = 4;
 
-FSMServer ioCompletionPort;
+FSMServer iocp_net_server_;
 bool  MovementSw = true;
 
 
 void MonsterMovemnet()
 {
-	while (ioCompletionPort.MovementSw)
+	while (iocp_net_server_.MovementSw)
 	{
 		if (MovementSw == true) {
-			ioCompletionPort.npc.m_NpcPos[0] += 1;
+			iocp_net_server_.npc.m_NpcPos[0] += 1;
 
 			char npcPosMsg[256] = { 0, };
-			*npcPosMsg = ioCompletionPort.npc.m_NpcPos[0];
+			*npcPosMsg = iocp_net_server_.npc.m_NpcPos[0];
 			npcPosMsg[1] = '\0';
-			ioCompletionPort.mainSendMsg(npcPosMsg);
+			iocp_net_server_.mainSendMsg(npcPosMsg);
 
 			Sleep(SLEEP_TIME);
-			if (ioCompletionPort.npc.m_NpcPos[0] >= 30)
+			if (iocp_net_server_.npc.m_NpcPos[0] >= 30)
 			{
 				MovementSw = false;
 				//break;
 			}
 		}
 		else {
-			ioCompletionPort.npc.m_NpcPos[0] -= 1;
+			iocp_net_server_.npc.m_NpcPos[0] -= 1;
 
 			char npcPosMsg[256] = { 0, };
-			*npcPosMsg = ioCompletionPort.npc.m_NpcPos[0];
+			*npcPosMsg = iocp_net_server_.npc.m_NpcPos[0];
 			npcPosMsg[1] = '\0';
-			ioCompletionPort.mainSendMsg(npcPosMsg);
+			iocp_net_server_.mainSendMsg(npcPosMsg);
 
 			Sleep(SLEEP_TIME);
-			if (ioCompletionPort.npc.m_NpcPos[0] <= 0)
+			if (iocp_net_server_.npc.m_NpcPos[0] <= 0)
 			{
 				MovementSw = true;
 			}
 		}
 
-		std::printf("MonsterMovemnet Thread 작동 몬스터 X : %d\n", (int)ioCompletionPort.npc.m_NpcPos[0]);
+		std::printf("MonsterMovemnet Thread 작동 몬스터 X : %d\n", (int)iocp_net_server_.npc.m_NpcPos[0]);
 	}
 }
 
@@ -56,12 +56,12 @@ int main()
 	void (*P_MonsterMovemnet)(void) = *MonsterMovemnet;
 
 	//소켓을 초기화
-	ioCompletionPort.Init(MAX_IO_WORKER_THREAD);
+	iocp_net_server_.Init(MAX_IO_WORKER_THREAD);
 
 	//소켓과 서버 주소를 연결하고 등록 시킨다.
-	ioCompletionPort.BindandListen(SERVER_PORT);
+	iocp_net_server_.BindandListen(SERVER_PORT);
 
-	ioCompletionPort.Run(MAX_CLIENT);
+	iocp_net_server_.Run(MAX_CLIENT);
 
 	//std::thread t1(P_MonsterMovemnet);
 
@@ -106,7 +106,7 @@ int main()
 
 	//t1.join();
 
-	ioCompletionPort.End();
+	iocp_net_server_.End();
 	return 0;
 }
 

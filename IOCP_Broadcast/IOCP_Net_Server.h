@@ -6,14 +6,13 @@
 #include "Define.h"
 #include <thread>
 #include <vector>
-#include <string.h>
 
-class IOCompletionPort
+class IOCP_Net_Server
 {
 public:
-	IOCompletionPort(void) {}
+	IOCP_Net_Server(void) {}
 
-	~IOCompletionPort(void)
+	~IOCP_Net_Server(void)
 	{
 		//윈속의 사용을 끝낸다.
 		WSACleanup();
@@ -49,6 +48,7 @@ public:
 	//------서버용 함수-------//
 	//서버의 주소정보를 소켓과 연결시키고 접속 요청을 받기 위해 
 	//소켓을 등록하는 함수
+
 	bool BindandListen(int nBindPort)
 	{
 		SOCKADDR_IN		stServerAddr;
@@ -174,11 +174,10 @@ private:
 	//WaitingThread Queue에서 대기할 쓰레드들을 생성
 	bool CreateWokerThread()
 	{
-		unsigned int uiThreadId = 0;
 		//WaingThread Queue에 대기 상태로 넣을 쓰레드들 생성 권장되는 개수 : (cpu개수 * 2) + 1 
-		for (int i = 0; i < max_io_worker_thread_count_; i++)
+		for (UINT32 i = 0; i < max_io_worker_thread_count_; i++)
 		{
-			io_worker_threads_.emplace_back([this]() { WokerThread(); });
+			io_worker_threads_.emplace_back([this]() { WorkerThread(); });
 		}
 
 		printf("WokerThread 시작..\n");
@@ -214,7 +213,7 @@ private:
 
 	//Overlapped I/O작업에 대한 완료 통보를 받아 
 	//그에 해당하는 처리를 하는 함수
-	void WokerThread()
+	void WorkerThread()
 	{
 		//CompletionKey를 받을 포인터 변수
 		stClientInfo* P_client_info = nullptr;
@@ -328,6 +327,7 @@ private:
 			auto cur_time_sec = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now().time_since_epoch()).count();
 			//접속을 받을 구조체의 인덱스를 얻어온다.
 
+			// 클라이언트의 리스트에서 is_connect_ 발생하면 accept 한다
 			for (auto client : client_Infos_)
 			{
 				if (client->IsConnected())
@@ -358,6 +358,11 @@ private:
 	//소켓의 연결을 종료 시킨다.
 	void CloseSocket(stClientInfo* pClientInfo, bool bIsForce = false)
 	{
+		if (pClientInfo->IsConnected() == false)
+		{
+			return;
+		}
+
 		auto clientIndex = pClientInfo->GetIndex();
 
 		pClientInfo->Close(bIsForce);
