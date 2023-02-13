@@ -70,10 +70,13 @@ public:
 		printf("[OnReceive] 클라이언트: Index(%d), dataSize(%d), data : %s\n", client_index, size, P_data);
 
 		P_packet_manager_->ReceivePacketData(client_index, size, P_data);
+		//Receive 호출 Send 호출해서 에코 서버 형태로 만듬
+		P_packet_manager_->SendPacketFunc(client_index, size, P_data);
 	}
 
 	void Run(const UINT32 max_client)
 	{
+		// 람다로 funtion 객체에 SendMsg 담음
 		auto send_packet_func = [&](UINT32 client_index, UINT16 packet_size, char* P_send_packet)
 		{
 			SendMsg(client_index, packet_size, P_send_packet);
