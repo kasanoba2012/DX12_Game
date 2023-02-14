@@ -5,7 +5,7 @@
 #include <mutex>
 #include <queue>
 
-//클라이언트 정보를 담기위한 구조체
+//클라이언트 정보를 클래스
 class stClientInfo
 {
 public:
@@ -38,7 +38,7 @@ public:
 
 		Clear();
 
-		//I/O Completion Port객체와 소켓을 연결시킨다.
+		// 클라이언트가 접속하면 listen_socket_ -> Client Socket으로 변경
 		if (BindIOCompletionPort(iocpHandle) == false)
 		{
 			return false;
@@ -100,6 +100,7 @@ public:
 		accept_context_.session_index_ = index_;
 
 		// AcceptEx : 비동기 accept
+		// https://snowfleur.tistory.com/116
 		if (FALSE == AcceptEx(listen_socket, socket_, accept_buf_, 0, sizeof(SOCKADDR_IN) + 16,
 			sizeof(SOCKADDR_IN) + 16, &bytes, (LPWSAOVERLAPPED) & (accept_context_)))
 		{
