@@ -79,6 +79,8 @@ public:
 			return false;
 		}
 
+		// 1. listen_socket_ = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, NULL, WSA_FLAG_OVERLAPPED);
+		// 2. listen_socket과 연결 될 iocp_handle_
 		auto H_iocp_handle = CreateIoCompletionPort((HANDLE)listen_socket_, iocp_handle_, (UINT32)0, 0);
 		if (nullptr == H_iocp_handle)
 		{
