@@ -38,8 +38,8 @@ public:
 
 		Clear();
 
-		// 클라이언트가 접속하면 listen_socket_ -> Client Socket으로 변경
-		if (BindIOCompletionPort(iocpHandle) == false)
+		// 클라이언트가 접속하면 listen_socket_ -> PostAccept()생성 Socket으로 변경
+		if (SetBindIocpSocket(iocpHandle) == false)
 		{
 			return false;
 		}
@@ -114,7 +114,6 @@ public:
 		return true;
 	}
 
-
 	// accept 완료 함수
 	bool AcceptCompletion()
 	{
@@ -134,11 +133,11 @@ public:
 		return true;
 	}
 
-	bool BindIOCompletionPort(HANDLE iocpHandle)
+	bool SetBindIocpSocket(HANDLE iocpHandle)
 	{
-		//socket과 pClientInfo를 CompletionPort객체와 연결시킨다.
+		// listen_socket_ -> PostAccept()에서 생성한 소켓으로 변경
 		auto H_iocp = CreateIoCompletionPort((HANDLE)GetSock(),
-			iocpHandle,
+			iocpHandle, // ExistingCompletionPort : 파일 또는 소켓과 연결할 입출력 완료 포트
 			(ULONG_PTR)(this),
 			0);
 

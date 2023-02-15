@@ -33,7 +33,7 @@ public:
 		Clear();
 
 		// I/O Completion Port 객체와 소켓을 연결시킨다.
-		if (BindIOCompletionPort(iocpHandle_) == false)
+		if (SetBindIocpSocket(iocpHandle_) == false)
 		{
 			return false;
 		}
@@ -68,7 +68,7 @@ public:
 	}
 
 	//CompletionPort객체와 소켓과 CompletionKey를 연결시키는 역할을 한다.
-	bool BindIOCompletionPort(HANDLE iocpHandle_)
+	bool SetBindIocpSocket(HANDLE iocpHandle_)
 	{
 		//socket과 pClientInfo를 CompletionPort객체와 연결시킨다.
 		auto hIOCP = CreateIoCompletionPort((HANDLE)GetSock()

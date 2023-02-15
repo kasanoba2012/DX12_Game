@@ -64,6 +64,8 @@ public:
 			return false;
 		}
 
+		// 클라이언트 Connect() 함수 연결 요청에 listen_socket_ 연결 요청을 listen 대기열 추가
+		// accept 호출 시에는 listen 대기열에서 가장 오래된 연결 소켓을 가져와서 클라이언트와 통신
 		nRet = listen(listen_socket_, 5);
 		if (0 != nRet)
 		{
@@ -80,7 +82,7 @@ public:
 		}
 
 		// 1. listen_socket_ = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, NULL, WSA_FLAG_OVERLAPPED);
-		// 2. listen_socket과 연결 될 iocp_handle_
+		// 2. listen_socket과 연결 될 IOCP 객체 (iocp_handle_)
 		auto H_iocp_handle = CreateIoCompletionPort((HANDLE)listen_socket_, iocp_handle_, (UINT32)0, 0);
 		if (nullptr == H_iocp_handle)
 		{
@@ -165,7 +167,7 @@ private:
 	{
 		for (UINT32 i = 0; i < maxClientCount; ++i)
 		{
-			// 접속 허용 클라이언트 만큼 빈 stClientInfo 구조체 할당
+			// 접속 허용 클라이언트 만큼 빈 stClientInfo 클래스 할당
 			auto clinet = new stClientInfo();
 			clinet->Init(i, iocp_handle_);
 			
@@ -272,7 +274,6 @@ private:
 				}
 			}
 			
-
 			//Overlapped I/O Recv작업 결과 뒤 처리
 			else if (IOOperation::RECV == P_overlapped_ex->E_operation_)
 			{
@@ -282,25 +283,6 @@ private:
 				// Recv 완료 했기 때문에 재차 Recv() 호출
 				P_client_info->BindRecv();
 				//클라이언트에 메세지를 에코한다.
-
-				//if (wellcomeSw == false)
-				//	//클라이언트에 메세지를 에코한다.
-				//	SendMsg(pClientInfo, pClientInfo->mRecvBuf, dwIoSize);
-
-				//while (wellcomeSw == true)
-				//{
-				//	//UPACKET returnPacket;
-				//	//ZeroMemory(&returnPacket, sizeof(UPACKET));
-				//	//// 패킷 길이 : 보낼 문자열 길이 + PACKET_HEADER_SIZE (4)
-				//	//returnPacket.ph.len = PACKET_HEADER_SIZE + 3;
-				//	//// 패킷 타입
-				//	//returnPacket.ph.type = PACKET_NAME_ACK;
-				//	//char* returnPacket2 = (char*)&returnPacket;
-				//	//SendMsg(pClientInfo, returnPacket2, sizeof(returnPacket2));
-
-				//	wellcomeSw = false;
-				//}
-
 
 				//SendMsg(pClientInfo, pClientInfo->mRecvBuf, dwIoSize);
 			}
@@ -329,7 +311,8 @@ private:
 			auto cur_time_sec = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now().time_since_epoch()).count();
 			//접속을 받을 구조체의 인덱스를 얻어온다.
 
-			// 클라이언트의 리스트에서 is_connect_ 발생하면 accept 한다
+			// 연결이 되지 않은 객체가 있으면 client->PostAccept(listen_socket_, cur_time_sec);으로 
+			// Acceptex 예약을 걸어둔다.
 			for (auto client : client_Infos_)
 			{
 				if (client->IsConnected())
@@ -337,6 +320,8 @@ private:
 					continue;
 				}
 
+				// 연결이 끊어진 클라의 경우 바로 연결하면 통신이 꼬일수도 있고 Wsasend가 발생할수도 있기 때문에
+				// 일정 시간 기다리고 client->PostAccept(listen_socket_, cur_time_sec); AcceptEx 재 예약
 				if ((UINT64)cur_time_sec < client->GetLatestClosedTimeSec())
 				{
 					continue;
@@ -395,10 +380,5 @@ private:
 	std::thread	accepter_thread_;
 
 	//CompletionPort객체 핸들
-	HANDLE		iocp_handle_ = INVALID_HANDLE_VALUE;
-
-	// 웰컴스위치
-	bool wellcome_sw = false;
-
-	
+	HANDLE		iocp_handle_ = INVALID_HANDLE_VALUE;	
 };
