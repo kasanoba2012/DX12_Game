@@ -33,7 +33,7 @@ public:
 		Clear();
 
 		// I/O Completion Port 객체와 소켓을 연결시킨다.
-		if (BindIOCompletionPort(iocpHandle_) == false)
+		if (SetBindIocpSocket(iocpHandle_) == false)
 		{
 			return false;
 		}
@@ -68,7 +68,7 @@ public:
 	}
 
 	//CompletionPort객체와 소켓과 CompletionKey를 연결시키는 역할을 한다.
-	bool BindIOCompletionPort(HANDLE iocpHandle_)
+	bool SetBindIocpSocket(HANDLE iocpHandle_)
 	{
 		//socket과 pClientInfo를 CompletionPort객체와 연결시킨다.
 		auto hIOCP = CreateIoCompletionPort((HANDLE)GetSock()
@@ -147,10 +147,52 @@ public:
 		printf("[송신 완료] bytes : %d\n", dataSize_);
 	}
 
-private:
+	bool WellcomeSend(short type)
+	{
+		UPACKET packet;
+		ZeroMemory(&packet, sizeof(UPACKET));
+
+		packet.ph.len = 4;
+		packet.ph.type = type;
+		// 기존 샌드
+		auto sendOverlappedEx = new stOverlappedEx;
+		ZeroMemory(sendOverlappedEx, sizeof(stOverlappedEx));
+		//sendOverlappedEx->ph.type = 1001;
+		sendOverlappedEx->m_wsaBuf.len = 4;
+		sendOverlappedEx->m_wsaBuf.buf = (char*)&packet;
+		//CopyMemory(sendOverlappedEx->m_wsaBuf.buf, pMsg_, 4);
+		sendOverlappedEx->m_eOperation = IOOperation::SEND;
+
+		DWORD dwRecvNumBytes = 0;
+		int nRet = WSASend(mSock,
+			&(sendOverlappedEx->m_wsaBuf),
+			1,
+			&dwRecvNumBytes,
+			0,
+			(LPWSAOVERLAPPED)sendOverlappedEx,
+			NULL);
+
+		//socket_error이면 client socket이 끊어진걸로 처리한다.
+		if (nRet == SOCKET_ERROR && (WSAGetLastError() != ERROR_IO_PENDING))
+		{
+			printf("[에러] WSASend()함수 실패 : %d\n", WSAGetLastError());
+			return false;
+		}
+
+		return true;
+	}
+
+public:
 	INT32 mIndex = 0;
 	SOCKET mSock; // Client와 연결되는 소켓
 	stOverlappedEx mRecvOverlappedEx; // RECV Overlapped I/O 작업을 위한 변수
+	stOverlappedEx	m_stSendOverlappedEx;	//SEND Overlapped I/O작업을 위한 변수
 
 	char mRecvBuf[MAX_SOCKBUF]; //데이터 버퍼
 };
+
+#define PACKET_CHAR_MSG   1000      // client ->
+#define PACKET_CHATNAME_REQ   1001  // server -> client
+#define PACKET_NAME_REQ   2000		// client -> server
+#define PACKET_NAME_ACK   3000		// server -> client
+#define PACKET_JOIN_USER  4000		// server -> client

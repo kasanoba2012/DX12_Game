@@ -4,6 +4,7 @@ SessionUser* SessionMgr::Add(SOCKET sock, SOCKADDR_IN address)
 {
     //u_long iMode = TRUE;
     //ioctlsocket(sock, FIONBIO, &iMode);
+    // 클라이언트가 접속하면 
     auto user = m_Pool.NewChunk();
     user->Set(sock, address);
     m_SessionList.push_back(user);

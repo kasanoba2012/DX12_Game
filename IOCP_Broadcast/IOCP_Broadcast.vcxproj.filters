@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="소스 파일">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="헤더 파일">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="FSM">
+      <UniqueIdentifier>{68c17e25-f3da-49c4-b1ff-80f97e28a46c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="FSM\소스 파일">
+      <UniqueIdentifier>{2312fbae-d483-40dc-83ac-ee7ef936d245}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="FSM\헤더 파일">
+      <UniqueIdentifier>{eedb70c0-e779-4442-b73e-ef6383b87795}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="IOCP_Main_Server.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="FiniteState.cpp">
+      <Filter>FSM\소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="FSM.cpp">
+      <Filter>FSM\소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Npc.cpp">
+      <Filter>FSM\소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>FSM\소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="FSMServer.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="PacketManager.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="FiniteState.h">
+      <Filter>FSM\헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="FSM.h">
+      <Filter>FSM\헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Npc.h">
+      <Filter>FSM\헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>FSM\헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="IOCP_Net_Server.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Define.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="FSMServer.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Packet.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ClientInfo.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="PacketManager.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="UserManager.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ErrorCode.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="User.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

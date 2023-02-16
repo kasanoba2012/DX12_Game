@@ -17,6 +17,11 @@ struct OVERLAPPED2 : ObjectPool<OVERLAPPED2>
 	}
 	OVERLAPPED2(int type)
 	{
+		// memset : 특정 크기만큼 mem 세팅
+		// memset(첫번째 인자 void* ptr은 세팅하고자 하는 메모리의 시작 주소)
+		// memset(두번째 인자 value는 메모리에 세팅하고자 하는 값을 집어 넣으면 됩니다)
+		// memset(세번째 인자 size_t num은 길이를 뜻합니다)
+		// &ov는 m_mPool의 시작 위치 주소 이다 | 즉 m_mPool 시작위치부터 OVERLAPPED 사이즈만큼 0으로 밀어버린다.
 		memset(&ov, 0, sizeof(OVERLAPPED));
 		iType = type;
 	}

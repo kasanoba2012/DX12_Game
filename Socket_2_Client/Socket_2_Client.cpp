@@ -162,6 +162,7 @@ int main()
                 {
                     if (WSAGetLastError() != WSAEWOULDBLOCK)
                     {
+                        printf("에러 : %d", WSAGetLastError());
                         //WSAEWOULDBLOCK 아니라면 오류!
                         closesocket(sock);
                         printf("서버 비정상 종료\n");
