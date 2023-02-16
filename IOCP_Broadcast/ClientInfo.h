@@ -6,10 +6,10 @@
 #include <queue>
 
 //클라이언트 정보를 클래스
-class stClientInfo
+class ClientInfo
 {
 public:
-	stClientInfo()
+	ClientInfo()
 	{
 		ZeroMemory(&recv_overlapped_ex_, sizeof(stOverlappedEx));
 		socket_ = INVALID_SOCKET;
@@ -29,7 +29,7 @@ public:
 
 	UINT64 GetLatestClosedTimeSec() { return latest_closed_time_sec_; }
 
-	char* RecvBuffer() { return recv_buf_; }
+	char* GetRecvBuffer() { return recv_buf_; }
 
 	bool OnConnect(HANDLE iocpHandle, SOCKET socket)
 	{
@@ -38,8 +38,8 @@ public:
 
 		Clear();
 
-		// 클라이언트가 접속하면 listen_socket_ -> PostAccept()생성 Socket으로 변경
-		if (SetBindIocpSocket(iocpHandle) == false)
+		// 클라이언트가 접속하면 listen_socket_ -> ReadyAccept()생성 Socket으로 변경
+		if (SetIocpBindSocket(iocpHandle) == false)
 		{
 			return false;
 		}
@@ -76,13 +76,13 @@ public:
 	}
 
 	// 비동기 accept 연결 예약
-	bool PostAccept(SOCKET listen_socket, const UINT64 cur_time_sec)
+	bool ReadyAccept(SOCKET listen_socket, const UINT64 cur_time_sec)
 	{
-		printf_s("PostAccept. client Index: %d\n", GetIndex());
+		printf_s("ReadyAccept. client Index: %d\n", GetIndex());
 
 		latest_closed_time_sec_ = UINT32_MAX;
 
-		// WSASocket : 비동기 소켓
+		// socket_ = INVALID_SOCKET 에서 인터넷 가능 소켓을 할당
 		socket_ = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_IP, NULL, 0, WSA_FLAG_OVERLAPPED);
 		if (INVALID_SOCKET == socket_)
 		{
@@ -90,19 +90,25 @@ public:
 			return false;
 		}
 
-		ZeroMemory(&accept_context_, sizeof(stOverlappedEx));
+		ZeroMemory(&accept_overlapped_ex_, sizeof(stOverlappedEx));
 
 		DWORD bytes = 0;
 		DWORD flags = 0;
-		accept_context_.wsa_buf_.len = 0;
-		accept_context_.wsa_buf_.buf = nullptr;
-		accept_context_.E_operation_ = IOOperation::ACCEPT;
-		accept_context_.session_index_ = index_;
+		accept_overlapped_ex_.wsa_buf_.len = 0;
+		accept_overlapped_ex_.wsa_buf_.buf = nullptr;
+		accept_overlapped_ex_.E_operation_ = IOOperation::ACCEPT;
+		accept_overlapped_ex_.session_index_ = index_;
 
 		// AcceptEx : 비동기 accept
 		// https://snowfleur.tistory.com/116
-		if (FALSE == AcceptEx(listen_socket, socket_, accept_buf_, 0, sizeof(SOCKADDR_IN) + 16,
-			sizeof(SOCKADDR_IN) + 16, &bytes, (LPWSAOVERLAPPED) & (accept_context_)))
+		if (FALSE == AcceptEx(
+			listen_socket, // 서버 애플리케이션이 이 소켓에서 연결을 시도 할때까지 기다림
+			socket_, // 들어오는 연결을 수락할 소켓
+			accept_buf_,  // 새 연결에서 보낸 첫 번째 데이터 블록, 서버의 로컬 주소 및 클라이언트의 원격 주소를 수신하는 버퍼에 대한 포인터
+			0, // 0이면 수신 작업이 발생하지 않고 연결 하는 즉시 완료
+			sizeof(SOCKADDR_IN) + 16, // 로컬 정보 주소 위한 예약된 바이트 수 전송 프로토콜보다 16 더 길어야함
+			sizeof(SOCKADDR_IN) + 16,  // 원격 주소 정보를 위한 예약된 바이트 수 전송 프로토콜보다 16 더 길어야함
+			&bytes, (LPWSAOVERLAPPED) & (accept_overlapped_ex_))) // 요청처리를 사용되는 OVERLAPPED 구조체 (NULL일수가 없음)
 		{
 			if (WSAGetLastError() != WSA_IO_PENDING)
 			{
@@ -133,12 +139,12 @@ public:
 		return true;
 	}
 
-	bool SetBindIocpSocket(HANDLE iocpHandle)
+	bool SetIocpBindSocket(HANDLE iocpHandle)
 	{
-		// listen_socket_ -> PostAccept()에서 생성한 소켓으로 변경
+		// listen_socket_ -> ReadyAccept()에서 생성한 소켓으로 변경
 		auto H_iocp = CreateIoCompletionPort((HANDLE)GetSock(),
 			iocpHandle, // ExistingCompletionPort : 파일 또는 소켓과 연결할 입출력 완료 포트
-			(ULONG_PTR)(this),
+			(ULONG_PTR)(this), // CompletionKey로 어떤 소켓이 I/O를 했는지 알 수 있음
 			0);
 
 		if (H_iocp == INVALID_HANDLE_VALUE)
@@ -158,9 +164,9 @@ public:
 		recv_overlapped_ex_.wsa_buf_.buf = recv_buf_;
 		recv_overlapped_ex_.E_operation_ = IOOperation::RECV;
 
-		int nRet = WSARecv(socket_, 
+		int nRet = WSARecv(socket_,
 			&(recv_overlapped_ex_.wsa_buf_),
-			1, &dwRecvNumBytes, &dwFlag, 
+			1, &dwRecvNumBytes, &dwFlag,
 			(LPWSAOVERLAPPED) & (recv_overlapped_ex_),
 			NULL);
 
@@ -174,7 +180,6 @@ public:
 		return true;
 	}
 
-	 
 	bool SendMsg(const UINT32 data_size_, char* P_msg_)
 	{
 		// send_overlapped 구조체 생성
@@ -208,9 +213,9 @@ public:
 
 		std::lock_guard<std::mutex> guard(send_lock_);
 
-		// 큐의 제일 앞 버퍼 배열 삭제
+		// 큐의 제일 앞 배열 삭제
 		delete[] send_data_queue_.front()->wsa_buf_.buf;
-		// 큐 제일 삭제
+		// 큐 제일 앞 삭제
 		delete send_data_queue_.front();
 
 		// 큐 제일 앞 빼버리기
@@ -230,13 +235,14 @@ private:
 		auto send_overlapped_ex = send_data_queue_.front();
 
 		DWORD dwRecvNumBytes = 0;
-		int nRet = WSASend(socket_,
-			&(send_overlapped_ex->wsa_buf_),
-			1,
-			&dwRecvNumBytes,
-			0,
-			(LPWSAOVERLAPPED)send_overlapped_ex,
-			NULL);
+		int nRet = WSASend(
+			socket_, // 비동기 입출력 소켓
+			&(send_overlapped_ex->wsa_buf_), // WSABUF 구조체 배열 주소
+			1, // WSABUF 구조체 갯수
+			&dwRecvNumBytes, // 함수 호출이 성공하면 이 변수에 보내거나 받은 바이트 수가 저장
+			0, // send()와 recv()함수의 마지막 인자와 동일한 역할
+			(LPWSAOVERLAPPED)send_overlapped_ex, // WSAOVERLAPPED 구조체 변수 주소값
+			NULL); // 입출력 작업이 완료되면 운영체제가 자동으로 호출할 완료루틴 주소 값
 
 		//socket_error이면 client socket이 끊어진걸로 처리한다.
 		if (nRet == SOCKET_ERROR && (WSAGetLastError() != ERROR_IO_PENDING))
@@ -272,16 +278,18 @@ private:
 	INT64 is_connect_ = 0;
 	UINT64 latest_closed_time_sec_ = 0;
 
-	SOCKET socket_; //Cliet와
 
-	// Accept 오버랩트 구조체 wsaaccpet 에서 사용 되는 버퍼
-	stOverlappedEx accept_context_;
+	SOCKET socket_; //Cliet와 연결되는 소켓
+
+	// Accept
+	stOverlappedEx accept_overlapped_ex_;
 	char accept_buf_[64];
 
+	// Recv
 	stOverlappedEx recv_overlapped_ex_; //RECV Overlapped I/O작업을 위한 변수
 	char recv_buf_[MAX_SOCKBUF];  //데이터 버퍼
 
-	// 1 send (queue 형태)
+	// Send (queue 형태)
 	std::mutex send_lock_;
 	std::queue<stOverlappedEx*> send_data_queue_;
 };

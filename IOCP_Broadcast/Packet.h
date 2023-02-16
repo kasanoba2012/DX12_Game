@@ -43,7 +43,7 @@ struct PacketInfo
 enum class PACKET_ID : UINT16
 {
 	// TODO 오늘 수정해야함
-	
+
 	//SYSTEM
 	SYS_USER_CONNECT = 11,
 	SYS_USER_DISCONNECT = 12,
@@ -53,7 +53,7 @@ enum class PACKET_ID : UINT16
 	DB_END = 99,
 
 	// Server -> Client
-	
+
 
 	// Client -> Server
 	LOGIN_REQUEST = 201,

@@ -3,6 +3,7 @@
 
 #include "UserManager.h"
 #include "PacketManager.h"
+#include "AppServer.h"
 
 void PacketManager::Init(const UINT32 max_client)
 {
@@ -212,12 +213,3 @@ void PacketManager::ClearConnectionInfo(INT32 client_index)
 		user_manager_->DeleteUserInfo(P_req_user);
 	}
 }
-
-
-
-
-
-
-
-
-

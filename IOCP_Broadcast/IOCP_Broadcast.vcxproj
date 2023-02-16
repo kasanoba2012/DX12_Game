@@ -143,7 +143,7 @@
   <ItemGroup>
     <ClCompile Include="FiniteState.cpp" />
     <ClCompile Include="FSM.cpp" />
-    <ClCompile Include="FSMServer.cpp" />
+    <ClCompile Include="AppServer.cpp" />
     <ClCompile Include="IOCP_Main_Server.cpp" />
     <ClCompile Include="Npc.cpp" />
     <ClCompile Include="PacketManager.cpp" />
@@ -155,8 +155,8 @@
     <ClInclude Include="ErrorCode.h" />
     <ClInclude Include="FiniteState.h" />
     <ClInclude Include="FSM.h" />
-    <ClInclude Include="FSMServer.h" />
-    <ClInclude Include="IOCP_Net_Server.h" />
+    <ClInclude Include="AppServer.h" />
+    <ClInclude Include="IocpNetServer.h" />
     <ClInclude Include="Npc.h" />
     <ClInclude Include="Packet.h" />
     <ClInclude Include="PacketManager.h" />

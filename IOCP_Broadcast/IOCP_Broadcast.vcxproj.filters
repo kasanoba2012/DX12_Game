@@ -35,7 +35,7 @@
     <ClCompile Include="Player.cpp">
       <Filter>FSM\소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="FSMServer.cpp">
+    <ClCompile Include="AppServer.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="PacketManager.cpp">
@@ -55,13 +55,13 @@
     <ClInclude Include="Player.h">
       <Filter>FSM\헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="IOCP_Net_Server.h">
+    <ClInclude Include="IocpNetServer.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Define.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="FSMServer.h">
+    <ClInclude Include="AppServer.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Packet.h">

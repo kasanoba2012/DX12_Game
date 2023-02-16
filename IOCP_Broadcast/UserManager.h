@@ -23,7 +23,7 @@ public:
 	}
 
 	INT32 GetCurrentUserCnt() { return current_user_cnt_; }
-	
+
 	INT32 GetMaxUserCnt() { return max_user_cnt_; }
 
 	void IncreaseUserCnt() { current_user_cnt_++; }
