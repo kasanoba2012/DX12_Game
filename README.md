@@ -1,7 +1,22 @@
 # IOCP_Server
 
-
+## IOCP API
+  - CreateIoCompletionPort();
+    - 1차 생성 IOCP 객체 생성
+    - 2차 생성 Socket을 IOCP에 연결
+  - GetQueueCompletionStatus();
+    - IOCP로 부터 I/O 결과를 얻음
+    
 ## IOCP 서버 설계 (멀티 쓰레드 버전)
+- 초기화
+  - 윈속 초기화, bind, listen, IOCP 객체 및 핸들 생성
+- 접속 클라이언트 정보 미리 생성
+- Listen 소켓 IOCP 등록 후 AcceptEx 호출
+- 서버 메인 루프
+  - 새로운 소켓 접속 하면 IOCP 연결 후 WSARecv 호출
+  - 클라이언트 Send 발생 시 서버는 Recv 처리 후 Recv Data Send queue에 담아서 클라이언트에게 동일 내용 Send
+
+## IOCP 기능 설명
 
 - Init();
   - WinSocket 초기화
