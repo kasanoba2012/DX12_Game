@@ -52,10 +52,15 @@ public:
 
 		printf("[OnConnect] 클라이언트: Index(%d)\n", client_index);
 
-		// TODO 패킷 일시 중단
-		//PacketInfo packet{ client_index, (UINT16)PACKET_ID::SYS_USER_DISCONNECT, 0 };
-		// 워크쓰레드에서 받은 패킷을 패킷 매니저로 보내서 패킷 쓰레드에서 처리하는거 확인
-		//P_packet_manager_->PushSystemPacket(packet);
+
+		// PacketInfo
+		// UINT32 client_index_ = 0;
+		// UINT16 packet_id_ = 0;
+		// UINT16 data_size_ = 0;
+		PacketInfo packet{ client_index, (UINT16)PACKET_ID::SYS_USER_CONNECT, 0 };
+		
+		// SYS_USER_CONNECT 패킷을 전달
+		P_packet_manager_->PushSystemPacket(packet);
 	}
 
 	virtual void OnClose(const UINT32 client_index_) override
@@ -70,7 +75,7 @@ public:
 	{
 		printf("[OnReceive] 클라이언트: Index(%d), dataSize(%d), recvData : %s\n", client_index, size, P_recv_data);
 
-		//P_packet_manager_->ReceivePacketData(client_index, size, P_recv_data);
+		P_packet_manager_->ReceivePacketData(client_index, size, P_recv_data);
 
 		//Receive 호출 Send 호출해서 에코 서버 형태로 만듬
 		//P_packet_manager_->SendPacketFunc(client_index, size, P_recv_data);

@@ -7,8 +7,11 @@
 
 void PacketManager::Init(const UINT32 max_client)
 {
+	// unordered_map
+	// https://blog.naver.com/PostView.nhn?blogId=webserver3315&logNo=221678909965&parentCategoryNo=&categoryNo=48&viewDate=&isShowPopularPosts=true&from=search
 	recv_funtion_dictionary_ = std::unordered_map<int, PROCESS_RECV_PACKET_FUNCTION>();
 
+	// (PACKET_ID 설정) Key, Value 설정
 	recv_funtion_dictionary_[(int)PACKET_ID::SYS_USER_CONNECT] = &PacketManager::ProcessuserConnect;
 	recv_funtion_dictionary_[(int)PACKET_ID::SYS_USER_DISCONNECT] = &PacketManager::ProcessUserDisConnect;
 	recv_funtion_dictionary_[(int)PACKET_ID::LOGIN_REQUEST] = &PacketManager::ProcessLogin;

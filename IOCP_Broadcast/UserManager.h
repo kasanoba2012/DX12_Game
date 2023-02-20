@@ -13,10 +13,12 @@ public:
 	void Init(const INT32 max_user_count)
 	{
 		max_user_cnt_ = max_user_count;
+		// 유저 미리 생성해서 쭉 담기
 		user_obj_pool_ = std::vector<User*>(max_user_cnt_);
 
 		for (auto i = 0; i < max_user_cnt_; i++)
 		{
+			// user index 및 packet data buffer 생성
 			user_obj_pool_[i] = new User();
 			user_obj_pool_[i]->Init(i);
 		}
@@ -36,7 +38,7 @@ public:
 		}
 	}
 
-	// 새로운 연결이 되면 ClinetInfo 세팅한것과 1:1 매칭
+	// 새로운 연결이 되면 ClinetInfo 세팅 index와 1:1 매칭
 	ERROR_CODE Adduser(char* user_id, int client_index)
 	{
 		auto user_idx = client_index;
