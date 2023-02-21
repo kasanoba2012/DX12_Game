@@ -1,6 +1,6 @@
 #pragma once
 #include "IocpNetServer.h"
-#include "Npc.h"
+#include "BlueNpc.h"
 #include "Player.h"
 #include "PacketManager.h"
 #include "Packet.h"
@@ -19,14 +19,12 @@ class AppServer : public IocpNetServer
 public:
 	// FSM 세팅
 	FSM fsm;
-	Npc npc;
+	//BlueNpc npc;
 
 	bool MovementSw = true;
 public:
-	AppServer();
 	virtual ~AppServer() = default;
 
-	void NpcMovement(Npc* npc);
 	void ThreadTestfuntion();
 
 	virtual void OnConnect(const UINT32 client_index) override
@@ -35,20 +33,6 @@ public:
 		Player player;
 
 		// TODO 접속하면 npc 따라가기 시작 근데 미리 좌표는 움직이고 있어야한다.
-		while (0)
-		{
-			printf("Connect npc 좌표 : %d\n", (int)npc.m_NpcPos[0]);
-
-			MovementSw = false;
-
-			char npcPosMsg[256] = { 0, };
-			*npcPosMsg = npc.m_NpcPos[0];
-			npcPosMsg[1] = '\0';
-			mainSendMsg(npcPosMsg);
-
-			npc.Process(&player);
-			Sleep(3000);
-		}
 
 		printf("[OnConnect] 클라이언트: Index(%d)\n", client_index);
 

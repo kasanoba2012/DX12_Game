@@ -27,6 +27,10 @@ DWORD FSM::GetTransition(DWORD dwState, DWORD dwEvent)
 FSM::FSM()
 {
     AddTransition(STATE_STAND, EVENT_TIMEMOVE, STATE_MOVE);
+    // 이동 시작
+    AddTransition(STATE_STAND, EVENT_STARTMOVE, STATE_MOVE);
+    // 방향 전환
+    AddTransition(STATE_MOVE, EVENT_TRUNMOVE, STATE_MOVE);
     // 타켓 발견하면 타켓에게 다가가기
     AddTransition(STATE_STAND, EVENT_POINTMOVE, STATE_POINT_MOVE);
     // 가만히 서있다가 타켓 발견하면 공격

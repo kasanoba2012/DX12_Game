@@ -10,50 +10,9 @@ const int SLEEP_TIME = 3000;
 const UINT32 MAX_IO_WORKER_THREAD = 4;
 
 AppServer iocp_net_server_;
-bool  MovementSw = true;
-
-
-void MonsterMovemnet()
-{
-	while (iocp_net_server_.MovementSw)
-	{
-		if (MovementSw == true) {
-			iocp_net_server_.npc.m_NpcPos[0] += 1;
-
-			char npcPosMsg[256] = { 0, };
-			*npcPosMsg = iocp_net_server_.npc.m_NpcPos[0];
-			npcPosMsg[1] = '\0';
-			iocp_net_server_.mainSendMsg(npcPosMsg);
-
-			Sleep(SLEEP_TIME);
-			if (iocp_net_server_.npc.m_NpcPos[0] >= 30)
-			{
-				MovementSw = false;
-				//break;
-			}
-		}
-		else {
-			iocp_net_server_.npc.m_NpcPos[0] -= 1;
-
-			char npcPosMsg[256] = { 0, };
-			*npcPosMsg = iocp_net_server_.npc.m_NpcPos[0];
-			npcPosMsg[1] = '\0';
-			iocp_net_server_.mainSendMsg(npcPosMsg);
-
-			Sleep(SLEEP_TIME);
-			if (iocp_net_server_.npc.m_NpcPos[0] <= 0)
-			{
-				MovementSw = true;
-			}
-		}
-
-		std::printf("MonsterMovemnet Thread 작동 몬스터 X : %d\n", (int)iocp_net_server_.npc.m_NpcPos[0]);
-	}
-}
 
 int main()
 {
-	void (*P_MonsterMovemnet)(void) = *MonsterMovemnet;
 
 	//소켓을 초기화
 	iocp_net_server_.Init(MAX_IO_WORKER_THREAD);
@@ -62,8 +21,6 @@ int main()
 	iocp_net_server_.BindAndListen(SERVER_PORT);
 
 	iocp_net_server_.Run(MAX_CLIENT);
-
-	//std::thread t1(P_MonsterMovemnet);
 
 	printf("아무 키나 누를 때까지 대기합니다\n");
 	while (true)

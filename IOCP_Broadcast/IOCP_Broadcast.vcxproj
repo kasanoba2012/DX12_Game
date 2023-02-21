@@ -145,9 +145,10 @@
     <ClCompile Include="FSM.cpp" />
     <ClCompile Include="AppServer.cpp" />
     <ClCompile Include="IOCP_Main_Server.cpp" />
-    <ClCompile Include="Npc.cpp" />
+    <ClCompile Include="BlueNpc.cpp" />
     <ClCompile Include="PacketManager.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="RedNpc.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ClientInfo.h" />
@@ -157,10 +158,11 @@
     <ClInclude Include="FSM.h" />
     <ClInclude Include="AppServer.h" />
     <ClInclude Include="IocpNetServer.h" />
-    <ClInclude Include="Npc.h" />
+    <ClInclude Include="BlueNpc.h" />
     <ClInclude Include="Packet.h" />
     <ClInclude Include="PacketManager.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="RedNpc.h" />
     <ClInclude Include="User.h" />
     <ClInclude Include="UserManager.h" />
   </ItemGroup>

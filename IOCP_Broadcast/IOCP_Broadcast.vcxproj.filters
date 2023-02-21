@@ -29,7 +29,7 @@
     <ClCompile Include="FSM.cpp">
       <Filter>FSM\소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Npc.cpp">
+    <ClCompile Include="BlueNpc.cpp">
       <Filter>FSM\소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Player.cpp">
@@ -41,6 +41,9 @@
     <ClCompile Include="PacketManager.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="RedNpc.cpp">
+      <Filter>FSM\소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FiniteState.h">
@@ -49,7 +52,7 @@
     <ClInclude Include="FSM.h">
       <Filter>FSM\헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Npc.h">
+    <ClInclude Include="BlueNpc.h">
       <Filter>FSM\헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Player.h">
@@ -81,6 +84,9 @@
     </ClInclude>
     <ClInclude Include="User.h">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="RedNpc.h">
+      <Filter>FSM\헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
