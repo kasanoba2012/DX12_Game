@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{22906166-6a92-445f-b45f-988e5464cb2a}</ProjectGuid>
-    <RootNamespace>FSMMain</RootNamespace>
+    <ProjectGuid>{3404d28a-5493-44e7-943d-39c1a5745471}</ProjectGuid>
+    <RootNamespace>ChatGptTest01</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -139,19 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="FiniteState.cpp" />
-    <ClCompile Include="FSM.cpp" />
-    <ClCompile Include="FSM_Main.cpp" />
-    <ClCompile Include="BlueNpc.cpp" />
-    <ClCompile Include="Player.cpp" />
-    <ClCompile Include="RedNpc.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="FiniteState.h" />
-    <ClInclude Include="FSM.h" />
-    <ClInclude Include="BlueNpc.h" />
-    <ClInclude Include="Player.h" />
-    <ClInclude Include="RedNpc.h" />
+    <ClCompile Include="Chat_Gpt_Test_01.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

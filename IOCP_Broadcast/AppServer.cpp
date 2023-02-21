@@ -5,7 +5,7 @@ AppServer::AppServer()
 	npc.FsmAdd(&fsm);
 }
 
-void AppServer::NpcMovement(Npc* npc)
+void AppServer::NpcMovement(Blue_Npc* npc)
 {
 	while (1)
 	{

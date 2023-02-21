@@ -5,7 +5,7 @@
 // TODO : Random Int가 대신 현재 Npc 좌표에 +-를 통해서 값을 증가 시키고 
 // 숫자와 비교하는 것 대신 Player 좌표에 따라서 처리 될 수 있도록 수정해야한다.
 
-void StandState::Process(Player* player, Npc* npc)
+void BlueStandState::Process(Player* player, Npc* npc)
 {
 	std::cout << "Stand State\n";
 	// 0,1 중 0 나오면 MoveState::Process 실행
@@ -30,7 +30,7 @@ void StandState::Process(Player* player, Npc* npc)
 	}
 }
 
-void MoveState::Process(Player* player, Npc* npc)
+void BlueMoveState::Process(Player* player, Npc* npc)
 {
 	int npcMove = (rand() % 5) + 1;
 	std::printf("몬스터가 %d만큼 이동합니다.\n", npcMove);
@@ -43,7 +43,7 @@ void MoveState::Process(Player* player, Npc* npc)
 
 }
 
-void PointMovekState::Process(Player* player, Npc* npc)
+void BluePointMovekState::Process(Player* player, Npc* npc)
 {
 	std::printf("목표물을 포착했다\n");
 	std::printf("현재 플레이어 좌표 X : %d, Y :%d\n", (int)player->m_Pos[0], (int)player->m_Pos[1]);
@@ -75,7 +75,7 @@ void PointMovekState::Process(Player* player, Npc* npc)
 }
 
 
-void AttackState::Process(Player* player, Npc* npc)
+void BlueAttackState::Process(Player* player, Npc* npc)
 {
 	std::cout << "몬스터에게 공격을 당했습니다.\n";
 	int randInt = rand() % 100;
@@ -107,10 +107,10 @@ void Npc::SetTransition(DWORD dwEvent)
 void Npc::FsmAdd(FSM* fsm)
 {
 	m_pFsm = fsm;
-	m_pActionList.push_back(new StandState(this));
-	m_pActionList.push_back(new MoveState(this));
-	m_pActionList.push_back(new AttackState(this));
-	m_pActionList.push_back(new PointMovekState(this));
+	m_pActionList.push_back(new BlueStandState(this));
+	m_pActionList.push_back(new BlueMoveState(this));
+	m_pActionList.push_back(new BlueAttackState(this));
+	m_pActionList.push_back(new BluePointMovekState(this));
 	// 최초 상태는 StandState 있는 상태로 시작
 	m_pCurentState = m_pActionList[0];
 	m_dwState = STATE_STAND;
@@ -122,10 +122,10 @@ void Npc::FsmAdd(FSM* fsm)
 Npc::Npc(FSM* fsm)
 {
 	m_pFsm = fsm;
-	m_pActionList.push_back(new StandState(this));
-	m_pActionList.push_back(new MoveState(this));
-	m_pActionList.push_back(new AttackState(this));
-	m_pActionList.push_back(new PointMovekState(this));
+	m_pActionList.push_back(new BlueStandState(this));
+	m_pActionList.push_back(new BlueMoveState(this));
+	m_pActionList.push_back(new BlueAttackState(this));
+	m_pActionList.push_back(new BluePointMovekState(this));
 	// 최초 상태는 StandState 있는 상태로 시작
 	m_pCurentState = m_pActionList[0];
 	m_dwState = STATE_STAND;

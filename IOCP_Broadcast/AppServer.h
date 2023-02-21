@@ -19,14 +19,14 @@ class AppServer : public IocpNetServer
 public:
 	// FSM ¼¼ÆÃ
 	FSM fsm;
-	Npc npc;
+	Blue_Npc npc;
 
 	bool MovementSw = true;
 public:
 	AppServer();
 	virtual ~AppServer() = default;
 
-	void NpcMovement(Npc* npc);
+	void NpcMovement(Blue_Npc* npc);
 	void ThreadTestfuntion();
 
 	virtual void OnConnect(const UINT32 client_index) override
