@@ -19,14 +19,14 @@ class AppServer : public IocpNetServer
 public:
 	// FSM 세팅
 	FSM fsm;
-	Blue_Npc npc;
+	Npc npc;
 
 	bool MovementSw = true;
 public:
 	AppServer();
 	virtual ~AppServer() = default;
 
-	void NpcMovement(Blue_Npc* npc);
+	void NpcMovement(Npc* npc);
 	void ThreadTestfuntion();
 
 	virtual void OnConnect(const UINT32 client_index) override
@@ -58,7 +58,7 @@ public:
 		// UINT16 packet_id_ = 0;
 		// UINT16 data_size_ = 0;
 		PacketInfo packet{ client_index, (UINT16)PACKET_ID::SYS_USER_CONNECT, 0 };
-		
+
 		// SYS_USER_CONNECT 패킷을 전달
 		P_packet_manager_->PushSystemPacket(packet);
 	}

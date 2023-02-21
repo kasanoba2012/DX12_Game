@@ -7,49 +7,49 @@
 class Npc;
 class Player;
 
-class BlueNpcState
+class NpcState
 {
 public:
 	Npc* m_pOwner = nullptr;
 public:
 	virtual void Process(Player* player, Npc* npc) = 0;
-	BlueNpcState() = delete;
-	BlueNpcState(Npc* npc)
+	NpcState() = delete;
+	NpcState(Npc* npc)
 	{
 		m_pOwner = npc;
 	}
 };
 
-class StandState : public BlueNpcState
+class StandState : public NpcState
 {
 public:
 	virtual void Process(Player* player, Npc* npc);
 	StandState() = delete;
-	StandState(Npc* npc) : BlueNpcState(npc) {}
+	StandState(Npc* npc) : NpcState(npc) {}
 };
 
-class MoveState : public BlueNpcState
+class MoveState : public NpcState
 {
 public:
 	virtual void Process(Player* player, Npc* npc);
 	MoveState() = delete;
-	MoveState(Npc* npc) :BlueNpcState(npc) {}
+	MoveState(Npc* npc) :NpcState(npc) {}
 };
 
-class AttackState : public BlueNpcState
+class AttackState : public NpcState
 {
 public:
 	virtual void Process(Player* player, Npc* npc);
 	AttackState() = delete;
-	AttackState(Npc* npc) : BlueNpcState(npc) {}
+	AttackState(Npc* npc) : NpcState(npc) {}
 };
 
-class PointMovekState : public BlueNpcState
+class PointMovekState : public NpcState
 {
 public:
 	virtual void Process(Player* player, Npc* npc);
 	PointMovekState() = delete;
-	PointMovekState(Npc* npc) : BlueNpcState(npc) {}
+	PointMovekState(Npc* npc) : NpcState(npc) {}
 };
 
 class Npc
@@ -57,8 +57,8 @@ class Npc
 	DWORD m_dwState;
 	FSM* m_pFsm = nullptr;
 public:
-	BlueNpcState* m_pCurentState = nullptr;
-	std::vector<BlueNpcState*> m_pActionList;
+	NpcState* m_pCurentState = nullptr;
+	std::vector<NpcState*> m_pActionList;
 	void Process(Player* player);
 	void SetTransition(DWORD dwEvent);
 	void FsmAdd(FSM* fsm);
