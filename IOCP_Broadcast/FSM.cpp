@@ -1,6 +1,7 @@
 #include <iostream>
 #include "FSM.h"
 
+
 void FSM::AddTransition(DWORD inState, DWORD dwEvent, DWORD outState)
 {
     FiniteState* pState = nullptr;
@@ -26,6 +27,7 @@ DWORD FSM::GetTransition(DWORD dwState, DWORD dwEvent)
 
 FSM::FSM()
 {
+    // 가만히 서있다가 시간 지나면 움직이기
     AddTransition(STATE_STAND, EVENT_TIMEMOVE, STATE_MOVE);
     // 이동 시작
     AddTransition(STATE_STAND, EVENT_STARTMOVE, STATE_MOVE);

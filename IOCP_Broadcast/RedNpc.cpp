@@ -1,12 +1,13 @@
 #include "RedNpc.h"
 #include "Player.h"
+#include "BlueNpc.h"
 #include <stdio.h>
 
 // TODO : Random Int가 대신 현재 Npc 좌표에 +-를 통해서 값을 증가 시키고 
 // 숫자와 비교하는 것 대신 Player 좌표에 따라서 처리 될 수 있도록 수정해야한다.
 
 // 정지 상태
-void RedStandState::Process(Player* player, RedNpc* red_npc)
+void RedStandState::Process(Player* player, RedNpc* red_npc, BlueNpc* blue_npc)
 {
 	std::cout << "상태 : 정지\n";
 
@@ -31,42 +32,61 @@ void RedStandState::Process(Player* player, RedNpc* red_npc)
 }
 
 // 이동 상태
-void RedMoveState::Process(Player* player, RedNpc* red_npc)
+void RedMoveState::Process(Player* player, RedNpc* red_npc, BlueNpc* blue_npc)
 {
 	std::cout << "상태 : 이동\n";
 	// rand() % 8 : 0 ~ 7까지 난수
-	//npc->npc_info_.npc_pos_dir_ = (rand() % 8);
-	std::printf("몬스터가 %d만큼 이동합니다.\n", red_npc->npc_info_.npc_pos_dir_);
+	if (red_npc->event_cnt_ == 0)
+	{
+		red_npc->npc_info_.npc_pos_dir_ = (rand() % 8);
+	}
+	else if (red_npc->event_cnt_ == 2)
+	{
+		red_npc->event_cnt_ = 0;
+		m_pOwner->SetTransition(EVENT_STOPMOVE);
+		// TODO 이때 방향전환 이벤트 호출 해야함
+		return;
+	}
+
+	//std::printf("몬스터가 %d만큼 이동합니다.\n", blue_npc->npc_info_.npc_pos_dir_);
 	switch (red_npc->npc_info_.npc_pos_dir_)
 	{
 		// Move Direction
 	case 0: // 12
 		red_npc->npc_info_.npc_pos_[1] -= red_npc->npc_info_.npc_speed;
+		red_npc->event_cnt_++;
 		break;
 	case 1: // 1
 		red_npc->npc_info_.npc_pos_[0] += red_npc->npc_info_.npc_speed;
 		red_npc->npc_info_.npc_pos_[1] -= red_npc->npc_info_.npc_speed;
+		red_npc->event_cnt_++;
 		break;
 	case 2: // 3
 		red_npc->npc_info_.npc_pos_[0] += red_npc->npc_info_.npc_speed;
+		red_npc->event_cnt_++;
 		break;
 	case 3: // 5
 		red_npc->npc_info_.npc_pos_[0] += red_npc->npc_info_.npc_speed;
 		red_npc->npc_info_.npc_pos_[1] += red_npc->npc_info_.npc_speed;
+		red_npc->event_cnt_++;
 		break;
 	case 4: // 6
 		red_npc->npc_info_.npc_pos_[1] += red_npc->npc_info_.npc_speed;
+		red_npc->event_cnt_++;
 		break;
 	case 5: // 7
 		red_npc->npc_info_.npc_pos_[0] -= red_npc->npc_info_.npc_speed;
 		red_npc->npc_info_.npc_pos_[1] += red_npc->npc_info_.npc_speed;
+		red_npc->event_cnt_++;
 		break;
 	case 6: // 9
 		red_npc->npc_info_.npc_pos_[0] -= red_npc->npc_info_.npc_speed;
+		red_npc->event_cnt_++;
 		break;
 	case 7: // 10
 		red_npc->npc_info_.npc_pos_[0] -= red_npc->npc_info_.npc_speed;
 		red_npc->npc_info_.npc_pos_[1] -= red_npc->npc_info_.npc_speed;
+		red_npc->event_cnt_++;
 		break;
 	default:
 		break;
@@ -77,7 +97,7 @@ void RedMoveState::Process(Player* player, RedNpc* red_npc)
 
 }
 
-void RedPointMovekState::Process(Player* player, RedNpc* red_npc)
+void RedPointMovekState::Process(Player* player, RedNpc* red_npc, BlueNpc* blue_npc)
 {
 	std::printf("목표물을 포착했다\n");
 	std::printf("현재 플레이어 좌표 X : %d, Y :%d\n", (int)player->m_Pos[0], (int)player->m_Pos[1]);
@@ -109,7 +129,7 @@ void RedPointMovekState::Process(Player* player, RedNpc* red_npc)
 }
 
 
-void RedAttackState::Process(Player* player, RedNpc* red_npc)
+void RedAttackState::Process(Player* player, RedNpc* red_npc, BlueNpc* blue_npc)
 {
 	std::cout << "몬스터에게 공격을 당했습니다.\n";
 	int randInt = rand() % 100;
@@ -127,15 +147,52 @@ void RedAttackState::Process(Player* player, RedNpc* red_npc)
 }
 
 
-void RedNpc::Process(Player* player)
+void RedNpc::Process(Player* player, BlueNpc* blue_npc)
 {
-	m_pCurentState->Process(player, this);
+	m_pCurentState->Process(player, this, blue_npc);
 }
 
 void RedNpc::SetTransition(DWORD dwEvent)
 {
 	DWORD dwOutput = m_pFsm->GetTransition(m_dwState, dwEvent);
 	m_pCurentState = m_pActionList[dwOutput];
+}
+
+bool RedNpc::TargetRange(BlueNpc* red_npc)
+{
+	if (this->npc_info_.npc_pos_[0])
+		return false;
+}
+
+void RedNpc::SetFsm(FSM* fsm)
+{
+	m_pFsm = fsm;
+}
+
+RedNpc::RedNpc()
+{
+	m_pActionList.push_back(new RedStandState(this));
+	m_pActionList.push_back(new RedMoveState(this));
+	m_pActionList.push_back(new RedAttackState(this));
+	m_pActionList.push_back(new RedPointMovekState(this));
+	// 최초 상태는 StandState 있는 상태로 시작
+	m_pCurentState = m_pActionList[0];
+	m_dwState = STATE_STAND;
+
+	// 초기 npc 위치
+	if (npc_info_.team_color == 0)
+	{
+		// red team 시작 위치
+		npc_info_.npc_pos_[0] = 50;
+		npc_info_.npc_pos_[1] = 0;
+	}
+	else
+	{
+		// blue team 시작 위치
+		npc_info_.npc_pos_[0] = 0;
+		npc_info_.npc_pos_[1] = 50;
+
+	}
 }
 
 RedNpc::RedNpc(FSM* fsm)

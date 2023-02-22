@@ -1,9 +1,12 @@
 #pragma once
 #include "IocpNetServer.h"
-#include "BlueNpc.h"
-#include "Player.h"
 #include "PacketManager.h"
 #include "Packet.h"
+//FSM
+#include "FSM.h"
+#include "BlueNpc.h"
+#include "RedNpc.h"
+#include "Player.h"
 
 #include <vector>
 #include <deque>
@@ -11,33 +14,33 @@
 #include <mutex>
 #include <memory>
 
-//TODO redis 연동. hiredis 포함하기
 
+//TODO redis 연동. hiredis 포함하기
 class AppServer : public IocpNetServer
 {
+public:
+	//FSM fsm;
+	//Player player;
+	//BlueNpc blue_npc_;
+	//RedNpc red_npc_;
 
 public:
-	// FSM 세팅
-	FSM fsm;
-	//BlueNpc npc;
-
-	bool MovementSw = true;
-public:
+	AppServer();
 	virtual ~AppServer() = default;
 
+	void FsmInit();
 	void ThreadTestfuntion();
 
 	virtual void OnConnect(const UINT32 client_index) override
 	{
-		// 접속 되면 플레이어 생성
-		Player player;
+		// 접속 되면 플레이어 생성 미리 쭉 생성
+		//Player player;
 
 		// TODO 접속하면 npc 따라가기 시작 근데 미리 좌표는 움직이고 있어야한다.
 
 		printf("[OnConnect] 클라이언트: Index(%d)\n", client_index);
 
-
-		// PacketInfo
+		// PacketInfo 정보
 		// UINT32 client_index_ = 0;
 		// UINT16 packet_id_ = 0;
 		// UINT16 data_size_ = 0;
@@ -46,6 +49,8 @@ public:
 		// SYS_USER_CONNECT 패킷을 전달
 		P_packet_manager_->PushSystemPacket(packet);
 	}
+
+	
 
 	virtual void OnClose(const UINT32 client_index_) override
 	{

@@ -144,6 +144,9 @@ int main()
 {
 	//DirectX::SimpleMath
 	FSM fsm;
+
+	// AppServer fsm 객체 떼고 연동시 생성자에 넣기
+	{
 	// 가만히 서있다가 시간 지나면 움직이기
 	fsm.AddTransition(STATE_STAND, EVENT_TIMEMOVE, STATE_MOVE);
 	// 이동 시작
@@ -158,6 +161,7 @@ int main()
 	fsm.AddTransition(STATE_MOVE, EVENT_STOPMOVE, STATE_STAND);
 	// 공격하다가 타켓 없어지면 멈추기
 	fsm.AddTransition(STATE_ATTACK, EVENT_LOSTTARGET, STATE_STAND);
+	}
 
 	Player player;
 	BlueNpc blue_npc_(&fsm);

@@ -185,6 +185,37 @@ bool BlueNpc::TargetRange(RedNpc* red_npc)
 		return false;
 }
 
+void BlueNpc::SetFsm(FSM* fsm)
+{
+	m_pFsm = fsm;
+}
+
+BlueNpc::BlueNpc()
+{
+	m_pActionList.push_back(new BlueStandState(this));
+	m_pActionList.push_back(new BlueMoveState(this));
+	m_pActionList.push_back(new BlueAttackState(this));
+	m_pActionList.push_back(new BluePointMovekState(this));
+	// 최초 상태는 StandState 있는 상태로 시작
+	m_pCurentState = m_pActionList[0];
+	m_dwState = STATE_STAND;
+
+	// 초기 npc 위치
+	if (npc_info_.team_color == 0)
+	{
+		// red team 시작 위치
+		npc_info_.npc_pos_[0] = 50;
+		npc_info_.npc_pos_[1] = 0;
+	}
+	else
+	{
+		// blue team 시작 위치
+		npc_info_.npc_pos_[0] = 0;
+		npc_info_.npc_pos_[1] = 50;
+
+	}
+}
+
 BlueNpc::BlueNpc(FSM* fsm)
 {
 	m_pFsm = fsm;
@@ -211,6 +242,10 @@ BlueNpc::BlueNpc(FSM* fsm)
 
 	}
 }
+
+
+
+
 
 BlueNpc::~BlueNpc()
 {

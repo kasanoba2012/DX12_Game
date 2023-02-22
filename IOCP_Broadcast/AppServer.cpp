@@ -1,5 +1,21 @@
 #include "AppServer.h"
+//FSM
+#include "FSM.h"
+#include "BlueNpc.h"
+#include "RedNpc.h"
+#include "Player.h"
 
+AppServer::AppServer()
+{
+	FsmInit();
+}
+
+
+void AppServer::FsmInit()
+{
+	// FSM ¼¼ÆÃ
+	//BlueNpc blue_npc_(&fsm);
+}
 
 void AppServer::ThreadTestfuntion()
 {

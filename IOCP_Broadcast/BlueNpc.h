@@ -78,7 +78,9 @@ private:
 	bool TargetRange(RedNpc* red_npc);
 public:
 	//float m_NpcPos[2];
+	BlueNpc();
 	BlueNpc(FSM* fsm);
+	void SetFsm(FSM* fsm);
 	virtual ~BlueNpc();
 	minion npc_info_;
 	int npc_event = 0;
