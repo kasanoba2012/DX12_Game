@@ -2,6 +2,7 @@
 #include "IocpNetServer.h"
 #include "PacketManager.h"
 #include "Packet.h"
+
 //FSM
 #include "FSM.h"
 #include "BlueNpc.h"
@@ -14,15 +15,15 @@
 #include <mutex>
 #include <memory>
 
-
 //TODO redis 연동. hiredis 포함하기
-class AppServer : public IocpNetServer
+class AppServer : public IocpNetServer, public BlueNpc
 {
 public:
 	//FSM fsm;
 	//Player player;
 	//BlueNpc blue_npc_;
 	//RedNpc red_npc_;
+	BlueNpc blue_npc_;
 
 public:
 	AppServer();
@@ -30,6 +31,11 @@ public:
 
 	void FsmInit();
 	void ThreadTestfuntion();
+
+	void TestOverrid() override
+	{
+		std::cout << "TestOverrid\n";
+	}
 
 	virtual void OnConnect(const UINT32 client_index) override
 	{
@@ -50,8 +56,6 @@ public:
 		P_packet_manager_->PushSystemPacket(packet);
 	}
 
-	
-
 	virtual void OnClose(const UINT32 client_index_) override
 	{
 		printf("[OnClose] 클라이언트: Index(%d)\n", client_index_);
@@ -69,6 +73,40 @@ public:
 		//Receive 호출 Send 호출해서 에코 서버 형태로 만듬
 		//P_packet_manager_->SendPacketFunc(client_index, size, P_recv_data);
 		SendMsg(client_index, size, P_recv_data);
+	}
+
+	void NpcRun()
+	{
+		FSM fsm;
+
+		// AppServer fsm 객체 떼고 연동시 생성자에 넣기
+		{
+			// 가만히 서있다가 시간 지나면 움직이기
+			fsm.AddTransition(STATE_STAND, EVENT_TIMEMOVE, STATE_MOVE);
+			// 이동 시작
+			fsm.AddTransition(STATE_STAND, EVENT_STARTMOVE, STATE_MOVE);
+			// 방향 전환
+			fsm.AddTransition(STATE_MOVE, EVENT_TRUNMOVE, STATE_MOVE);
+			// 타켓 발견하면 타켓에게 다가가기
+			fsm.AddTransition(STATE_STAND, EVENT_POINTMOVE, STATE_POINT_MOVE);
+			// 가만히 서있다가 타켓 발견하면 공격
+			fsm.AddTransition(STATE_STAND, EVENT_FINDTARGET, STATE_ATTACK);
+			// 움직이다가 멈추기
+			fsm.AddTransition(STATE_MOVE, EVENT_STOPMOVE, STATE_STAND);
+			// 공격하다가 타켓 없어지면 멈추기
+			fsm.AddTransition(STATE_ATTACK, EVENT_LOSTTARGET, STATE_STAND);
+		}
+
+		Player player;
+		blue_npc_.SetFsm(&fsm);
+		RedNpc red_npc_(&fsm);
+
+		while (1)
+		{
+			blue_npc_.Process(&player, &red_npc_);
+
+			Sleep(1000);
+		}
 	}
 
 	void Run(const UINT32 max_client)

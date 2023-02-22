@@ -144,6 +144,7 @@
     <ClCompile Include="FiniteState.cpp" />
     <ClCompile Include="FSM.cpp" />
     <ClCompile Include="AppServer.cpp" />
+    <ClCompile Include="IocpNetServer.cpp" />
     <ClCompile Include="IOCP_Main_Server.cpp" />
     <ClCompile Include="BlueNpc.cpp" />
     <ClCompile Include="PacketManager.cpp" />
@@ -163,8 +164,12 @@
     <ClInclude Include="PacketManager.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="RedNpc.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="User.h" />
     <ClInclude Include="UserManager.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="IOCP_Broadcast.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

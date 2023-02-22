@@ -56,66 +56,68 @@ void BlueStandState::Process(Player* player, BlueNpc* blue_npc, RedNpc* red_npc)
 void BlueMoveState::Process(Player* player, BlueNpc* blue_npc, RedNpc* red_npc)
 {
 	std::cout << "상태 : 이동\n";
-	// rand() % 8 : 0 ~ 7까지 난수
-	if (blue_npc->event_cnt_ == 0)
-	{
-		blue_npc->npc_info_.npc_pos_dir_ = (rand() % 8);
-	}
-	else if (blue_npc->event_cnt_ == 2)
-	{
-		blue_npc->event_cnt_ = 0;
-		m_pOwner->SetTransition(EVENT_STOPMOVE);
-		// TODO 이때 방향전환 이벤트 호출 해야함
-		return;
-	}
+	//// rand() % 8 : 0 ~ 7까지 난수
+	//if (blue_npc->event_cnt_ == 0)
+	//{
+	//	blue_npc->npc_info_.npc_pos_dir_ = (rand() % 8);
+	//}
+	//else if (blue_npc->event_cnt_ == 2)
+	//{
+	//	blue_npc->event_cnt_ = 0;
+	//	m_pOwner->MoveBroadCast(player, blue_npc, red_npc);
+	//	//m_pOwner->SetTransition(EVENT_STOPMOVE);
+	//	// TODO 이때 방향전환 이벤트 호출 해야함
+	//	
+	//	return;
+	//}
 
-	//std::printf("몬스터가 %d만큼 이동합니다.\n", blue_npc->npc_info_.npc_pos_dir_);
-	switch (blue_npc->npc_info_.npc_pos_dir_)
-	{
-		// Move Direction
-	case 0: // 12
-		blue_npc->npc_info_.npc_pos_[1] -= blue_npc->npc_info_.npc_speed;
-		blue_npc->event_cnt_++;
-		break;
-	case 1: // 1
-		blue_npc->npc_info_.npc_pos_[0] += blue_npc->npc_info_.npc_speed;
-		blue_npc->npc_info_.npc_pos_[1] -= blue_npc->npc_info_.npc_speed;
-		blue_npc->event_cnt_++;
-		break;
-	case 2: // 3
-		blue_npc->npc_info_.npc_pos_[0] += blue_npc->npc_info_.npc_speed;
-		blue_npc->event_cnt_++;
-		break;
-	case 3: // 5
-		blue_npc->npc_info_.npc_pos_[0] += blue_npc->npc_info_.npc_speed;
-		blue_npc->npc_info_.npc_pos_[1] += blue_npc->npc_info_.npc_speed;
-		blue_npc->event_cnt_++;
-		break;
-	case 4: // 6
-		blue_npc->npc_info_.npc_pos_[1] += blue_npc->npc_info_.npc_speed;
-		blue_npc->event_cnt_++;
-		break;
-	case 5: // 7
-		blue_npc->npc_info_.npc_pos_[0] -= blue_npc->npc_info_.npc_speed;
-		blue_npc->npc_info_.npc_pos_[1] += blue_npc->npc_info_.npc_speed;
-		blue_npc->event_cnt_++;
-		break;
-	case 6: // 9
-		blue_npc->npc_info_.npc_pos_[0] -= blue_npc->npc_info_.npc_speed;
-		blue_npc->event_cnt_++;
-		break;
-	case 7: // 10
-		blue_npc->npc_info_.npc_pos_[0] -= blue_npc->npc_info_.npc_speed;
-		blue_npc->npc_info_.npc_pos_[1] -= blue_npc->npc_info_.npc_speed;
-		blue_npc->event_cnt_++;
-		break;
-	default:
-		break;
-	}
+	////std::printf("몬스터가 %d만큼 이동합니다.\n", blue_npc->npc_info_.npc_pos_dir_);
+	//switch (blue_npc->npc_info_.npc_pos_dir_)
+	//{
+	//	// Move Direction
+	//case 0: // 12
+	//	blue_npc->npc_info_.npc_pos_[1] -= blue_npc->npc_info_.npc_speed;
+	//	blue_npc->event_cnt_++;
+	//	break;
+	//case 1: // 1
+	//	blue_npc->npc_info_.npc_pos_[0] += blue_npc->npc_info_.npc_speed;
+	//	blue_npc->npc_info_.npc_pos_[1] -= blue_npc->npc_info_.npc_speed;
+	//	blue_npc->event_cnt_++;
+	//	break;
+	//case 2: // 3
+	//	blue_npc->npc_info_.npc_pos_[0] += blue_npc->npc_info_.npc_speed;
+	//	blue_npc->event_cnt_++;
+	//	break;
+	//case 3: // 5
+	//	blue_npc->npc_info_.npc_pos_[0] += blue_npc->npc_info_.npc_speed;
+	//	blue_npc->npc_info_.npc_pos_[1] += blue_npc->npc_info_.npc_speed;
+	//	blue_npc->event_cnt_++;
+	//	break;
+	//case 4: // 6
+	//	blue_npc->npc_info_.npc_pos_[1] += blue_npc->npc_info_.npc_speed;
+	//	blue_npc->event_cnt_++;
+	//	break;
+	//case 5: // 7
+	//	blue_npc->npc_info_.npc_pos_[0] -= blue_npc->npc_info_.npc_speed;
+	//	blue_npc->npc_info_.npc_pos_[1] += blue_npc->npc_info_.npc_speed;
+	//	blue_npc->event_cnt_++;
+	//	break;
+	//case 6: // 9
+	//	blue_npc->npc_info_.npc_pos_[0] -= blue_npc->npc_info_.npc_speed;
+	//	blue_npc->event_cnt_++;
+	//	break;
+	//case 7: // 10
+	//	blue_npc->npc_info_.npc_pos_[0] -= blue_npc->npc_info_.npc_speed;
+	//	blue_npc->npc_info_.npc_pos_[1] -= blue_npc->npc_info_.npc_speed;
+	//	blue_npc->event_cnt_++;
+	//	break;
+	//default:
+	//	break;
+	//}
 
-	// npc 상태 변경
-	m_pOwner->SetTransition(EVENT_STOPMOVE);
-
+	//// npc 상태 변경
+	//m_pOwner->SetTransition(EVENT_STOPMOVE);
+	//m_pOwner->MoveBroadCast(player, blue_npc, red_npc);
 }
 
 void BluePointMovekState::Process(Player* player, BlueNpc* blue_npc, RedNpc* red_npc)
@@ -170,6 +172,7 @@ void BlueAttackState::Process(Player* player, BlueNpc* blue_npc, RedNpc* red_npc
 
 void BlueNpc::Process(Player* player, RedNpc* red_npc)
 {
+	TestOverrid();
 	m_pCurentState->Process(player, this, red_npc);
 }
 
@@ -213,7 +216,7 @@ BlueNpc::BlueNpc()
 		npc_info_.npc_pos_[0] = 0;
 		npc_info_.npc_pos_[1] = 50;
 
-	}
+	}	
 }
 
 BlueNpc::BlueNpc(FSM* fsm)
@@ -242,10 +245,6 @@ BlueNpc::BlueNpc(FSM* fsm)
 
 	}
 }
-
-
-
-
 
 BlueNpc::~BlueNpc()
 {

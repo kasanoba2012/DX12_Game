@@ -3,6 +3,9 @@
 #include <vector>
 #include <iostream>
 #include "FSM.h"
+//#include "BlueNpc.h"
+//#include "RedNpc.h"
+//#include "Player.h"
 
 class BlueNpc;
 class RedNpc;
@@ -58,7 +61,6 @@ public:
 
 class BlueNpc
 {
-
 	struct minion
 	{
 		int my_index = 0;
@@ -74,6 +76,9 @@ public:
 	std::vector<BlueNpcState*> m_pActionList;
 	void Process(Player* player, RedNpc* red_npc);
 	void SetTransition(DWORD dwEvent);
+
+	virtual void MoveBroadCast(const Player* player, const BlueNpc* blue_npc, const RedNpc* red_npc) {}
+	virtual void TestOverrid() {}
 private:
 	bool TargetRange(RedNpc* red_npc);
 public:

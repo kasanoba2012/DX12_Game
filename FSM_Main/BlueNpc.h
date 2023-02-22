@@ -74,6 +74,7 @@ public:
 	std::vector<BlueNpcState*> m_pActionList;
 	void Process(Player* player, RedNpc* red_npc);
 	void SetTransition(DWORD dwEvent);
+
 private:
 	bool TargetRange(RedNpc* red_npc);
 public:

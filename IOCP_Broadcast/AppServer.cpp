@@ -1,13 +1,13 @@
 #include "AppServer.h"
 //FSM
-#include "FSM.h"
-#include "BlueNpc.h"
-#include "RedNpc.h"
-#include "Player.h"
+//#include "FSM.h"
+//#include "BlueNpc.h"
+//#include "RedNpc.h"
+//#include "Player.h"
 
 AppServer::AppServer()
 {
-	FsmInit();
+	//FsmInit();
 }
 
 
