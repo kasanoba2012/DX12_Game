@@ -4,6 +4,25 @@
 #include <stdio.h>
 #include <mutex>
 #include <queue>
+#include "BlueNpc.h"
+
+//typedef struct Player_Socket {
+//	// 전송을 위해 사용
+//	float x = -1, y = -1, z = -1;
+//}Player_Socket;
+//
+//Player_Socket player1;
+//
+//typedef struct Server_Player {
+//	//플레이어 데이터를 묶어놓은것
+//	Player_Socket player1[4];
+//}Server_Player;
+//Server_Player server_data;
+
+struct test_struct
+{
+	int x = 14, y = 0, z = 0;
+};
 
 //클라이언트 정보를 클래스
 class ClientInfo
@@ -206,15 +225,20 @@ public:
 		return true;
 	}
 
-	bool StructSendMsg(const UINT32 data_size_, char* P_msg_)
+	bool StructSendMsg(const UINT32 data_size_, BlueNpc* P_msg_)
 	{
+		test_struct min;
+		P_msg_->npc_info_.npc_pos_;
 		// send_overlapped 구조체 생성
 		auto send_overlapped_ex = new stOverlappedEx;
 		ZeroMemory(send_overlapped_ex, sizeof(stOverlappedEx));
 		send_overlapped_ex->wsa_buf_.len = data_size_;
+		
 		// Send 보낼 데이터 사이즈만큼 buf 동적 할당
 		send_overlapped_ex->wsa_buf_.buf = new char[data_size_];
-		CopyMemory(send_overlapped_ex->wsa_buf_.buf, P_msg_, data_size_);
+		//CopyMemory(send_overlapped_ex->wsa_buf_.buf, P_msg_, data_size_);
+		CopyMemory(send_overlapped_ex->wsa_buf_.buf, (char*)&P_msg_->npc_info_.npc_pos_, data_size_);
+		//CopyMemory(send_overlapped_ex->wsa_buf_.buf, (char*)&min, data_size_);
 		// send_overlapped 형태 알려주기 
 		send_overlapped_ex->E_operation_ = IOOperation::SEND;
 

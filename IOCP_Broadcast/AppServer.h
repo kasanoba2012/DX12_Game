@@ -14,19 +14,6 @@
 #include <mutex>
 #include <memory>
 
-//typedef struct Player_Socket {
-//	// 전송을 위해 사용
-//	float x = 0, y = 0, z = 0;
-//}Player_Socket;
-//
-//Player_Socket player;
-//
-//typedef struct Server_Player {
-//	//플레이어 데이터를 묶어놓은것
-//	Player_Socket player[4];
-//}Server_Player;
-//Server_Player server_data;
-
 //TODO redis 연동. hiredis 포함하기
 class AppServer : public IocpNetServer
 {
@@ -127,7 +114,7 @@ public:
 				char temp_send_buf1_[1] = { blue_npc_.npc_info_.npc_pos_[0] };
 				//temp_send_buf_.size();
 				//BroadcastSendMsg(temp_send_buf1_);
-				BroadcastSendMsg((char*)&blue_npc_.npc_info_.npc_pos_);
+				BroadcastSendMsg(&blue_npc_);
 				//send();
 			}
 			Sleep(1000);

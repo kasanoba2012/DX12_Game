@@ -7,6 +7,7 @@
 #include "Define.h"
 #include <thread>
 #include <vector>
+#include "BlueNpc.h"
 
 class IocpNetServer
 {
@@ -144,10 +145,10 @@ public:
 	bool SendMsg(const UINT32 client_index, const UINT32 data_size, char* P_send_data)
 	{
 		auto pClient = GetClientInfo(client_index);
-		return pClient->StructSendMsg(data_size, P_send_data);
+		return pClient->SendMsg(data_size, P_send_data);
 	}
 
-	char* BroadcastSendMsg(char* pMsg)
+	void BroadcastSendMsg(BlueNpc* blue_npc)
 	{
 		//SendMsg(pClientInfo, pMsg, sizeof(pMsg));
 		// TODO 모든 데이터 저장 첫번째 벡터에 소켓에 발송 이새끼를 브로드 캐스트 하면 전체발송
@@ -160,13 +161,13 @@ public:
 				auto ConnectedList = GetClientInfo(broadastList->GetIndex());
 				std::cout << "BroadcastSendMsg %d\n", broadastList;
 				UINT32 a = 5;
-				ConnectedList->StructSendMsg((UINT32)sizeof(pMsg), pMsg);
+				ConnectedList->StructSendMsg((UINT32)sizeof(blue_npc), blue_npc);
 
 				//return ConnectedList->SendMsg(a, pMsg);
 			}
 		}
 
-		return 0;
+		//return 0;
 	}
 
 	// 네트워크 이벤트를 처리할 함수들
