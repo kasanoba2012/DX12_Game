@@ -206,6 +206,32 @@ public:
 		return true;
 	}
 
+	bool StructSendMsg(const UINT32 data_size_, char* P_msg_)
+	{
+		// send_overlapped 구조체 생성
+		auto send_overlapped_ex = new stOverlappedEx;
+		ZeroMemory(send_overlapped_ex, sizeof(stOverlappedEx));
+		send_overlapped_ex->wsa_buf_.len = data_size_;
+		// Send 보낼 데이터 사이즈만큼 buf 동적 할당
+		send_overlapped_ex->wsa_buf_.buf = new char[data_size_];
+		CopyMemory(send_overlapped_ex->wsa_buf_.buf, P_msg_, data_size_);
+		// send_overlapped 형태 알려주기 
+		send_overlapped_ex->E_operation_ = IOOperation::SEND;
+
+		std::lock_guard<std::mutex> guard(send_lock_);
+
+		// send queue에 데이터 밀어 넣기
+		send_data_queue_.push(send_overlapped_ex);
+
+		// 현재 큐에 한개 밖에 없으면 실행해도 되고 2개 이상이면 현재 진행중인 WSASend가 있다
+		if (send_data_queue_.size() == 1)
+		{
+			SendIO();
+		}
+
+		return true;
+	}
+
 
 	void SendCompleted(const UINT32 dataSize_)
 	{

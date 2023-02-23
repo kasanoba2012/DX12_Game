@@ -2,6 +2,7 @@
 #pragma comment(lib, "ws2_32")
 #pragma comment(lib, "mswsock.lib")
 
+#include <iostream>
 #include "ClientInfo.h"
 #include "Define.h"
 #include <thread>
@@ -143,20 +144,29 @@ public:
 	bool SendMsg(const UINT32 client_index, const UINT32 data_size, char* P_send_data)
 	{
 		auto pClient = GetClientInfo(client_index);
-		return pClient->SendMsg(data_size, P_send_data);
+		return pClient->StructSendMsg(data_size, P_send_data);
 	}
 
-	char* mainSendMsg(char* pMsg)
+	char* BroadcastSendMsg(char* pMsg)
 	{
 		//SendMsg(pClientInfo, pMsg, sizeof(pMsg));
 		// TODO 모든 데이터 저장 첫번째 벡터에 소켓에 발송 이새끼를 브로드 캐스트 하면 전체발송
-		//for (auto& broadastList : _ClientInfos)
-		//{
-		//	SendMsg(&broadastList, pMsg, sizeof(pMsg));
-		//}
-		//	
-		//return pMsg;
-		return nullptr;
+		for (auto& broadastList : client_Infos_)
+		{
+			// 실제 접속이 되었다면
+			if (broadastList->IsConnected() == 1)
+			{
+				//SendMsg();
+				auto ConnectedList = GetClientInfo(broadastList->GetIndex());
+				std::cout << "BroadcastSendMsg %d\n", broadastList;
+				UINT32 a = 5;
+				ConnectedList->StructSendMsg((UINT32)sizeof(pMsg), pMsg);
+
+				//return ConnectedList->SendMsg(a, pMsg);
+			}
+		}
+
+		return 0;
 	}
 
 	// 네트워크 이벤트를 처리할 함수들

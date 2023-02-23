@@ -74,6 +74,7 @@ public:
 	std::vector<BlueNpcState*> m_pActionList;
 	void Process(Player* player, RedNpc* red_npc);
 	void SetTransition(DWORD dwEvent);
+	bool SetTest();
 private:
 	bool TargetRange(RedNpc* red_npc);
 public:
@@ -85,5 +86,7 @@ public:
 	minion npc_info_;
 	int npc_event = 0;
 	int event_cnt_ = 0;
+
+	bool move_sw_ = false;
 };
 

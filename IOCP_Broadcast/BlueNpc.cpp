@@ -10,11 +10,12 @@
 void BlueStandState::Process(Player* player, BlueNpc* blue_npc, RedNpc* red_npc)
 {
 	std::cout << "상태 : 정지\n";
-
+	m_pOwner->move_sw_ = false;
 	std::printf("Blue Npc 좌표 X : %d Y : %d 이벤트 카운트 : %d 디렉션 : %d\n", (int)blue_npc->npc_info_.npc_pos_[0], (int)blue_npc->npc_info_.npc_pos_[1], blue_npc->event_cnt_, blue_npc->npc_info_.npc_pos_dir_);
 	switch (stand_sw_)
 	{
 	case 0: // 무브
+		m_pOwner->SetTest();
 		m_pOwner->SetTransition(EVENT_STARTMOVE);
 		break;
 	case 1: // 타켓 추적
@@ -64,6 +65,7 @@ void BlueMoveState::Process(Player* player, BlueNpc* blue_npc, RedNpc* red_npc)
 	else if (blue_npc->event_cnt_ == 2)
 	{
 		blue_npc->event_cnt_ = 0;
+		m_pOwner->move_sw_ = true;
 		m_pOwner->SetTransition(EVENT_STOPMOVE);
 		// TODO 이때 방향전환 이벤트 호출 해야함
 		return;
@@ -149,7 +151,6 @@ void BluePointMovekState::Process(Player* player, BlueNpc* blue_npc, RedNpc* red
 	}
 }
 
-
 void BlueAttackState::Process(Player* player, BlueNpc* blue_npc, RedNpc* red_npc)
 {
 	std::cout << "몬스터에게 공격을 당했습니다.\n";
@@ -179,6 +180,11 @@ void BlueNpc::SetTransition(DWORD dwEvent)
 	m_pCurentState = m_pActionList[dwOutput];
 }
 
+bool BlueNpc::SetTest()
+{
+	return move_sw_;
+}
+
 bool BlueNpc::TargetRange(RedNpc* red_npc)
 {
 	if (this->npc_info_.npc_pos_[0])
@@ -192,6 +198,7 @@ void BlueNpc::SetFsm(FSM* fsm)
 
 BlueNpc::BlueNpc()
 {
+	std::cout << "BlueNpc() 생성자 호출\n";
 	m_pActionList.push_back(new BlueStandState(this));
 	m_pActionList.push_back(new BlueMoveState(this));
 	m_pActionList.push_back(new BlueAttackState(this));
@@ -218,6 +225,7 @@ BlueNpc::BlueNpc()
 
 BlueNpc::BlueNpc(FSM* fsm)
 {
+	std::cout << "BlueNpc(FSM* fsm) 생성자 호출\n";
 	m_pFsm = fsm;
 	m_pActionList.push_back(new BlueStandState(this));
 	m_pActionList.push_back(new BlueMoveState(this));
@@ -239,13 +247,8 @@ BlueNpc::BlueNpc(FSM* fsm)
 		// blue team 시작 위치
 		npc_info_.npc_pos_[0] = 0;
 		npc_info_.npc_pos_[1] = 50;
-
 	}
 }
-
-
-
-
 
 BlueNpc::~BlueNpc()
 {
@@ -255,4 +258,3 @@ BlueNpc::~BlueNpc()
 	}
 	m_pActionList.clear();
 }
-
