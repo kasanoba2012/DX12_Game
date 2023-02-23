@@ -4,6 +4,14 @@
 #include <iostream>
 #include <winsock2.h>
 
+struct minion
+{
+    int my_index = 0;
+    int npc_pos_[3];
+    int npc_pos_dir_ = 5;
+    int team_color = 0;
+    int npc_speed = 1;
+};
 int main()
 {
     WSADATA wsa;
@@ -69,6 +77,8 @@ int main()
          데이터 수신 로직
          -----------------------*/
         char szRecvMsg[256] = { 0, };
+        minion recv_minion;
+        //int iRecvBytes = recv(sock, (char*)&recv_minion, 256, 0);
         int iRecvBytes = recv(sock, szRecvMsg, 256, 0);
         if (iRecvBytes == SOCKET_ERROR)
         {
@@ -81,7 +91,8 @@ int main()
             }
             continue;
         }
-        printf("Recv----> 몬스터의 현재 X 좌표 : %d\n", szRecvMsg[0]);
+        printf("Recv----> 몬스터의 현재 X 좌표 : %d Y 좌표 : %d\n", szRecvMsg[0], szRecvMsg[4]);
+        //printf("Recv----> 몬스터의 현재 X 좌표 : %d\n", (int)recv_minion.npc_pos_[0]);
     }
     closesocket(sock);
     WSACleanup();

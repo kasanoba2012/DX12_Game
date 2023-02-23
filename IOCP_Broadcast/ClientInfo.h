@@ -241,7 +241,7 @@ public:
 		//CopyMemory(send_overlapped_ex->wsa_buf_.buf, (char*)&min, data_size_);
 		// send_overlapped 형태 알려주기 
 		send_overlapped_ex->E_operation_ = IOOperation::SEND;
-
+		send_overlapped_ex->wsa_buf_;
 		std::lock_guard<std::mutex> guard(send_lock_);
 
 		// send queue에 데이터 밀어 넣기

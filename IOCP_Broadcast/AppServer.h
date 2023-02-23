@@ -117,7 +117,7 @@ public:
 				BroadcastSendMsg(&blue_npc_);
 				//send();
 			}
-			Sleep(1000);
+			Sleep(10);
 		}
 	}
 
