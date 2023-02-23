@@ -76,7 +76,8 @@ public:
 	std::vector<BlueNpcState*> m_pActionList;
 	void Process(Player* player, RedNpc* red_npc);
 	void SetTransition(DWORD dwEvent);
-
+	void BlueInit();
+	void Npc_Run2();
 	virtual void MoveBroadCast(const Player* player, const BlueNpc* blue_npc, const RedNpc* red_npc) {}
 	virtual void TestOverrid() {}
 private:

@@ -150,8 +150,10 @@
     <ClCompile Include="PacketManager.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="RedNpc.cpp" />
+    <ClCompile Include="TestOverride.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Base.h" />
     <ClInclude Include="ClientInfo.h" />
     <ClInclude Include="Define.h" />
     <ClInclude Include="ErrorCode.h" />
@@ -165,6 +167,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="RedNpc.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="TestOverride.h" />
     <ClInclude Include="User.h" />
     <ClInclude Include="UserManager.h" />
   </ItemGroup>

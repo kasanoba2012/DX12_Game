@@ -2,6 +2,7 @@
 #include <string>
 #include <iostream>
 #include "AppServer.h"
+#include "TestOverride.h"
 
 const UINT16 SERVER_PORT = 10000;
 const UINT16 MAX_CLIENT = 3;		//총 접속할수 있는 클라이언트 수
@@ -9,9 +10,12 @@ const int SLEEP_TIME = 3000;
 const UINT32 MAX_IO_WORKER_THREAD = 4;
 
 AppServer iocp_net_server_;
+TestOverride min;
 
 int main()
 {
+	//min.Testinit();
+	
 	//소켓을 초기화
 	iocp_net_server_.Init(MAX_IO_WORKER_THREAD);
 
@@ -20,7 +24,10 @@ int main()
 
 	iocp_net_server_.Run(MAX_CLIENT);
 
-	iocp_net_server_.NpcRun();
+	//iocp_net_server_.NpcRun();
+	//iocp_net_server_.Npc_Run2();
+	//iocp_net_server_.BlueInit();
+	iocp_net_server_.FSM_RUN();
 
 	printf("아무 키나 누를 때까지 대기합니다\n");
 	while (true)

@@ -47,6 +47,9 @@
     <ClCompile Include="IocpNetServer.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="TestOverride.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FiniteState.h">
@@ -92,6 +95,12 @@
       <Filter>FSM\헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="TestOverride.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Base.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

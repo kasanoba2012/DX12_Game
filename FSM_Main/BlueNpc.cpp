@@ -179,6 +179,38 @@ void BlueNpc::SetTransition(DWORD dwEvent)
 	m_pCurentState = m_pActionList[dwOutput];
 }
 
+void BlueNpc::Npc_Run()
+{
+	FSM fsm;
+
+	fsm.AddTransition(STATE_STAND, EVENT_TIMEMOVE, STATE_MOVE);
+	// 이동 시작
+	fsm.AddTransition(STATE_STAND, EVENT_STARTMOVE, STATE_MOVE);
+	// 방향 전환
+	fsm.AddTransition(STATE_MOVE, EVENT_TRUNMOVE, STATE_MOVE);
+	// 타켓 발견하면 타켓에게 다가가기
+	fsm.AddTransition(STATE_STAND, EVENT_POINTMOVE, STATE_POINT_MOVE);
+	// 가만히 서있다가 타켓 발견하면 공격
+	fsm.AddTransition(STATE_STAND, EVENT_FINDTARGET, STATE_ATTACK);
+	// 움직이다가 멈추기
+	fsm.AddTransition(STATE_MOVE, EVENT_STOPMOVE, STATE_STAND);
+	// 공격하다가 타켓 없어지면 멈추기
+	fsm.AddTransition(STATE_ATTACK, EVENT_LOSTTARGET, STATE_STAND);
+
+	Player player;
+	BlueNpc blue_npc_(&fsm);
+	RedNpc red_npc_(&fsm);
+
+	while (1)
+	{
+		blue_npc_.Process(&player, &red_npc_);
+		//red_npc_.Process(&player);
+		// 5초에 한번씩 실행하기
+
+		Sleep(1000);
+	}
+}
+
 bool BlueNpc::TargetRange(RedNpc* red_npc)
 {
 	if(this->npc_info_.npc_pos_[0])
@@ -187,6 +219,7 @@ bool BlueNpc::TargetRange(RedNpc* red_npc)
 
 BlueNpc::BlueNpc(FSM* fsm)
 {
+	std::cout << "BlueNpc(FSM* fsm) 생성자 호출\n";
 	m_pFsm = fsm;
 	m_pActionList.push_back(new BlueStandState(this));
 	m_pActionList.push_back(new BlueMoveState(this));
