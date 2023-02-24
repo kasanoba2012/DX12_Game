@@ -98,7 +98,7 @@ PacketInfo PacketManager::DequePacketData()
 
 	{
 		std::lock_guard<std::mutex> grard(lock_);
-		// 현재 요청을 보낸 유저가 있는지 확인
+		// 현재 Send 요청을 보낸 유저가 있는지 확인
 		if (in_coming_packet_user_index_.empty())
 		{
 			return PacketInfo();

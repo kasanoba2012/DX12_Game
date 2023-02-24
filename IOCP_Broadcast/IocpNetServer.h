@@ -45,7 +45,7 @@ public:
 
 		printf("소켓 초기화 성공\n");
 		return true;
-	}
+	} // end Init
 
 	//------서버용 함수-------//
 	//서버의 주소정보를 소켓과 연결시키고 접속 요청을 받기 위해 
@@ -159,11 +159,7 @@ public:
 			{
 				//SendMsg();
 				auto ConnectedList = GetClientInfo(broadastList->GetIndex());
-				std::cout << "BroadcastSendMsg %d\n", broadastList;
-				UINT32 a = 5;
 				ConnectedList->StructSendMsg((UINT32)sizeof(blue_npc), blue_npc);
-
-				//return ConnectedList->SendMsg(a, pMsg);
 			}
 		}
 

@@ -77,7 +77,6 @@ int main()
          데이터 수신 로직
          -----------------------*/
         char szRecvMsg[256] = { 0, };
-        minion recv_minion;
         //int iRecvBytes = recv(sock, (char*)&recv_minion, 256, 0);
         int iRecvBytes = recv(sock, szRecvMsg, 256, 0);
         if (iRecvBytes == SOCKET_ERROR)

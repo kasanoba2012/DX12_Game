@@ -73,7 +73,6 @@ public:
 		//Receive 호출 Send 호출해서 에코 서버 형태로 만듬
 		//P_packet_manager_->SendPacketFunc(client_index, size, P_recv_data);
 		SendMsg(client_index, size, P_recv_data);
-		//BroadcastSendMsg(P_recv_data);
 	}
 
 	void NpcInit()
@@ -102,20 +101,12 @@ public:
 		{
 			blue_npc_.Process(&player, &red_npc_);
 			
-			if (blue_npc_.SetTest() == true)
+			if (blue_npc_.NpcChangeDirection() == true)
 			{
-				std::cout << "AppSever : SetTest()\n";
-				printf("병신 같은데 .. : %d : %d 방향 : %d\n", (int)blue_npc_.npc_info_.npc_pos_[0], (int)blue_npc_.npc_info_.npc_pos_[1], blue_npc_.npc_info_.npc_pos_dir_);
+				std::cout << "AppSever : NpcChangeDirection()\n";
+				printf("Npc : %d : %d 방향 : %d\n", (int)blue_npc_.npc_info_.npc_pos_[0], (int)blue_npc_.npc_info_.npc_pos_[1], blue_npc_.npc_info_.npc_pos_dir_);
 				
-				// TODO 이새끼를 넘기고 싶다
-				blue_npc_.npc_info_.npc_pos_;
-				//char temp_send_buf_[MAX_SOCKBUF];  //데이터 버퍼
-				char temp_send_buf_[5] = "min";
-				char temp_send_buf1_[1] = { blue_npc_.npc_info_.npc_pos_[0] };
-				//temp_send_buf_.size();
-				//BroadcastSendMsg(temp_send_buf1_);
 				BroadcastSendMsg(&blue_npc_);
-				//send();
 			}
 			Sleep(10);
 		}
@@ -137,6 +128,7 @@ public:
 		// 패킷 매니저 생성
 		P_packet_manager_ = std::make_unique<PacketManager>();
 		P_packet_manager_->SendPacketFunc = send_packet_func;
+		// 클라이언트 수 만큼 user 생성 index, packet_data_buffer 초기화
 		P_packet_manager_->Init(max_client);
 
 		// 패킷쓰레드 생성

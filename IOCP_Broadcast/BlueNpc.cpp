@@ -15,7 +15,7 @@ void BlueStandState::Process(Player* player, BlueNpc* blue_npc, RedNpc* red_npc)
 	switch (stand_sw_)
 	{
 	case 0: // 무브
-		m_pOwner->SetTest();
+		m_pOwner->NpcChangeDirection();
 		m_pOwner->SetTransition(EVENT_STARTMOVE);
 		break;
 	case 1: // 타켓 추적
@@ -180,7 +180,7 @@ void BlueNpc::SetTransition(DWORD dwEvent)
 	m_pCurentState = m_pActionList[dwOutput];
 }
 
-bool BlueNpc::SetTest()
+bool BlueNpc::NpcChangeDirection()
 {
 	return move_sw_;
 }

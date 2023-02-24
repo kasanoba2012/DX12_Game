@@ -227,8 +227,6 @@ public:
 
 	bool StructSendMsg(const UINT32 data_size_, BlueNpc* P_msg_)
 	{
-		test_struct min;
-		P_msg_->npc_info_.npc_pos_;
 		// send_overlapped 구조체 생성
 		auto send_overlapped_ex = new stOverlappedEx;
 		ZeroMemory(send_overlapped_ex, sizeof(stOverlappedEx));
