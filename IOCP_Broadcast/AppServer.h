@@ -22,7 +22,10 @@ class AppServer : public IocpNetServer
 public:
 	FSM fsm;
 	Player player;
+	// TODO 원하는 npc만큼 담는 pool 형태로 만들어야함
 	BlueNpc blue_npc_;
+	BlueNpc blue_npc1_;
+	std::vector<BlueNpc*> npc_pool_;
 	RedNpc red_npc_;
 
 	std::thread npc_process_thread_;
@@ -92,7 +95,9 @@ public:
 		// 공격하다가 타켓 없어지면 멈추기
 		fsm.AddTransition(STATE_ATTACK, EVENT_LOSTTARGET, STATE_STAND);
 		
+		// todo npc 갯수만큼 세팅
 		blue_npc_.SetFsm(&fsm);
+		blue_npc1_.SetFsm(&fsm);
 	}
 
 	void NpcProcess()
@@ -108,7 +113,19 @@ public:
 				
 				BroadcastSendMsg(&blue_npc_);
 			}
-			Sleep(10);
+
+
+			blue_npc1_.Process(&player, &red_npc_);
+
+			if (blue_npc1_.NpcChangeDirection() == true)
+			{
+				std::cout << "AppSever1 : NpcChangeDirection()\n";
+				printf("Npc : %d : %d 방향 : %d\n", (int)blue_npc1_.npc_info_.npc_pos_[0], (int)blue_npc1_.npc_info_.npc_pos_[1], blue_npc1_.npc_info_.npc_pos_dir_);
+
+				BroadcastSendMsg(&blue_npc_);
+			}
+
+			Sleep(1000);
 		}
 	}
 
