@@ -235,7 +235,9 @@ public:
 		// Send 보낼 데이터 사이즈만큼 buf 동적 할당
 		send_overlapped_ex->wsa_buf_.buf = new char[data_size_];
 		//CopyMemory(send_overlapped_ex->wsa_buf_.buf, P_msg_, data_size_);
-		CopyMemory(send_overlapped_ex->wsa_buf_.buf, (char*)&P_msg_->npc_info_.npc_pos_, data_size_);
+		//CopyMemory(send_overlapped_ex->wsa_buf_.buf, (char*)&P_msg_->npc_info_.npc_pos_, data_size_);
+		CopyMemory(send_overlapped_ex->wsa_buf_.buf, (char*)&P_msg_->npc_info_, data_size_);
+		printf("테스트 %d : %d", (int)P_msg_->npc_info_.npc_pos_[0], (int)P_msg_->npc_info_.npc_pos_[1]);
 		//CopyMemory(send_overlapped_ex->wsa_buf_.buf, (char*)&min, data_size_);
 		// send_overlapped 형태 알려주기 
 		send_overlapped_ex->E_operation_ = IOOperation::SEND;

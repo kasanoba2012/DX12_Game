@@ -1,0 +1,1 @@
+#include "BlueNpc.h"

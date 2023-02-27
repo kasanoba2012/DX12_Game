@@ -4,7 +4,7 @@
 #include "AppServer.h"
 
 const UINT16 SERVER_PORT = 10000;
-const UINT16 MAX_CLIENT = 100;		//총 접속할수 있는 클라이언트 수
+const UINT16 MAX_CLIENT = 20;		//총 접속할수 있는 클라이언트 수
 const int SLEEP_TIME = 3000;
 const UINT32 MAX_IO_WORKER_THREAD = 4;
 

@@ -185,6 +185,11 @@ bool BlueNpc::NpcChangeDirection()
 	return move_sw_;
 }
 
+void BlueNpc::init(UINT32 index)
+{
+	npc_info_.my_index = index;
+}
+
 bool BlueNpc::TargetRange(RedNpc* red_npc)
 {
 	if (this->npc_info_.npc_pos_[0])

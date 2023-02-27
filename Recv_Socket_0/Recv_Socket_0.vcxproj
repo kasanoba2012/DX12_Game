@@ -140,7 +140,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BlueNpc.cpp" />
     <ClCompile Include="Recv_Socket_0.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="BlueNpc.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

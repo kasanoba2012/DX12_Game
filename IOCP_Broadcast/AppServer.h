@@ -17,8 +17,6 @@
 //TODO redis 연동. hiredis 포함하기
 class AppServer : public IocpNetServer
 {
-
-
 public:
 	FSM fsm;
 	Player player;
@@ -27,6 +25,7 @@ public:
 	BlueNpc blue_npc1_;
 	std::vector<BlueNpc*> npc_pool_;
 	RedNpc red_npc_;
+	UINT32 max_npc_cnt_ = 10;
 
 	std::thread npc_process_thread_;
 public:
@@ -95,43 +94,91 @@ public:
 		// 공격하다가 타켓 없어지면 멈추기
 		fsm.AddTransition(STATE_ATTACK, EVENT_LOSTTARGET, STATE_STAND);
 		
+		NpcCreate(max_npc_cnt_);
+		SetNpcFsm(max_npc_cnt_);
+
+		//npc_pool_[0]->SetFsm(&fsm);
+		
 		// todo npc 갯수만큼 세팅
-		blue_npc_.SetFsm(&fsm);
-		blue_npc1_.SetFsm(&fsm);
+		//blue_npc_.SetFsm(&fsm);
+		//blue_npc1_.SetFsm(&fsm);
 	}
+
 
 	void NpcProcess()
 	{
 		while (1)
 		{
-			blue_npc_.Process(&player, &red_npc_);
-			
-			if (blue_npc_.NpcChangeDirection() == true)
+			//blue_npc_.Process(&player, &red_npc_);
+			//
+			//if (blue_npc_.NpcChangeDirection() == true)
+			//{
+			//	std::cout << "AppSever : NpcChangeDirection()\n";
+			//	printf("Npc : %d : %d 방향 : %d\n", (int)blue_npc_.npc_info_.npc_pos_[0], (int)blue_npc_.npc_info_.npc_pos_[1], blue_npc_.npc_info_.npc_pos_dir_);
+			//	
+			//	BroadcastSendMsg(&blue_npc_);
+			//}
+
+			for (UINT32 i = 0; i < max_npc_cnt_; ++i)
 			{
-				std::cout << "AppSever : NpcChangeDirection()\n";
-				printf("Npc : %d : %d 방향 : %d\n", (int)blue_npc_.npc_info_.npc_pos_[0], (int)blue_npc_.npc_info_.npc_pos_[1], blue_npc_.npc_info_.npc_pos_dir_);
-				
-				BroadcastSendMsg(&blue_npc_);
+				npc_pool_[i]->Process(&player, &red_npc_);
+
+				if (npc_pool_[i]->NpcChangeDirection() == true)
+				{
+					std::cout << "AppSever : NpcChangeDirection()\n";
+
+					printf("npc_pool_ : %d : %d 방향 : %d npc Index : %d\n", (int)npc_pool_[i]->npc_info_.npc_pos_[0], (int)npc_pool_[i]->npc_info_.npc_pos_[1], npc_pool_[i]->npc_info_.npc_pos_dir_, i);
+
+					//npc_pool_[i];
+					BroadcastSendMsg(npc_pool_[i]);
+				}
 			}
 
+			//npc_pool_[0]->Process(&player, &red_npc_);
 
-			blue_npc1_.Process(&player, &red_npc_);
+			//if (npc_pool_[0]->NpcChangeDirection() == true)
+			//{
+			//	std::cout << "AppSever : NpcChangeDirection()\n";
 
-			if (blue_npc1_.NpcChangeDirection() == true)
-			{
-				std::cout << "AppSever1 : NpcChangeDirection()\n";
-				printf("Npc : %d : %d 방향 : %d\n", (int)blue_npc1_.npc_info_.npc_pos_[0], (int)blue_npc1_.npc_info_.npc_pos_[1], blue_npc1_.npc_info_.npc_pos_dir_);
+			//	printf("npc_pool_ : %d : %d 방향 : %d\n", (int)npc_pool_[0]->npc_info_.npc_pos_[0], (int)npc_pool_[0]->npc_info_.npc_pos_[1], npc_pool_[0]->npc_info_.npc_pos_dir_);
+			//}
 
-				BroadcastSendMsg(&blue_npc_);
-			}
 
-			Sleep(1000);
+			//blue_npc1_.Process(&player, &red_npc_);
+
+			//if (blue_npc1_.NpcChangeDirection() == true)
+			//{
+			//	std::cout << "AppSever1 : NpcChangeDirection()\n";
+			//	printf("Npc : %d : %d 방향 : %d\n", (int)blue_npc1_.npc_info_.npc_pos_[0], (int)blue_npc1_.npc_info_.npc_pos_[1], blue_npc1_.npc_info_.npc_pos_dir_);
+
+			//	BroadcastSendMsg(&blue_npc_);
+			//}
+
+			Sleep(500);
 		}
 	}
 
 	void NpcRun()
 	{
 		npc_process_thread_ = std::thread([this]() {NpcProcess(); });
+	}
+
+	void NpcCreate(UINT32 max_npc_cnt)
+	{
+		for (UINT32 i = 0; i < max_npc_cnt; ++i)
+		{
+			auto npc = new BlueNpc();
+			npc->init(i);
+			npc_pool_.push_back(npc);
+		}
+	}
+
+	void SetNpcFsm(UINT32 max_npc_cnt)
+	{
+		for (UINT32 i = 0; i < max_npc_cnt; ++i)
+		{
+			npc_pool_[i]->SetFsm(&fsm);
+		}
 	}
 
 	void Run(const UINT32 max_client)

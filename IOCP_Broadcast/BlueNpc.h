@@ -58,7 +58,6 @@ public:
 
 class BlueNpc
 {
-
 	struct minion
 	{
 		int my_index = 0;
@@ -75,6 +74,8 @@ public:
 	void Process(Player* player, RedNpc* red_npc);
 	void SetTransition(DWORD dwEvent);
 	bool NpcChangeDirection();
+
+	void init(UINT32 index);
 private:
 	bool TargetRange(RedNpc* red_npc);
 public:

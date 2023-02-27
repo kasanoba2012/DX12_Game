@@ -12,8 +12,10 @@ struct minion
     int team_color = 0;
     int npc_speed = 1;
 };
+
 int main()
 {
+    
     WSADATA wsa;
     if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
     {
@@ -79,6 +81,9 @@ int main()
         char szRecvMsg[256] = { 0, };
         //int iRecvBytes = recv(sock, (char*)&recv_minion, 256, 0);
         int iRecvBytes = recv(sock, szRecvMsg, 256, 0);
+        minion * npc;
+        npc = (minion*)szRecvMsg;
+
         if (iRecvBytes == SOCKET_ERROR)
         {
             // WSAEWOULDBLOCK 데이터는 받았는데 빈데이터인 경우
@@ -90,7 +95,14 @@ int main()
             }
             continue;
         }
-        printf("Recv----> 몬스터의 현재 X 좌표 : %d Y 좌표 : %d\n", szRecvMsg[0], szRecvMsg[4]);
+        printf("Recv----> 몬스터의 idnex : %d 현재 X 좌표 : %d Y 좌표 : %d\n", (int)npc->my_index, (int)npc->npc_pos_[0], npc->npc_pos_[1]);
+
+        if (npc->my_index == 9)
+        {
+            Sleep(1500);
+            system("cls");
+        }
+        
         //printf("Recv----> 몬스터의 현재 X 좌표 : %d\n", (int)recv_minion.npc_pos_[0]);
     }
     closesocket(sock);
