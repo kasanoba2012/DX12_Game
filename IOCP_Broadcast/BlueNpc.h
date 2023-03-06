@@ -64,7 +64,7 @@ class BlueNpc
 		int npc_pos_[3];
 		int npc_pos_dir_ = 5;
 		int team_color = 0;
-		int npc_speed = 1;
+		int npc_speed = 10;
 	};
 	DWORD m_dwState;
 	FSM* m_pFsm = nullptr;

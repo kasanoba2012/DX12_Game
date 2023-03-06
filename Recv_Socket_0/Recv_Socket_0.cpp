@@ -81,7 +81,7 @@ int main()
         char szRecvMsg[256] = { 0, };
         //int iRecvBytes = recv(sock, (char*)&recv_minion, 256, 0);
         int iRecvBytes = recv(sock, szRecvMsg, 256, 0);
-        minion * npc;
+        minion* npc;
         npc = (minion*)szRecvMsg;
 
         if (iRecvBytes == SOCKET_ERROR)
@@ -99,7 +99,7 @@ int main()
 
         if (npc->my_index == 9)
         {
-            Sleep(1500);
+            Sleep(500);
             system("cls");
         }
         

@@ -25,6 +25,7 @@ public:
 	BlueNpc blue_npc1_;
 	std::vector<BlueNpc*> npc_pool_;
 	RedNpc red_npc_;
+	// npc °¹¼ö
 	UINT32 max_npc_cnt_ = 10;
 
 	std::thread npc_process_thread_;
@@ -154,7 +155,7 @@ public:
 			//	BroadcastSendMsg(&blue_npc_);
 			//}
 
-			Sleep(500);
+			Sleep(100);
 		}
 	}
 

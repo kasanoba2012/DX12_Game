@@ -76,39 +76,93 @@ void BlueMoveState::Process(Player* player, BlueNpc* blue_npc, RedNpc* red_npc)
 	{
 		// Move Direction
 	case 0: // 12
-		blue_npc->npc_info_.npc_pos_[1] -= blue_npc->npc_info_.npc_speed;
+		//if (blue_npc->npc_info_.npc_pos_[1] >= 0)
+		if (blue_npc->npc_info_.npc_pos_[1] >= blue_npc->npc_info_.npc_speed)
+		{
+			blue_npc->npc_info_.npc_pos_[1] -= blue_npc->npc_info_.npc_speed;
+		}
 		blue_npc->event_cnt_++;
 		break;
 	case 1: // 1
-		blue_npc->npc_info_.npc_pos_[0] += blue_npc->npc_info_.npc_speed;
-		blue_npc->npc_info_.npc_pos_[1] -= blue_npc->npc_info_.npc_speed;
+		if (blue_npc->npc_info_.npc_pos_[0] <= 800 - blue_npc->npc_info_.npc_speed)
+		{
+			blue_npc->npc_info_.npc_pos_[0] += blue_npc->npc_info_.npc_speed;
+		}
+
+		if (blue_npc->npc_info_.npc_pos_[1] >= blue_npc->npc_info_.npc_speed)
+		{
+			blue_npc->npc_info_.npc_pos_[1] -= blue_npc->npc_info_.npc_speed;
+		}
+		
 		blue_npc->event_cnt_++;
 		break;
 	case 2: // 3
-		blue_npc->npc_info_.npc_pos_[0] += blue_npc->npc_info_.npc_speed;
+		if (blue_npc->npc_info_.npc_pos_[0] <= 800 - blue_npc->npc_info_.npc_speed)
+		{
+			blue_npc->npc_info_.npc_pos_[0] += blue_npc->npc_info_.npc_speed;
+		}
+
 		blue_npc->event_cnt_++;
 		break;
 	case 3: // 5
-		blue_npc->npc_info_.npc_pos_[0] += blue_npc->npc_info_.npc_speed;
-		blue_npc->npc_info_.npc_pos_[1] += blue_npc->npc_info_.npc_speed;
+		if (blue_npc->npc_info_.npc_pos_[0] <= 800 - blue_npc->npc_info_.npc_speed)
+		{
+			blue_npc->npc_info_.npc_pos_[0] += blue_npc->npc_info_.npc_speed;
+		}
+
+		if (blue_npc->npc_info_.npc_pos_[1] <= 600 - blue_npc->npc_info_.npc_speed)
+		{
+			blue_npc->npc_info_.npc_pos_[1] += blue_npc->npc_info_.npc_speed;
+		}
+
+		//blue_npc->npc_info_.npc_pos_[0] += blue_npc->npc_info_.npc_speed;
+		//blue_npc->npc_info_.npc_pos_[1] += blue_npc->npc_info_.npc_speed;
 		blue_npc->event_cnt_++;
 		break;
 	case 4: // 6
-		blue_npc->npc_info_.npc_pos_[1] += blue_npc->npc_info_.npc_speed;
+		if (blue_npc->npc_info_.npc_pos_[1] <= 600 - blue_npc->npc_info_.npc_speed)
+		{
+			blue_npc->npc_info_.npc_pos_[1] += blue_npc->npc_info_.npc_speed;
+		}
+
+		//blue_npc->npc_info_.npc_pos_[1] += blue_npc->npc_info_.npc_speed;
 		blue_npc->event_cnt_++;
 		break;
 	case 5: // 7
-		blue_npc->npc_info_.npc_pos_[0] -= blue_npc->npc_info_.npc_speed;
-		blue_npc->npc_info_.npc_pos_[1] += blue_npc->npc_info_.npc_speed;
+		if (blue_npc->npc_info_.npc_pos_[0] >= blue_npc->npc_info_.npc_speed)
+		{
+			blue_npc->npc_info_.npc_pos_[0] -= blue_npc->npc_info_.npc_speed;
+		}
+
+		if (blue_npc->npc_info_.npc_pos_[1] <= 600 - blue_npc->npc_info_.npc_speed)
+		{
+			blue_npc->npc_info_.npc_pos_[1] += blue_npc->npc_info_.npc_speed;
+		}
+
 		blue_npc->event_cnt_++;
 		break;
 	case 6: // 9
-		blue_npc->npc_info_.npc_pos_[0] -= blue_npc->npc_info_.npc_speed;
+		if (blue_npc->npc_info_.npc_pos_[0] >= blue_npc->npc_info_.npc_speed)
+		{
+			blue_npc->npc_info_.npc_pos_[0] -= blue_npc->npc_info_.npc_speed;
+		}
+
+		//blue_npc->npc_info_.npc_pos_[0] -= blue_npc->npc_info_.npc_speed;
 		blue_npc->event_cnt_++;
 		break;
 	case 7: // 10
-		blue_npc->npc_info_.npc_pos_[0] -= blue_npc->npc_info_.npc_speed;
-		blue_npc->npc_info_.npc_pos_[1] -= blue_npc->npc_info_.npc_speed;
+		if (blue_npc->npc_info_.npc_pos_[0] > blue_npc->npc_info_.npc_speed)
+		{
+			blue_npc->npc_info_.npc_pos_[0] -= blue_npc->npc_info_.npc_speed;
+		}
+
+		if (blue_npc->npc_info_.npc_pos_[1] >= blue_npc->npc_info_.npc_speed)
+		{
+			blue_npc->npc_info_.npc_pos_[1] -= blue_npc->npc_info_.npc_speed;
+		}
+
+		//blue_npc->npc_info_.npc_pos_[0] -= blue_npc->npc_info_.npc_speed;
+		//blue_npc->npc_info_.npc_pos_[1] -= blue_npc->npc_info_.npc_speed;
 		blue_npc->event_cnt_++;
 		break;
 	default:
