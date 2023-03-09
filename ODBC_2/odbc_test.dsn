@@ -1,0 +1,10 @@
+[ODBC]
+DRIVER=SQL Server
+UID=sa
+PWD=dpsjwl2012
+Network=DBMSSOCN
+DATABASE=test_DB
+WSID=DESKTOP-UBUTK8O
+APP=Microsoft¢ç Windows¢ç Operating System
+SERVER=127.0.0.1
+Description=odbc_test
