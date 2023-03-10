@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="Resource.h">
+      <Filter>헤더</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>헤더</Filter>
+    </ClInclude>
+    <ClInclude Include="framework.h">
+      <Filter>헤더</Filter>
+    </ClInclude>
+    <ClInclude Include="Odbc.h">
+      <Filter>헤더</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="ODBC_3.ico">
+      <Filter>리소스</Filter>
+    </Image>
+    <Image Include="small.ico">
+      <Filter>리소스</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="리소스">
+      <UniqueIdentifier>{d44eb353-ba3f-4097-951c-c28ec6c82965}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더">
+      <UniqueIdentifier>{7e1ea98b-f2a9-48ea-9c61-917e4fe85294}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스">
+      <UniqueIdentifier>{eca6ab7a-296f-4933-b861-402ccbeb8789}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="ODBC_3.rc">
+      <Filter>리소스</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ODBC_3.cpp">
+      <Filter>소스</Filter>
+    </ClCompile>
+    <ClCompile Include="Odbc.cpp">
+      <Filter>소스</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="odbc_test.dsn">
+      <Filter>리소스</Filter>
+    </None>
+  </ItemGroup>
+</Project>
