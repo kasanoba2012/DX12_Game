@@ -127,6 +127,7 @@ bool Odbc::CreatePrepare()
 
 	// Delete
 	std::wstring sql5 = L"delete from user_table where Name=?";
+	//std::wstring sql5 = L"select * from user_table where Name =?";
 	// SQLAllocHandle : 핸들의 할당 함수
 	ret = SQLAllocHandle(SQL_HANDLE_STMT,  // 할당하고자하는 핸들 타입
 		g_hDbc, // 생성할 부모 핸들 지정
@@ -157,6 +158,57 @@ bool Odbc::CreatePrepare()
 	if (ret != SQL_SUCCESS)
 	{
 		ErrorMsg(g_hDeleteStmt);
+		return false;
+	}
+
+	// Login 로그인 체크
+	std::wstring sql6 = L"select * from user_table where Name =? and Pass=?";
+	//std::wstring sql6 = L"select * from user_table where Name =?";
+	// SQLAllocHandle : 핸들의 할당 함수
+	ret = SQLAllocHandle(SQL_HANDLE_STMT,  // 할당하고자하는 핸들 타입
+		g_hDbc, // 생성할 부모 핸들 지정
+		&g_hLoginCheckStmt // 생성할 핸들의 주소
+	);
+
+	// SQLPrepare 파라미터만 바꿔서 sql 실행
+	ret = SQLPrepare(g_hLoginCheckStmt, // Handle
+		(SQLTCHAR*)sql6.c_str(), // 실행할 sql 문
+		SQL_NTS // TextLength?
+	);
+
+	m_iLoginIdDataLength = sizeof(m_szLoginId);
+	m_iLoginPwDataLength = sizeof(m_szLoginPw);
+	m_cbColumn = SQL_NTS;
+
+	// ?를 파라미터 마커라고 하며, 실행중 바인딩된 변수값으로 대체 ? 만큼 SQLBindParameter 할당 해야 한다.
+	ret = SQLBindParameter(g_hLoginCheckStmt, // 명령핸들
+		1, // 파라미터 번호
+		SQL_PARAM_INPUT, // 파라미터 용도
+		SQL_UNICODE, // 파라미터 데이터 타입(C형)
+		SQL_CHAR, // 파라미터 데이터 타입(SQL형)
+		m_iDataLength, // 파라미터 변수의 크기
+		0, // 파라미터 변수의 자리수
+		m_szLoginId, // 실제 파라미터와 연결될 변수의 주소
+		m_iDataLength, // 파라미터의 문자열이나 이진형일때 버퍼의 크기
+		&m_cbColumn // 길이와 상태 인수
+	);
+
+	// ?를 파라미터 마커라고 하며, 실행중 바인딩된 변수값으로 대체 ? 만큼 SQLBindParameter 할당 해야 한다.
+	ret = SQLBindParameter(g_hLoginCheckStmt, // 명령핸들
+		2, // 파라미터 번호
+		SQL_PARAM_INPUT, // 파라미터 용도
+		SQL_UNICODE, // 파라미터 데이터 타입(C형)
+		SQL_CHAR, // 파라미터 데이터 타입(SQL형)
+		m_iLoginPwDataLength, // 파라미터 변수의 크기
+		0, // 파라미터 변수의 자리수
+		m_szLoginPw, // 실제 파라미터와 연결될 변수의 주소
+		m_iDataLength, // 파라미터의 문자열이나 이진형일때 버퍼의 크기
+		&m_cbColumn // 길이와 상태 인수
+	);
+
+	if (ret != SQL_SUCCESS)
+	{
+		ErrorMsg(g_hLoginCheckStmt);
 		return false;
 	}
 
@@ -249,6 +301,7 @@ void Odbc::DisConnect()
 	if (g_hInsertStmt) SQLFreeHandle(SQL_HANDLE_STMT, g_hInsertStmt);
 	if (g_hUpdateStmt) SQLFreeHandle(SQL_HANDLE_STMT, g_hUpdateStmt);
 	if (g_hDeleteStmt) SQLFreeHandle(SQL_HANDLE_STMT, g_hDeleteStmt);
+	if (g_hLoginCheckStmt) SQLFreeHandle(SQL_HANDLE_STMT, g_hLoginCheckStmt);
 
 	if (g_hDbc) SQLFreeHandle(SQL_HANDLE_DBC, g_hDbc);
 	if (g_hEnv) SQLFreeHandle(SQL_HANDLE_ENV, g_hEnv);
@@ -429,6 +482,36 @@ bool Odbc::DeleteSQL(const TCHAR* szName)
 	SQLFreeStmt(g_hDeleteStmt, SQL_CLOSE);
 	return false;
 
+}
+
+bool Odbc::LoginCheckSQL(const TCHAR* szName, const TCHAR* szPw)
+{
+	if (szName != nullptr && szPw != nullptr)
+	{
+		ZeroMemory(m_szLoginId, sizeof(m_szLoginId));
+		ZeroMemory(m_szLoginPw, sizeof(m_szLoginPw));
+		CopyMemory(m_szLoginId, szName, sizeof(szName));
+		CopyMemory(m_szLoginPw, szPw, sizeof(szPw));
+
+		// SQLExecute : 준비된 파라미터만 교체해서 바로 실행한다
+		SQLRETURN hr = SQLExecute(g_hLoginCheckStmt);
+
+		if (hr == SQL_SUCCESS)
+		{
+			// SQLFetch 결과 집합에서 바인딩된 데이터를 반환
+			if (SQLFetch(g_hLoginCheckStmt) != SQL_NO_DATA)
+			{
+				if (g_hLoginCheckStmt) SQLCloseCursor(g_hLoginCheckStmt);
+				SQLFreeStmt(g_hLoginCheckStmt, SQL_CLOSE);
+				return true;
+			}
+		}
+	}
+
+	ErrorMsg(g_hLoginCheckStmt);
+	if (g_hLoginCheckStmt) SQLCloseCursor(g_hLoginCheckStmt);
+	SQLFreeStmt(g_hLoginCheckStmt, SQL_CLOSE);
+	return false;
 }
 
 bool Odbc::CreateUserAllSelect()

@@ -40,8 +40,26 @@ void DeleteRecord()
 			SendMessage(g_hDlgList, LB_ADDSTRING, 0, (LPARAM)data[1].c_str());
 		}
 	}
-
 }
+
+void LoginRecord()
+{
+	dbitem record;
+	SQLTCHAR name[255] = { 0, };
+	SQLTCHAR pw[255] = { 0, };
+	GetWindowText(g_hDlgName, name, 255);
+	GetWindowText(g_hDlgPass, pw, 255);
+	if (g_odbc.LoginCheckSQL(name, pw))
+	{
+		SendMessage(g_hDlgList, LB_RESETCONTENT, 0, 0);
+		g_odbc.Load();
+		for (auto data : g_odbc.m_dbDataList)
+		{
+			SendMessage(g_hDlgList, LB_ADDSTRING, 0, (LPARAM)data[1].c_str());
+		}
+	}
+}
+
 void InsertRecord()
 {
 	dbitem record;
@@ -126,7 +144,7 @@ LRESULT CALLBACK DlgProc(HWND hDlg, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	{
 		switch (LOWORD(wParam))
 		{
-		case IDOK:  EndDialog(hDlg, IDOK); return TRUE;
+		case IDOK:  LoginRecord(); return TRUE;
 		case IDCANCEL:  EndDialog(hDlg, IDOK); return TRUE;
 		case IDC_DELETE: DeleteRecord(); return TRUE;
 		case IDC_INSERT: InsertRecord(); return TRUE;

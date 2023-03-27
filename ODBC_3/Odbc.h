@@ -47,6 +47,8 @@ public:
 	SQLHSTMT  g_hStmt; // 명령핸들
 	SQLHSTMT  g_hReadStmt; // SQLExecute 핸들
 	SQLHSTMT  g_hDeleteStmt; // SQLPrepare Delete 핸들
+	SQLHSTMT  g_hLoginCheckStmt; // SQLPrepare LoginCheck 핸들
+
 
 	std::vector<TColDescription>	m_ColumnList;
 	std::vector<RECORD>				m_dbDataList;
@@ -82,6 +84,12 @@ public:
 	/// </summary>
 	SQLHSTMT  g_hPassStmt;
 	TCHAR	  m_szDeleteName[64] = { 0, };
+
+	// LoginCheck
+	TCHAR	   m_szLoginId[10] = { 0, };
+	TCHAR	   m_szLoginPw[10] = { 0, };
+	SQLINTEGER  m_iLoginIdDataLength;
+	SQLINTEGER  m_iLoginPwDataLength;
 public:
 	void Init();
 	bool CreatePrepare();
@@ -93,11 +101,13 @@ public:
 	bool UpdateSQL(dbitem& record, std::wstring selectName);
 	bool ReadRecord(std::wstring selectName);
 	bool DeleteSQL(const TCHAR* szName);
+	bool LoginCheckSQL(const TCHAR* szName, const TCHAR* szPw);
 public:
 	bool CreateUserAllSelect();
 	bool CreateSelectWhereName();
 	bool CreateInsertAccount();
 	bool CreateUpdate();
+	
 
 public:
 	int    retID;					SQLLEN  lID;
