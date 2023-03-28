@@ -51,12 +51,16 @@ void LoginRecord()
 	GetWindowText(g_hDlgPass, pw, 255);
 	if (g_odbc.LoginCheckSQL(name, pw))
 	{
+		// TODO : 아이디 패스워드가 참인 경우
 		SendMessage(g_hDlgList, LB_RESETCONTENT, 0, 0);
 		g_odbc.Load();
 		for (auto data : g_odbc.m_dbDataList)
 		{
 			SendMessage(g_hDlgList, LB_ADDSTRING, 0, (LPARAM)data[1].c_str());
 		}
+	}
+	else {
+		// TODO 아이디와 패스워드가 거짓인 경우
 	}
 }
 
