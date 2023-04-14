@@ -8,6 +8,7 @@
 #include <time.h>
 #include <ctime>
 #include <vector>
+#include <iostream>
 //#pragma comment(lib, "legacy_stdio_definitions.lib")
 //참고 Roaming::RoamingNotInitializedException C++ 예외 발생시 accessdatabaseengine_X64.exe 설치
 using RECORD = std::vector<std::wstring>;
@@ -59,7 +60,7 @@ public:
 	/// 
 	/// </summary>
 	SQLHSTMT    g_hSelectAllStmt;
-	TCHAR		m_szReadName[10] = { 0, };
+	TCHAR		m_szReadName[20] = { 0, };
 	SQLINTEGER  m_iDataLength;
 	SQLLEN      m_cbColumn;
 	void Load();
@@ -67,15 +68,16 @@ public:
 	/// 
 	/// </summary>
 	SQLHSTMT  g_hInsertStmt; // SQLPrepare Insert 핸들
-	TCHAR	   m_szInsertName[10] = { 0, };
-	TCHAR	   m_szInsertPass[10] = { 0, };
+	TCHAR	   m_szInsertName[20] = { 0, };
+	TCHAR	   m_szTestInsertName[20] = { 0, };
+	TCHAR	   m_szInsertPass[20] = { 0, };
 	SQLINTEGER m_iSelectLevel;
 	/// <summary>
 	/// 
 	/// </summary>
 	SQLHSTMT  g_hUpdateStmt; // SQLPrepare Update 핸들
-	TCHAR	   m_szUpdateName[10] = { 0, };
-	TCHAR	   m_szUpdatePass[10] = { 0, };
+	TCHAR	   m_szUpdateName[20] = { 0, };
+	TCHAR	   m_szUpdatePass[20] = { 0, };
 	SQLINTEGER m_iUpdateLevel;
 	SQLINTEGER m_iUpdateSex;
 	TIMESTAMP_STRUCT m_ts;
@@ -90,6 +92,7 @@ public:
 	TCHAR	   m_szLoginPw[10] = { 0, };
 	SQLINTEGER  m_iLoginIdDataLength;
 	SQLINTEGER  m_iLoginPwDataLength;
+
 public:
 	void Init();
 	bool CreatePrepare();
@@ -107,6 +110,8 @@ public:
 	bool CreateSelectWhereName();
 	bool CreateInsertAccount();
 	bool CreateUpdate();
+	bool DeleteLoingInfo();
+	bool LoginCheck();
 	
 
 public:

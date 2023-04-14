@@ -174,7 +174,7 @@ void PacketManager::ProcessLogin(UINT32 client_index, UINT16 packet_size, char* 
 		return;
 	}
 
-	auto  P_login_req_packet = reinterpret_cast<LOGIN_REQUEST_PACKET*>(P_packet);
+	auto P_login_req_packet = reinterpret_cast<LOGIN_REQUEST_PACKET*>(P_packet);
 
 	auto P_user_id = P_login_req_packet->user_id_;
 	printf("requested user id = %s\n", P_user_id);

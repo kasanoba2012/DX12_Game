@@ -57,6 +57,9 @@ public:
 
 		// SYS_USER_CONNECT 패킷을 전달
 		P_packet_manager_->PushSystemPacket(packet);
+		
+		// TODO 로그인 헤더 접속하면 보내기
+		//HeaderSendMsg(client_index, PACKET_CHATNAME_REQ);
 	}
 
 	virtual void OnClose(const UINT32 client_index_) override
@@ -71,6 +74,7 @@ public:
 	{
 		printf("[OnReceive] 클라이언트: Index(%d), dataSize(%d), recvData : %s\n", client_index, size, P_recv_data);
 
+		// client_index 어떤 클라가 보냈는지 알수 있는 index
 		P_packet_manager_->ReceivePacketData(client_index, size, P_recv_data);
 
 		//Receive 호출 Send 호출해서 에코 서버 형태로 만듬
@@ -97,12 +101,6 @@ public:
 		
 		NpcCreate(max_npc_cnt_);
 		SetNpcFsm(max_npc_cnt_);
-
-		//npc_pool_[0]->SetFsm(&fsm);
-		
-		// todo npc 갯수만큼 세팅
-		//blue_npc_.SetFsm(&fsm);
-		//blue_npc1_.SetFsm(&fsm);
 	}
 
 
@@ -126,9 +124,9 @@ public:
 
 				if (npc_pool_[i]->NpcChangeDirection() == true)
 				{
-					std::cout << "AppSever : NpcChangeDirection()\n";
+					//std::cout << "AppSever : NpcChangeDirection()\n";
 
-					printf("npc_pool_ : %d : %d 방향 : %d npc Index : %d\n", (int)npc_pool_[i]->npc_info_.npc_pos_[0], (int)npc_pool_[i]->npc_info_.npc_pos_[1], npc_pool_[i]->npc_info_.npc_pos_dir_, i);
+					//printf("npc_pool_ : %d : %d 방향 : %d npc Index : %d\n", (int)npc_pool_[i]->npc_info_.npc_pos_[0], (int)npc_pool_[i]->npc_info_.npc_pos_[1], npc_pool_[i]->npc_info_.npc_pos_dir_, i);
 
 					//npc_pool_[i];
 					BroadcastSendMsg(npc_pool_[i]);

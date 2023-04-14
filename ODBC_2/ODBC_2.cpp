@@ -285,6 +285,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	//g_odbc.Connect(L"../data/db/Account.accdb");
 	g_odbc.ConnetMssql(L"odbc_test.dsn");
 	Load();
+	//g_odbc.Lo
 	DialogBox(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), HWND_DESKTOP, (DLGPROC)DlgProc);
 	g_odbc.DisConnect();
 }

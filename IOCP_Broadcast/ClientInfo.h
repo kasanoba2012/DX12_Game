@@ -225,6 +225,34 @@ public:
 		return true;
 	}
 
+	bool PacketHeaderSendMsg(const short type)
+	{
+		UPACKET packet;
+		// send_overlapped 구조체 생성
+		//auto packet = new PACKET_HEADER2;
+		ZeroMemory(&packet, sizeof(UPACKET));
+		packet.ph.len = 4;
+		// Send 보낼 데이터 사이즈만큼 buf 동적 할당
+		packet.ph.type = type;
+
+		char* msgSend = (char*)&packet;
+
+		int iSendBytes = send(socket_, msgSend, packet.ph.len, 0);
+
+		if (iSendBytes == SOCKET_ERROR)
+		{
+			if (WSAGetLastError() != WSAEWOULDBLOCK)
+			{
+				//WSAEWOULDBLOCK 아니라면 오류!
+				closesocket(socket_);
+				return -1;
+			}
+		}
+
+		return true;
+	}
+
+
 	bool StructSendMsg(const UINT32 data_size_, BlueNpc* P_msg_)
 	{
 		// send_overlapped 구조체 생성
@@ -234,8 +262,6 @@ public:
 		
 		// Send 보낼 데이터 사이즈만큼 buf 동적 할당
 		send_overlapped_ex->wsa_buf_.buf = new char[data_size_];
-		//CopyMemory(send_overlapped_ex->wsa_buf_.buf, P_msg_, data_size_);
-		//CopyMemory(send_overlapped_ex->wsa_buf_.buf, (char*)&P_msg_->npc_info_.npc_pos_, data_size_);
 		CopyMemory(send_overlapped_ex->wsa_buf_.buf, (char*)&P_msg_->npc_info_, data_size_);
 		printf("테스트 %d : %d", (int)P_msg_->npc_info_.npc_pos_[0], (int)P_msg_->npc_info_.npc_pos_[1]);
 		//CopyMemory(send_overlapped_ex->wsa_buf_.buf, (char*)&min, data_size_);

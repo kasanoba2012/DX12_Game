@@ -20,9 +20,9 @@ int main()
 
 	iocp_net_server_.Run(MAX_CLIENT);
 
-	iocp_net_server_.NpcInit();
-	
-	iocp_net_server_.NpcRun();
+	//iocp_net_server_.NpcInit();
+
+	//iocp_net_server_.NpcRun();
 
 	printf("아무 키나 누를 때까지 대기합니다\n");
 	while (true)

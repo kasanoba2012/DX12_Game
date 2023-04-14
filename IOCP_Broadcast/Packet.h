@@ -54,7 +54,6 @@ enum class PACKET_ID : UINT16
 
 	// Server -> Client
 
-
 	// Client -> Server
 	LOGIN_REQUEST = 201,
 	LOGIN_RESPONSE = 202,

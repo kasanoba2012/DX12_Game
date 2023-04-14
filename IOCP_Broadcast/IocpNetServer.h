@@ -155,6 +155,13 @@ public:
 	{
 		auto pClient = GetClientInfo(client_index);
 		return pClient->SendMsg(data_size, P_send_data);
+		//return pClient->PacketHeaderSendMsg(1001);
+	}
+
+	bool HeaderSendMsg(const UINT32 client_index, short type)
+	{
+		auto pClient = GetClientInfo(client_index);
+		return pClient->PacketHeaderSendMsg(type);
 	}
 
 	void BroadcastSendMsg(BlueNpc* blue_npc)

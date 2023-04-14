@@ -9,9 +9,9 @@
 // 정지 상태
 void BlueStandState::Process(Player* player, BlueNpc* blue_npc, RedNpc* red_npc)
 {
-	std::cout << "상태 : 정지\n";
+	//std::cout << "상태 : 정지\n";
 	m_pOwner->move_sw_ = false;
-	std::printf("Blue Npc 좌표 X : %d Y : %d 이벤트 카운트 : %d 디렉션 : %d\n", (int)blue_npc->npc_info_.npc_pos_[0], (int)blue_npc->npc_info_.npc_pos_[1], blue_npc->event_cnt_, blue_npc->npc_info_.npc_pos_dir_);
+	//std::printf("Blue Npc 좌표 X : %d Y : %d 이벤트 카운트 : %d 디렉션 : %d\n", (int)blue_npc->npc_info_.npc_pos_[0], (int)blue_npc->npc_info_.npc_pos_[1], blue_npc->event_cnt_, blue_npc->npc_info_.npc_pos_dir_);
 	switch (stand_sw_)
 	{
 	case 0: // 무브
@@ -56,7 +56,7 @@ void BlueStandState::Process(Player* player, BlueNpc* blue_npc, RedNpc* red_npc)
 // 이동 상태
 void BlueMoveState::Process(Player* player, BlueNpc* blue_npc, RedNpc* red_npc)
 {
-	std::cout << "상태 : 이동\n";
+	//std::cout << "상태 : 이동\n";
 	// rand() % 8 : 0 ~ 7까지 난수
 	if (blue_npc->event_cnt_ == 0)
 	{

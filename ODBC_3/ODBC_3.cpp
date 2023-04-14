@@ -1,6 +1,8 @@
 ﻿#define _CRT_SECURE_NO_WARNINGS
 #include "Odbc.h"
 
+#include <string>
+#include <iostream>
 #include "resource.h"
 
 Odbc  g_odbc;
@@ -30,6 +32,7 @@ void DeleteRecord()
 {
 	dbitem record;
 	SQLTCHAR name[255] = { 0, };
+	int test0 = sizeof(name);
 	GetWindowText(g_hDlgName, name, 255);
 	if (g_odbc.DeleteSQL(name))
 	{
@@ -47,6 +50,10 @@ void LoginRecord()
 	dbitem record;
 	SQLTCHAR name[255] = { 0, };
 	SQLTCHAR pw[255] = { 0, };
+	std::string name2 = "";
+	std::string pw2 = "";
+	name2.append("tt");
+	pw2.append("mm");
 	GetWindowText(g_hDlgName, name, 255);
 	GetWindowText(g_hDlgPass, pw, 255);
 	if (g_odbc.LoginCheckSQL(name, pw))
@@ -227,6 +234,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	//g_odbc.Connect(L"../data/db/Account.accdb");
 	g_odbc.ConnetMssql(L"odbc_test.dsn");
 	g_odbc.Load();
+	//SQLTCHAR name[255] = { L"Son" };
+	//SQLTCHAR pw[255] = { L"heungmin" };
+	//g_odbc.LoginCheckSQL(name, pw);
 	DialogBox(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), HWND_DESKTOP, (DLGPROC)DlgProc);
 	g_odbc.DisConnect();
 }

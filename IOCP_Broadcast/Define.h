@@ -26,6 +26,18 @@ struct stOverlappedEx
 	UINT32 session_index_ = 0;
 };
 
+typedef struct
+{
+	short len;
+	short type;
+}PACKET_HEADER2;
+
+typedef struct
+{
+	PACKET_HEADER2 ph;
+	char msg[2048];
+}UPACKET;
+
 #define PACKET_CHAR_MSG   1000      // client ->
 #define PACKET_CHATNAME_REQ   1001  // server -> client
 #define PACKET_NAME_REQ   2000		// client -> server
